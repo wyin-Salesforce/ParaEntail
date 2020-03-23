@@ -35,7 +35,7 @@ def load_per_docs_file(fil):
             continue
         if line.strip().find('</SUM>') >-1:
             summary +=' '+line.strip().replace('</SUM>', ' ')
-            print('sum:', summary)
+            # print('sum:', summary)
             summary_start = False
             id2sum[doc_id] = summary.strip()
         if summary_start:
