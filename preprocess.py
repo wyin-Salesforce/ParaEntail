@@ -28,6 +28,7 @@ def load_per_docs_file(fil):
             doc_id = linestrip[equi_pos+2:-1]
         if line.strip().startswith('SUMMARIZER'):
             summary_start = True
+            continue
         if line.strip().startswith('</SUM>'):
             summary_start = False
             pairlist.append((doc_id, summary))
