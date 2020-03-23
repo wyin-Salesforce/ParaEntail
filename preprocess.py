@@ -17,6 +17,7 @@ def load_CNN_DailyMail():
 def load_per_docs_file(fil):
     readfile = codecs.open(fil, 'r', 'utf-8')
     pairlist = []
+    summary_start = False
     for line in readfile:
         if line.strip().startswith('<SUM'):
             doc_id = ''
@@ -50,4 +51,3 @@ def load_DUC():
 
 if __name__ == "__main__":
     load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
-    
