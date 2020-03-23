@@ -18,6 +18,7 @@ def load_CNN_DailyMail():
 
 
 def load_per_docs_file(fil):
+    print('fil:', fil)
     readfile = codecs.open(fil, 'r', 'utf-8')
     id2sum={}
     summary_start = False
