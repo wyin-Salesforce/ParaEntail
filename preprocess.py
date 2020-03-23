@@ -92,7 +92,7 @@ def load_DUC():
         assert len(id2doc) ==  len(id2sum)
 
         for id, doc in id2doc.items():
-            print(id, doc, id2sum.get(id))
+            print(id, '\n', doc, '\n', id2sum.get(id))
             exit(0)
 
 
