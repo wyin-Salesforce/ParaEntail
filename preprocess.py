@@ -49,10 +49,12 @@ def load_DUC_doc(fil):
     doc_start = False
     doc = ''
     for line in readfile:
-        if line.strip().startswith('<TEXT>'):
+        if line.strip().find('<TEXT>') > -1:
             doc_start = True
+            doc+=' '+line.strip().replace('<TEXT>', ' ')
             continue
-        if line.strip().startswith('</TEXT>'):
+        if line.strip().find('</TEXT>')>-1:
+            doc+=' '+line.strip().replace('</TEXT>', ' ')
             doc_start = False
             break
         if doc_start:
