@@ -34,6 +34,7 @@ def load_per_docs_file(fil):
             summary_start = True
             continue
         if line.strip().startswith('</SUM>'):
+            summary +=' '+line.strip().replace('</SUM>', ' ')
             summary_start = False
             id2sum[doc_id] = summary.strip()
         if summary_start:
