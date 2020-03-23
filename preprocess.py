@@ -82,7 +82,7 @@ def load_DUC():
                 doc = load_DUC_doc(path_to_story)
                 id2doc[story_filename] = doc
 
-        assert len(id2doc) =  len(id2sum)
+        assert len(id2doc) ==  len(id2sum)
 
         for id, doc in id2doc.items():
             print(id, doc, id2sum.get(id))
