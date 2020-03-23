@@ -33,7 +33,7 @@ def load_per_docs_file(fil):
         if line.strip().startswith('SUMMARIZER'):
             summary_start = True
             continue
-        if line.strip().startswith('</SUM>'):
+        if line.strip().find('</SUM>') >-1:
             summary +=' '+line.strip().replace('</SUM>', ' ')
             print('sum:', summary)
             summary_start = False
