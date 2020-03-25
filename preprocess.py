@@ -1,6 +1,7 @@
 
 import codecs
 import os
+import nltk
 from nltk import pos_tag, ne_chunk
 from nltk.chunk import conlltags2tree, tree2conlltags
 
@@ -107,7 +108,7 @@ def NER(input):
 
 
 def generate_negative_summaries(doc_str, sum_str):
-    return 
+    return
 
 
 def load_DUC():
