@@ -6,7 +6,8 @@ from nltk import pos_tag, ne_chunk
 from nltk.tokenize import word_tokenize
 from nltk.chunk import conlltags2tree, tree2conlltags
 # nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+# nltk.download('averaged_perceptron_tagger')
+nltk.download('maxent_ne_chunker')
 
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
