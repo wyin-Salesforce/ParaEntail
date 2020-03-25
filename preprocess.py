@@ -8,7 +8,12 @@ from nltk.chunk import conlltags2tree, tree2conlltags
 # nltk.download('punkt')
 # nltk.download('averaged_perceptron_tagger')
 # nltk.download('maxent_ne_chunker')
-nltk.download('words')
+# nltk.download('words')
+
+import spacy
+from spacy import displacy
+from collections import Counter
+import en_core_web_sm
 
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
@@ -75,51 +80,57 @@ def word_change(doc_str, sum_str):
     '''swap entity'''
     return
 
+# def NER(input):
+#     ne_tree = ne_chunk(pos_tag(word_tokenize(input)))
+#     iob_tagged = tree2conlltags(ne_tree)
+#     print('iob_tagged:', iob_tagged)
+#     exit(0)
+#
+#     person_list = []
+#     org_list = []
+#     GPE = [] #GSP
+#
+#     word_list = []
+#     prior_label = ' '
+#     for triple in iob_tagged:
+#         word = triple[0]
+#         ner_label = triple[2]
+#         if ner_label[:2] == 'B-':
+#             word_list.append(word)
+#             prior_label = ner_label[2:]
+#         else:
+#             #start with I-
+#             if ner_label[2:] == prior_label:
+#                 word_list[-1] = word_list[-1]+' '+word
+#                 prior_label = ner_label[2:]
+#             else:
+#                 word_list.append(word)
+#                 prior_label = ner_label
+#
+#
+#         if ner_label == 'B-PERSON':
+#             word = 'contact'
+#             person_sent = True
+#         elif ner_label == 'B-ORGANIZATION' or ner_label == 'B-GPE' or word in set(['Corp', 'corp', 'corporation', 'company']):
+#             word = 'account'
+#             company_sent = True
+#         word_list.append(word)
+
 def NER(input):
-    ne_tree = ne_chunk(pos_tag(word_tokenize(input)))
-    iob_tagged = tree2conlltags(ne_tree)
-    print('iob_tagged:', iob_tagged)
-    exit(0)
 
-    person_list = []
-    org_list = []
-    GPE = [] #GSP
-
-    word_list = []
-    prior_label = ' '
-    for triple in iob_tagged:
-        word = triple[0]
-        ner_label = triple[2]
-        if ner_label[:2] == 'B-':
-            word_list.append(word)
-            prior_label = ner_label[2:]
-        else:
-            #start with I-
-            if ner_label[2:] == prior_label:
-                word_list[-1] = word_list[-1]+' '+word
-                prior_label = ner_label[2:]
-            else:
-                word_list.append(word)
-                prior_label = ner_label
-
-
-        if ner_label == 'B-PERSON':
-            word = 'contact'
-            person_sent = True
-        elif ner_label == 'B-ORGANIZATION' or ner_label == 'B-GPE' or word in set(['Corp', 'corp', 'corporation', 'company']):
-            word = 'account'
-            company_sent = True
-        word_list.append(word)
-
-def NER_Spacy(input):
-    import spacy
-    from spacy import displacy
-    from collections import Counter
-    import en_core_web_sm
     nlp = en_core_web_sm.load()
     # doc = nlp('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices')
     doc = nlp(input)
-    print([(X.text, X.label_) for X in doc.ents])
+
+    nerlabel2entitylist = {}
+    for X in doc.ents:
+        entlist = nerlabel2entitylist.get(X.label)
+        if entlist is None:
+            entlist = []
+        entlist.append(X.text)
+        nerlabel2entitylist[X.label] = entlist
+
+    print(nerlabel2entitylist)
 
 def generate_negative_summaries(doc_str, sum_str):
     return
@@ -165,4 +176,4 @@ def load_DUC():
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
-    NER_Spacy('Wenpeng Yin went to Tong Xiong office in Philadelphia Pennsylvania.')
+    NER('Wenpeng Yin went to Tong Xiong office in Philadelphia Pennsylvania.')
