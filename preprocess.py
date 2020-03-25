@@ -105,7 +105,7 @@ def word_change(doc_str, sum_str):
             else:
                 #fine one from doc
                 doc_ent = random.choice(doc_valuelist)
-                if doc_ent ! = valuelist[0]:
+                if doc_ent != valuelist[0]:
                     new_sum = new_sum.replace(valuelist[0], doc_ent)
                 else:
                     break
