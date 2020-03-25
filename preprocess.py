@@ -77,10 +77,13 @@ def appearance_of_str(mom_str, baby_str):
 
     prior_len = 0
     while len(mom_str) > 0:
+        print('mom_str:', mom_str)
         pos = mom_str.find(baby_str)
+        print('pos:', pos)
         if pos > -1:
             start = pos
             end = start + len(baby_str)
+            print('start:', start, 'end:', end, 'prior_len:', prior_len)
             poslist.append((start+prior_len, end+prior_len))
             prior_len += end
             mom_str = mom_str[end:]
