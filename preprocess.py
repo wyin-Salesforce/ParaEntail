@@ -124,11 +124,11 @@ def NER(input):
 
     nerlabel2entitylist = {}
     for X in doc.ents:
-        entlist = nerlabel2entitylist.get(X.label)
+        entlist = nerlabel2entitylist.get(X.label_)
         if entlist is None:
             entlist = []
         entlist.append(X.text)
-        nerlabel2entitylist[X.label] = entlist
+        nerlabel2entitylist[X.label_] = entlist
 
     print(nerlabel2entitylist)
 
