@@ -87,6 +87,8 @@ def appearance_of_str(mom_str, baby_str):
             poslist.append((start+prior_len, end+prior_len))
             prior_len += end
             mom_str = mom_str[end:]
+        else:
+            break
 
     for pos in poslist:
         print(mom_str[pos[0]:pos[1]])
