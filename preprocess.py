@@ -1,6 +1,8 @@
 
 import codecs
 import os
+from nltk import pos_tag, ne_chunk
+from nltk.chunk import conlltags2tree, tree2conlltags
 
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
@@ -63,6 +65,49 @@ def load_DUC_doc(fil):
     return doc.strip()
 
 
+def word_change(doc_str, sum_str):
+    '''swap entity'''
+    return
+
+def NER(input):
+    ne_tree = ne_chunk(pos_tag(word_tokenize(input)))
+    iob_tagged = tree2conlltags(ne_tree)
+    print('iob_tagged:', iob_tagged)
+    exit(0)
+
+    person_list = []
+    org_list = []
+    GPE = []
+
+    word_list = []
+    prior_label = ' '
+    for triple in iob_tagged:
+        word = triple[0]
+        ner_label = triple[2]
+        if ner_label[:2] == 'B-':
+            word_list.append(word)
+            prior_label = ner_label[2:]
+        else:
+            #start with I-
+            if ner_label[2:] == prior_label:
+                word_list[-1] = word_list[-1]+' '+word
+                prior_label = ner_label[2:]
+            else:
+                word_list.append(word)
+                prior_label = ner_label
+
+
+        if ner_label == 'B-PERSON':
+            word = 'contact'
+            person_sent = True
+        elif ner_label == 'B-ORGANIZATION' or ner_label == 'B-GPE' or word in set(['Corp', 'corp', 'corporation', 'company']):
+            word = 'account'
+            company_sent = True
+        word_list.append(word)
+
+
+def generate_negative_summaries(doc_str, sum_str):
+
 
 
 def load_DUC():
@@ -104,4 +149,5 @@ def load_DUC():
 
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
-    load_DUC()
+    # load_DUC()
+    NER('Wenpeng Yin went to Caiming Xiong office')
