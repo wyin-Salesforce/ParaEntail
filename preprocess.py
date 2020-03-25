@@ -92,7 +92,7 @@ def appearance_of_str(mom_str, baby_str):
             break
 
     for pos in poslist:
-        print(origin_mom_str[pos[0]:pos[1]])
+        assert origin_mom_str[pos[0]:pos[1]] == baby_str
 
     return poslist
 
