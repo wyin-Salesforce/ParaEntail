@@ -156,4 +156,4 @@ def load_DUC():
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
-    NER('Wenpeng Yin went to Caiming Xiong office')
+    NER('Wenpeng Yin went to Tong Xiong office')
