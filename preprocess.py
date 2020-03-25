@@ -107,7 +107,7 @@ def NER(input):
 
 
 def generate_negative_summaries(doc_str, sum_str):
-
+    return 
 
 
 def load_DUC():
