@@ -117,7 +117,8 @@ def NER_Spacy(input):
     from collections import Counter
     import en_core_web_sm
     nlp = en_core_web_sm.load()
-    doc = nlp('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices')
+    # doc = nlp('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices')
+    doc = nlp(input)
     print([(X.text, X.label_) for X in doc.ents])
 
 def generate_negative_summaries(doc_str, sum_str):
