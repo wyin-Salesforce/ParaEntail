@@ -176,4 +176,4 @@ def load_DUC():
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
-    NER('Wenpeng Yin went to Tong Xiong office in Philadelphia Pennsylvania.')
+    NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
