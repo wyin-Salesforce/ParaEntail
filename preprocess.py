@@ -74,6 +74,7 @@ def load_DUC_doc(fil):
 
 def appearance_of_str(mom_str, baby_str):
     poslist = []
+    origin_mom_str = mom_str
 
     prior_len = 0
     while len(mom_str) > 0:
@@ -91,7 +92,7 @@ def appearance_of_str(mom_str, baby_str):
             break
 
     for pos in poslist:
-        print(mom_str[pos[0]:pos[1]])
+        print(origin_mom_str[pos[0]:pos[1]])
 
     return poslist
 
