@@ -178,4 +178,4 @@ if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
-    appearance_of_str('why we do there without why you come why why .')
+    appearance_of_str('why we do there without why you come why why .', 'why')
