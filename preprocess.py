@@ -5,10 +5,7 @@ import nltk
 from nltk import pos_tag, ne_chunk
 from nltk.tokenize import word_tokenize
 from nltk.chunk import conlltags2tree, tree2conlltags
-# nltk.download('punkt')
-# nltk.download('averaged_perceptron_tagger')
-# nltk.download('maxent_ne_chunker')
-# nltk.download('words')
+import random
 
 import spacy
 from spacy import displacy
@@ -75,46 +72,50 @@ def load_DUC_doc(fil):
     readfile.close()
     return doc.strip()
 
+def appearance_of_str(mom_str, baby_str):
+    poslist = []
+
+    prior_len = 0
+    while len(mom_str) > 0:
+        pos = mom_str.find(baby_str)
+        if pos > -1:
+            start = pos
+            end = start + len(baby_str)
+            poslist.append((start+prior_len, end+prior_len))
+            prior_len += end
+            mom_str = mom_str[end:]
+
+    for pos in poslist:
+        print(mom_str[pos[0]:pos[1]])
+
+    return poslist
+
 
 def word_change(doc_str, sum_str):
     '''swap entity'''
-    return
+    doc_ent_dict = NER(doc_str)
+    sum_ent_dict = NER(sum_str)
 
-# def NER(input):
-#     ne_tree = ne_chunk(pos_tag(word_tokenize(input)))
-#     iob_tagged = tree2conlltags(ne_tree)
-#     print('iob_tagged:', iob_tagged)
-#     exit(0)
-#
-#     person_list = []
-#     org_list = []
-#     GPE = [] #GSP
-#
-#     word_list = []
-#     prior_label = ' '
-#     for triple in iob_tagged:
-#         word = triple[0]
-#         ner_label = triple[2]
-#         if ner_label[:2] == 'B-':
-#             word_list.append(word)
-#             prior_label = ner_label[2:]
-#         else:
-#             #start with I-
-#             if ner_label[2:] == prior_label:
-#                 word_list[-1] = word_list[-1]+' '+word
-#                 prior_label = ner_label[2:]
-#             else:
-#                 word_list.append(word)
-#                 prior_label = ner_label
-#
-#
-#         if ner_label == 'B-PERSON':
-#             word = 'contact'
-#             person_sent = True
-#         elif ner_label == 'B-ORGANIZATION' or ner_label == 'B-GPE' or word in set(['Corp', 'corp', 'corporation', 'company']):
-#             word = 'account'
-#             company_sent = True
-#         word_list.append(word)
+    new_sum = sum_str
+    for nerlabel, valuelist  in sum_ent_dict.items():
+        if len(valuelist) == 1:
+            doc_valuelist = doc_ent_dict.get(nerlabel)
+            if doc_valuelist is None:
+                continue
+            else:
+                #fine one from doc
+                doc_ent = random.choice(doc_valuelist)
+                if doc_ent ! = valuelist[0]:
+                    new_sum = new_sum.replace(valuelist[0], doc_ent)
+                else:
+                    break
+        else:
+            #swap inside
+            entities_to_swap = random.sample(valuelist, 2)
+
+
+
+
 
 def NER(input):
 
@@ -130,7 +131,7 @@ def NER(input):
         entlist.append(X.text)
         nerlabel2entitylist[X.label_] = entlist
 
-    print(nerlabel2entitylist)
+    return nerlabel2entitylist
 
 def generate_negative_summaries(doc_str, sum_str):
     return
@@ -176,4 +177,5 @@ def load_DUC():
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
-    NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
+    # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
+    appearance_of_str('why we do there without why you come why why .')
