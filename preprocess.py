@@ -83,7 +83,7 @@ def NER(input):
 
     person_list = []
     org_list = []
-    GPE = []
+    GPE = [] #GSP
 
     word_list = []
     prior_label = ' '
@@ -111,6 +111,14 @@ def NER(input):
             company_sent = True
         word_list.append(word)
 
+def NER_Spacy(input):
+    import spacy
+    from spacy import displacy
+    from collections import Counter
+    import en_core_web_sm
+    nlp = en_core_web_sm.load()
+    doc = nlp('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices')
+    print([(X.text, X.label_) for X in doc.ents])
 
 def generate_negative_summaries(doc_str, sum_str):
     return
@@ -156,4 +164,4 @@ def load_DUC():
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
-    NER('Wenpeng Yin went to Tong Xiong office in Philadelphia Pennsylvania.')
+    NER_Spacy('Wenpeng Yin went to Tong Xiong office in Philadelphia Pennsylvania.')
