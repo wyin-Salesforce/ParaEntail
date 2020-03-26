@@ -132,6 +132,7 @@ def word_change(doc_str, sum_str):
             prior_str = ''
             prior_end = 0
             for i in sorted (pos_dict_0.keys()):
+                print('i:',i)
                 prior_str += sum_str[prior_end:i]
                 end_0 = pos_dict_0.get(i)
                 end_1 = pos_dict_1.get(i)
