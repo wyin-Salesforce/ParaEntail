@@ -73,26 +73,27 @@ def load_DUC_doc(fil):
     return doc.strip()
 
 def appearance_of_str(mom_str, baby_str):
-    poslist = []
+    poslist = {}
     origin_mom_str = mom_str
 
     prior_len = 0
     while len(mom_str) > 0:
-        print('mom_str:', mom_str)
+        # print('mom_str:', mom_str)
         pos = mom_str.find(baby_str)
-        print('pos:', pos)
+        # print('pos:', pos)
         if pos > -1:
             start = pos
             end = start + len(baby_str)
-            print('start:', start, 'end:', end, 'prior_len:', prior_len)
-            poslist.append((start+prior_len, end+prior_len))
+            # print('start:', start, 'end:', end, 'prior_len:', prior_len)
+            # poslist.append((start+prior_len, end+prior_len))
+            poslist[start+prior_len] = end+prior_len
             prior_len += end
             mom_str = mom_str[end:]
         else:
             break
 
-    for pos in poslist:
-        assert origin_mom_str[pos[0]:pos[1]] == baby_str
+    for pos_key, pos_value in poslist.items():
+        assert origin_mom_str[pos_key:pos_value] == baby_str
 
     return poslist
 
@@ -105,6 +106,7 @@ def word_change(doc_str, sum_str):
     new_sum = sum_str
     for nerlabel, valuelist  in sum_ent_dict.items():
         if len(valuelist) == 1:
+            '''if summary has only one entity, swap with doc'''
             doc_valuelist = doc_ent_dict.get(nerlabel)
             if doc_valuelist is None:
                 continue
@@ -116,8 +118,39 @@ def word_change(doc_str, sum_str):
                 else:
                     break
         else:
-            #swap inside
+            '''if summary has more than two, swap within summary'''
             entities_to_swap = random.sample(valuelist, 2)
+            pos_dict_0 = appearance_of_str(sum_str, entities_to_swap[0])
+            pos_dict_1 = appearance_of_str(sum_str, entities_to_swap[1])
+            '''combine two dict'''
+            pos_dict_0.update(pos_dict_1)
+
+            prior_str = ''
+            prior_end = 0
+            for i in sorted (pos_dict_0.keys()):
+                prior_str += sum_str[prior_end:i]
+                end_0 = pos_dict_0.get(i)
+                end_1 = pos_dict_1.get(i)
+                if end_0 is None and end_1 is None:
+                    print('error')
+                    exit(0)
+                elif end_0 is not None:
+                    '''entity A, replace by entity B'''
+                    prior_str += entities_to_swap[1]
+                    prior_end = end_0
+                else:
+                    prior_str += entities_to_swap[0]
+                    prior_end = end_1
+            prior_str += sum_str[prior_end:]
+
+            print('origin sum:', sum_str)
+            print('new sum:', prior_str)
+            exit(0)
+
+
+
+
+
 
 
 
@@ -184,4 +217,5 @@ if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
     # load_DUC()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
-    appearance_of_str('why we do there without why you come why why .', 'why')
+    # appearance_of_str('why we do there without why you come why why .', 'why')
+    word_change('haha', 'Wenpeng Yin is the Tong Niu office')
