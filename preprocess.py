@@ -126,8 +126,9 @@ def word_change(doc_str, sum_str):
             pos_dict_1 = appearance_of_str(sum_str, entities_to_swap[1])
             print('pos_dict_1:', pos_dict_1)
             '''combine two dict'''
-            pos_dict_0.update(pos_dict_1)
-            print('pos_dict_0:', pos_dict_0)
+            # pos_dict_0.update(pos_dict_1)
+            pos_dict_combine = {**pos_dict_0, **pos_dict_1}
+            print('pos_dict_combine:', pos_dict_combine)
 
             prior_str = ''
             prior_end = 0
