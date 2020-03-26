@@ -102,6 +102,7 @@ def word_change(doc_str, sum_str):
     '''swap entity'''
     doc_ent_dict = NER(doc_str)
     sum_ent_dict = NER(sum_str)
+    print('sum_ent_dict:', sum_ent_dict)
 
     new_sum = sum_str
     for nerlabel, valuelist  in sum_ent_dict.items():
