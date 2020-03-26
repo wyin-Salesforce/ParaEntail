@@ -122,7 +122,9 @@ def word_change(doc_str, sum_str):
             '''if summary has more than two, swap within summary'''
             entities_to_swap = random.sample(valuelist, 2)
             pos_dict_0 = appearance_of_str(sum_str, entities_to_swap[0])
+            print('pos_dict_0:', pos_dict_0)
             pos_dict_1 = appearance_of_str(sum_str, entities_to_swap[1])
+            print('pos_dict_1:', pos_dict_1)
             '''combine two dict'''
             pos_dict_0.update(pos_dict_1)
             print('pos_dict_0:', pos_dict_0)
