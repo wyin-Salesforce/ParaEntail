@@ -137,6 +137,7 @@ def word_change(doc_str, sum_str):
                 prior_str += sum_str[prior_end:i]
                 end_0 = pos_dict_0.get(i)
                 end_1 = pos_dict_1.get(i)
+                print('end_0:', end_0, 'end_1:', end_1)
                 if end_0 is None and end_1 is None:
                     print('error')
                     exit(0)
