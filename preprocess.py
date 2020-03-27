@@ -223,8 +223,15 @@ def random_add_words(sum_str, drop):
     #
     # from transformers import pipeline
 
+    # sum_len = len(sum_str.strip().split())
+    # insert_size = int(sum_len*drop)#0.3
+    # for i in range(insert_size)
+
+
+
     nlp = pipeline("fill-mask")
-    print(nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks."))
+    lists = nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks.")
+    word = nlp.tokenizer.convert_ids_to_tokens(lists[0].get('token'))
 
 
 def NER(input):
