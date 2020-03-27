@@ -201,6 +201,7 @@ def shuffle_words_same_POStags(sum_str):
                 replace_word = random.choice(list(word_set))
                 new_word_list.append(replace_word)
 
+    print(new_word_list)
     print('old:', sum_str)
     print('new:', ' '.join(new_word_list))
     return ' '.join(new_word_list)
