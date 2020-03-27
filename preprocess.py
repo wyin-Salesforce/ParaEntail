@@ -227,13 +227,32 @@ def random_add_words(sum_str, drop):
     # insert_size = int(sum_len*drop)#0.3
     # for i in range(insert_size)
 
+    from transformers import AutoModelWithLMHead, AutoTokenizer
 
 
-    nlp = pipeline("fill-mask")
-    lists = nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks.")
-    print(lists)
-    word = nlp.tokenizer.convert_ids_to_tokens(lists[0].get('token'))
-    print(word)
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+
+    sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
+
+    input = tokenizer.encode(sequence, return_tensors="pt")
+    mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
+
+    token_logits = model(input)[0]
+    mask_token_logits = token_logits[0, mask_token_index, :]
+
+    top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
+    print(top_5_tokens)
+
+    for token in top_5_tokens:
+        print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
+
+
+    # nlp = pipeline("fill-mask")
+    # lists = nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks.")
+    # print(lists)
+    # word = nlp.tokenizer.convert_ids_to_tokens(lists[0].get('token'))
+    # print(word)
 
 
 def NER(input):
