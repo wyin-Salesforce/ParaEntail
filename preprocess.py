@@ -187,7 +187,7 @@ def shuffle_words_same_POStags(sum_str):
     for token in doc:
         word_set = set(pos2words.get(token.pos_))
         if len(word_set) ==  1:
-            new_word_list.append(token)
+            new_word_list.append(token.text)
             continue
         else:
             word_set.discard(token)
@@ -195,11 +195,11 @@ def shuffle_words_same_POStags(sum_str):
             prob = random.uniform(0, 1)
             if prob < 0.3:
                 '''do not replace'''
-                new_word_list.append(token)
+                new_word_list.append(token.text)
                 continue
             else:
                 replace_word = random.choice(list(word_set))
-                new_word_list.append(replace_word)
+                new_word_list.append(replace_word.text)
 
     print(new_word_list)
     print('old:', sum_str)
