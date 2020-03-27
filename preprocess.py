@@ -13,6 +13,8 @@ from collections import Counter
 import en_core_web_sm
 from collections import defaultdict
 
+from transformers import pipeline
+
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
     for line in trainfile:
@@ -176,13 +178,9 @@ def swap_pronouns(sum_str):
 def shuffle_words_same_POStags(sum_str):
     nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
-
     pos2words = defaultdict(list)
-
     for token in doc:
         pos2words[token.pos_].append(token)
-
-
     new_word_list = []
     for token in doc:
         word_set = set(pos2words.get(token.pos_))
@@ -200,15 +198,33 @@ def shuffle_words_same_POStags(sum_str):
             else:
                 replace_word = random.choice(list(word_set))
                 new_word_list.append(replace_word.text)
+    # print('old:', sum_str)
+    # print('new:', ' '.join(new_word_list))
+    return [' '.join(new_word_list)]
 
+def random_remove_words(sum_str, drop):
+    tokens = sum_str.strip().split()
 
-    print('old:', sum_str)
-    print('new:', ' '.join(new_word_list))
-    return ' '.join(new_word_list)
+    new_tokens = []
+    for word in tokens:
+        prob = random.uniform(0, 1)
+        if prob < drop:
+            #0.8
+            new_tokens.append(word)
+        else:
+            continue
 
+    return [' '.join(new_tokens)]
 
+def random_add_words(sum_str, drop):
 
+    # nlp = pipeline('fill-mask', 'checkpoint-335000/', tokenizer='roberta-large')
+    # print(nlp('On admission, the most common symptoms were <mask>'))
+    #
+    # from transformers import pipeline
 
+    nlp = pipeline("fill-mask")
+    print(nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks."))
 
 
 def NER(input):
@@ -273,4 +289,5 @@ if __name__ == "__main__":
     # load_DUC()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
-    shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
+    # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
+    random_add_words(None, None)
