@@ -177,9 +177,9 @@ def shuffle_words_same_POStags(sum_str):
     nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
 
-    pos2words = defaultdict(list)
+    pos2words = defaultdict(set)
     for token in doc:
-        pos2words[token.pos_].append(token)
+        pos2words[token.pos_].add(token)
 
     print(pos2words)
 
