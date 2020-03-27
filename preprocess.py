@@ -177,11 +177,35 @@ def shuffle_words_same_POStags(sum_str):
     nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
 
-    pos2words = defaultdict(set)
-    for token in doc:
-        pos2words[token.pos_].add(token)
+    pos2words = defaultdict(list)
 
-    print(pos2words)
+    for token in doc:
+        pos2words[token.pos_].append(token)
+
+
+    new_word_list = []
+    for token in doc:
+        word_set = set(pos2words.get(token.pos_))
+        if len(word_set) ==  1:
+            new_word_list.append(token)
+            continue
+        else:
+            remain_word_set = word_set.discard(token)
+            assert len(remain_word_set) >=1
+            prob = random.uniform(0, 1)
+            if prob < 0.3:
+                '''do not replace'''
+                new_word_list.append(token)
+                continue
+            else:
+                replace_word = random.choice(remain_word_set)
+                new_word_list.append(replace_word)
+
+    print('old:', sum_str)
+    print('new:', ' '.join(new_word_list))
+    return ' '.join(new_word_list)
+
+
 
 
 
