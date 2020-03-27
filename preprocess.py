@@ -250,9 +250,11 @@ def random_add_words(sum_str, drop, tokenizer, model):
         top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
         print(top_5_tokens)
 
-        for token in top_5_tokens:
-            print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
+        prior_sum = sequence.replace(tokenizer.mask_token, tokenizer.decode([top_5_tokens[0]]))
 
+        # for token in top_5_tokens:
+        #     print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
+        print(prior_sum)
         exit(0)
 
 
