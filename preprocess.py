@@ -222,6 +222,7 @@ def random_add_words(sum_str, drop, tokenizer, model):
     # print(nlp('On admission, the most common symptoms were <mask>'))
     #
     # from transformers import pipeline
+    print(sum_str)
 
     input_wordlist = sum_str.strip().split()
     sum_len = len(input_wordlist)
