@@ -201,7 +201,7 @@ def shuffle_words_same_POStags(sum_str):
                 replace_word = random.choice(list(word_set))
                 new_word_list.append(replace_word.text)
 
-    print(new_word_list)
+
     print('old:', sum_str)
     print('new:', ' '.join(new_word_list))
     return ' '.join(new_word_list)
@@ -273,4 +273,4 @@ if __name__ == "__main__":
     # load_DUC()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
-    shuffle_words_same_POStags('Wenpeng Yin is the Donald Trump office, but Wenpeng Yin is a man')
+    shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
