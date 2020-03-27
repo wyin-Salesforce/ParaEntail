@@ -12,6 +12,7 @@ from spacy import displacy
 from collections import Counter
 import en_core_web_sm
 
+
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
     for line in trainfile:
@@ -98,14 +99,18 @@ def appearance_of_str(mom_str, baby_str):
     return poslist
 
 
-def word_change(doc_str, sum_str):
+def swap_entities(doc_str, sum_str):
     '''swap entity'''
     doc_ent_dict = NER(doc_str)
     sum_ent_dict = NER(sum_str)
-    print('sum_ent_dict:', sum_ent_dict)
+    # print('sum_ent_dict:', sum_ent_dict)
 
-    new_sum = sum_str
+
+    negative_sum_list = []
+
+    # new_sum = sum_str
     for nerlabel, valuelist  in sum_ent_dict.items():
+        '''for each NER type, e.g., person, org'''
         if len(valuelist) == 1:
             '''if summary has only one entity, swap with doc'''
             doc_valuelist = doc_ent_dict.get(nerlabel)
@@ -115,29 +120,29 @@ def word_change(doc_str, sum_str):
                 #fine one from doc
                 doc_ent = random.choice(doc_valuelist)
                 if doc_ent != valuelist[0]:
-                    new_sum = new_sum.replace(valuelist[0], doc_ent)
+                    new_sum = sum_str.replace(valuelist[0], doc_ent)
+                    negative_sum_list.append(new_sum)
                 else:
-                    break
+                    continue
         else:
             '''if summary has more than two, swap within summary'''
             entities_to_swap = random.sample(valuelist, 2)
             pos_dict_0 = appearance_of_str(sum_str, entities_to_swap[0])
-            print('pos_dict_0:', pos_dict_0)
+            # print('pos_dict_0:', pos_dict_0)
             pos_dict_1 = appearance_of_str(sum_str, entities_to_swap[1])
-            print('pos_dict_1:', pos_dict_1)
+            # print('pos_dict_1:', pos_dict_1)
             '''combine two dict'''
-            # pos_dict_0.update(pos_dict_1)
             pos_dict_combine = {**pos_dict_0, **pos_dict_1}
-            print('pos_dict_combine:', pos_dict_combine)
+            # print('pos_dict_combine:', pos_dict_combine)
 
             prior_str = ''
             prior_end = 0
             for i in sorted (pos_dict_combine.keys()):
-                print('i:',i)
+                # print('i:',i)
                 prior_str += sum_str[prior_end:i]
                 end_0 = pos_dict_0.get(i)
                 end_1 = pos_dict_1.get(i)
-                print('end_0:', end_0, 'end_1:', end_1)
+                # print('end_0:', end_0, 'end_1:', end_1)
                 if end_0 is None and end_1 is None:
                     print('error')
                     exit(0)
@@ -150,15 +155,33 @@ def word_change(doc_str, sum_str):
                     prior_end = end_1
             prior_str += sum_str[prior_end:]
 
-            print('origin sum:', sum_str)
-            print('new sum:', prior_str)
-            exit(0)
+            negative_sum_list.append(prior_str)
+
+            # print('origin sum:', sum_str)
+            # print('new sum:', prior_str)
+            # exit(0)
+
+    return negative_sum_list
 
 
 
+def swap_pronouns(sum_str):
+    '''dont plan to use'''
+    pronouns_cands = {'he': ['she'],
+    'she': ['he'],
+    'his': ['her'],
+    'her': ['his']
+    }
 
+def shuffle_words_same_POStags(sum_str):
+    nlp = en_core_web_sm.load()
+    doc = nlp(sum_str)
 
+    pos2words = defaultdict([])
+    for token in doc:
+        pos2words[token.pos_].append(token)
 
+    print(pos2words)
 
 
 
@@ -225,4 +248,4 @@ if __name__ == "__main__":
     # load_DUC()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
-    word_change('haha', 'Wenpeng Yin is the Donald Trump office, but Wenpeng Yin is a man')
+    shuffle_words_same_POStags('haha', 'Wenpeng Yin is the Donald Trump office, but Wenpeng Yin is a man')
