@@ -231,7 +231,7 @@ def random_add_words(sum_str, drop, tokenizer, model):
     for i in range(insert_size):
         prior_len = len(prior_sum)
         pos = random.randrange(prior_len-1)
-        sequence = f' '.join(prior_sum[:pos])+' '+ {tokenizer.mask_token} + ' '+ ' '.join(prior_sum[pos:])
+        sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos:])
 
 
 
