@@ -190,15 +190,15 @@ def shuffle_words_same_POStags(sum_str):
             new_word_list.append(token)
             continue
         else:
-            remain_word_set = word_set.discard(token)
-            assert len(remain_word_set) >=1
+            word_set.discard(token)
+            assert len(word_set) >=1
             prob = random.uniform(0, 1)
             if prob < 0.3:
                 '''do not replace'''
                 new_word_list.append(token)
                 continue
             else:
-                replace_word = random.choice(remain_word_set)
+                replace_word = random.choice(word_set)
                 new_word_list.append(replace_word)
 
     print('old:', sum_str)
