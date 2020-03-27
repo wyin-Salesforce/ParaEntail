@@ -326,4 +326,6 @@ if __name__ == "__main__":
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
     # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
-    random_add_words(None, None)
+    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    random_add_words(None, None, tokenizer, model)
