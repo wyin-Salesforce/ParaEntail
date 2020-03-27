@@ -328,4 +328,4 @@ if __name__ == "__main__":
     # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
     tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
-    random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', None, tokenizer, model)
+    random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', 0.3, tokenizer, model)
