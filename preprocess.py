@@ -249,21 +249,12 @@ def random_add_words(sum_str, drop, tokenizer, model):
         mask_token_logits = token_logits[0, mask_token_index, :]
 
         top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
-        print(top_5_tokens)
+        # print(top_5_tokens)
 
-        prior_sum = sequence.replace(tokenizer.mask_token, tokenizer.decode([top_5_tokens[0]]))
-
-        # for token in top_5_tokens:
-        #     print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
-        print(prior_sum)
-        exit(0)
+        prior_sum = sequence.replace(tokenizer.mask_token, tokenizer.decode([top_5_tokens[0]])).split()
+        print(' '.join(prior_sum))
 
 
-    # nlp = pipeline("fill-mask")
-    # lists = nlp(f"HuggingFace is creating a {nlp.tokenizer.mask_token} that the community uses to solve NLP tasks.")
-    # print(lists)
-    # word = nlp.tokenizer.convert_ids_to_tokens(lists[0].get('token'))
-    # print(word)
 
 
 def NER(input):
