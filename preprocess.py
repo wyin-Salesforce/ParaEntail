@@ -11,7 +11,7 @@ import spacy
 from spacy import displacy
 from collections import Counter
 import en_core_web_sm
-
+from collections import defaultdict
 
 def load_CNN_DailyMail():
     trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
