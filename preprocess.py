@@ -12,7 +12,7 @@ from spacy import displacy
 from collections import Counter
 import en_core_web_sm
 from collections import defaultdict
-
+from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
 
 def load_CNN_DailyMail():
@@ -216,36 +216,44 @@ def random_remove_words(sum_str, drop):
 
     return [' '.join(new_tokens)]
 
-def random_add_words(sum_str, drop):
+def random_add_words(sum_str, drop, tokenizer, model):
 
     # nlp = pipeline('fill-mask', 'checkpoint-335000/', tokenizer='roberta-large')
     # print(nlp('On admission, the most common symptoms were <mask>'))
     #
     # from transformers import pipeline
 
-    # sum_len = len(sum_str.strip().split())
-    # insert_size = int(sum_len*drop)#0.3
-    # for i in range(insert_size)
+    input_wordlist = sum_str.strip().split()
+    sum_len = len(input_wordlist)
+    insert_size = int(sum_len*drop)#0.3
 
-    from transformers import AutoModelWithLMHead, AutoTokenizer
+    prior_sum = input_wordlist
+    for i in range(insert_size):
+        prior_len = len(prior_sum)
+        pos = random.randrange(prior_len-1)
+        sequence = f' '.join(prior_sum[:pos])+' '+ {tokenizer.mask_token} + ' '+ ' '.join(prior_sum[pos:])
 
 
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
 
-    sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
 
-    input = tokenizer.encode(sequence, return_tensors="pt")
-    mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
+        # tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+        # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
 
-    token_logits = model(input)[0]
-    mask_token_logits = token_logits[0, mask_token_index, :]
+        # sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
 
-    top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
-    print(top_5_tokens)
+        input = tokenizer.encode(sequence, return_tensors="pt")
+        mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
 
-    for token in top_5_tokens:
-        print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
+        token_logits = model(input)[0]
+        mask_token_logits = token_logits[0, mask_token_index, :]
+
+        top_5_tokens = torch.topk(mask_token_logits, 5, dim=1).indices[0].tolist()
+        print(top_5_tokens)
+
+        for token in top_5_tokens:
+            print(sequence.replace(tokenizer.mask_token, tokenizer.decode([token])))
+
+        exit(0)
 
 
     # nlp = pipeline("fill-mask")
