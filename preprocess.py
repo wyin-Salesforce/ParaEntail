@@ -13,6 +13,7 @@ from collections import Counter
 import en_core_web_sm
 from collections import defaultdict
 from transformers import AutoModelWithLMHead, AutoTokenizer
+# from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
 
 def load_CNN_DailyMail():
@@ -222,7 +223,7 @@ def random_add_words(sum_str, drop, tokenizer, model):
     # print(nlp('On admission, the most common symptoms were <mask>'))
     #
     # from transformers import pipeline
-    print(sum_str)
+    # print(sum_str)
 
     input_wordlist = sum_str.strip().split()
     sum_len = len(input_wordlist)
@@ -252,9 +253,27 @@ def random_add_words(sum_str, drop, tokenizer, model):
         # print(top_5_tokens)
 
         prior_sum = sequence.replace(tokenizer.mask_token, tokenizer.decode([top_5_tokens[0]])).split()
-        print(' '.join(prior_sum))
+        # print(' '.join(prior_sum))
+
+    return [' '.join(prior_sum)]
+
+def append_unrelated_sents(sum_str, source_sent_list):
+    return
+
+def GPT2_generate(sum_str, max_len, tokenizer, model):
 
 
+
+    # tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    # model = AutoModelWithLMHead.from_pretrained("gpt2")
+
+    sequence = sum_str#f"Hugging Face is based in DUMBO, New York City, and is"
+
+    input = tokenizer.encode(sequence, return_tensors="pt")
+    generated = model.generate(input, max_length=50)
+
+    resulting_string = tokenizer.decode(generated.tolist()[0])
+    print(resulting_string)
 
 
 def NER(input):
@@ -320,6 +339,9 @@ if __name__ == "__main__":
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
     # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
-    tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    # tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', 0.3, tokenizer, model)
+    tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    model = AutoModelWithLMHead.from_pretrained("gpt2")
+    GPT2_generate('Distilled models are smaller than the models they mimic. Using them ', 50, tokenizer, model)
