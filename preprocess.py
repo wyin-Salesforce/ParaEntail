@@ -260,20 +260,26 @@ def random_add_words(sum_str, drop, tokenizer, model):
 def append_unrelated_sents(sum_str, source_sent_list):
     return
 
-def GPT2_generate(sum_str, max_len, tokenizer, model):
+def GPT2_generate(sum_str, tokenizer, model):
 
 
+    input_wordlist = sum_str.split()
+    max_len = len(input_wordlist)
 
-    # tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    # model = AutoModelWithLMHead.from_pretrained("gpt2")
+    keep_lengths = [int(max_len*0.3), int(max_len*0.6), int(max_len*0.9)]
+    new_seq = []
+    for leng in keep_lengths:
 
-    sequence = sum_str#f"Hugging Face is based in DUMBO, New York City, and is"
+        sequence = ' '.join(input_wordlist[:leng])#f"Hugging Face is based in DUMBO, New York City, and is"
 
-    input = tokenizer.encode(sequence, return_tensors="pt")
-    generated = model.generate(input, max_length=50)
+        input = tokenizer.encode(sequence, return_tensors="pt")
+        generated = model.generate(input, max_length=50)
 
-    resulting_string = tokenizer.decode(generated.tolist()[0])
-    print(resulting_string)
+        resulting_string = tokenizer.decode(generated.tolist()[0])
+        new_seq.append(resulting_string)
+    print(new_seq)
+
+    return new_seq
 
 
 def NER(input):
@@ -344,4 +350,4 @@ if __name__ == "__main__":
     # random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', 0.3, tokenizer, model)
     tokenizer = AutoTokenizer.from_pretrained("gpt2")
     model = AutoModelWithLMHead.from_pretrained("gpt2")
-    GPT2_generate('Distilled models are smaller than the models they mimic. Using them ', 50, tokenizer, model)
+    GPT2_generate('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', tokenizer, model)
