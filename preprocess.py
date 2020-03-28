@@ -268,7 +268,7 @@ def GPT2_generate(sum_str, tokenizer, model):
     max_len = input_len+15
 
     keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
-    new_seq = []
+    new_seqs = []
     for leng in keep_lengths:
 
         sequence = ' '.join(input_wordlist[:leng])#f"Hugging Face is based in DUMBO, New York City, and is"
@@ -278,10 +278,14 @@ def GPT2_generate(sum_str, tokenizer, model):
 
         resulting_string = tokenizer.decode(generated.tolist()[0])
         print('resulting_string:', resulting_string)
-        new_seq.append(resulting_string[:resulting_string.rfind('.')+1])
-    print(new_seq)
+        new_seq = resulting_string[:resulting_string.rfind('.')+1]
+        if resulting_string.rfind('.') < len(sum_str):
+            continue
+        else:
+            new_seqs.append(new_seq)
+    print(new_seqs)
 
-    return new_seq
+    return new_seqs
 
 
 def NER(input):
