@@ -264,19 +264,20 @@ def GPT2_generate(sum_str, tokenizer, model):
 
 
     input_wordlist = sum_str.split()
-    max_len = len(input_wordlist)
+    input_len = len(input_wordlist)
+    max_len = input_len+10
 
-    keep_lengths = [int(max_len*0.3), int(max_len*0.6), int(max_len*0.9)]
+    keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
     new_seq = []
     for leng in keep_lengths:
 
         sequence = ' '.join(input_wordlist[:leng])#f"Hugging Face is based in DUMBO, New York City, and is"
 
         input = tokenizer.encode(sequence, return_tensors="pt")
-        generated = model.generate(input, max_length=50)
+        generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0])
-        new_seq.append(resulting_string)
+        new_seq.append(resulting_string[:resulting_string.rfind('.')+1])
     print(new_seq)
 
     return new_seq
