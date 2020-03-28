@@ -265,7 +265,7 @@ def GPT2_generate(sum_str, tokenizer, model):
 
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
-    max_len = input_len+10
+    max_len = input_len+15
 
     keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
     new_seq = []
