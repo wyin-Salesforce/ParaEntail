@@ -277,6 +277,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0])
+        print('resulting_string:', resulting_string)
         new_seq.append(resulting_string[:resulting_string.rfind('.')+1])
     print(new_seq)
 
