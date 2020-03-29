@@ -384,16 +384,37 @@ def load_DUC_test():
     gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
 
+    '''test doc has multiple summary'''
+    duplicate_sum_path = os.listdir('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries')
+    folder_2_multiple = defaultdict(list)
+    for foldername in duplicate_sum_path:
+        path_to_folder = os.path.join(duplicate_sum_path, foldername)
+        if os.path.isdir(path_to_folder):
+            folder_2_multiple[foldername[:4]] = foldername
+
+
     size = 0
     for foldername in test_folder_namelist:
         last_char = foldername[-1]
         subfolder = foldername+last_char
         docsfolder = 'docs'
-        perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/'+foldername+'/'+subfolder+'/perdocs'
+
+        # /export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/original.summaries/d56kk
+        perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/original.summaries'+'/'+subfolder+'/perdocs'
         id2sum = load_per_docs_file(perdoc_file)
+        '''load duplicate summary'''
+        id2sumlist = defaultdict(list)
+        for idd, sum_i in id2sum.items():
+            id2sumlist[idd].append(sum_i)
+        for sumfolder in folder_2_multiple.get(foldername):
+            #/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries/d59kg
+            perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries'+'/'+sumfolder+'/perdocs'
+            id2sum_i = load_per_docs_file(perdoc_file)
+            for idd, sum_i in id2sum_i.items():
+                id2sumlist[idd].append(sum_i)
 
         id2doc = {}
-        path_to_stories = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/'+foldername+'/docs/'
+        path_to_stories = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/docs/'+foldername+'/'
         story_filenames_list = os.listdir(path_to_stories)
         for story_filename in story_filenames_list:
             path_to_story = os.path.join(path_to_stories, story_filename)
@@ -408,13 +429,17 @@ def load_DUC_test():
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
-            summ = id2sum.get(id)
-            if summ is None:
+            summ_list = id2sumlist.get(id)
+            if summ_list is None:
                 print('missing:', foldername, id)
                 continue
-            sum_str = ' '.join(summ.strip().split())
 
-            writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            for summm in summ_list:
+                sum_str = ' '.join(summm.strip().split())
+                writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+
+            '''to save time, we only use the first summary to generate negative ones'''
+            sum_str = ' '.join(summ_list[0].strip().split())
             neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             for neg_sum in neg_sum_list:
                 writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
@@ -429,7 +454,8 @@ def load_DUC_test():
 
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
-    load_DUC_train()
+    # load_DUC_train()
+    load_DUC_test()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
     # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
