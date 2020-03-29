@@ -261,8 +261,6 @@ def append_unrelated_sents(sum_str, source_sent_list):
     return
 
 def GPT2_generate(sum_str, tokenizer, model):
-
-
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
     max_len = input_len+15
@@ -277,14 +275,14 @@ def GPT2_generate(sum_str, tokenizer, model):
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0])
-        print('resulting_string:', resulting_string)
+        # print('resulting_string:', resulting_string)
         new_seq = resulting_string[:resulting_string.rfind('.')+1]
-        print(resulting_string.rfind('.'), len(sum_str))
+        # print(resulting_string.rfind('.'), len(sum_str))
         if resulting_string.rfind('.') < len(sum_str):
             continue
         else:
             new_seqs.append(new_seq)
-    print(new_seqs)
+    # print(new_seqs)
 
     return new_seqs
 
@@ -305,16 +303,31 @@ def NER(input):
 
     return nerlabel2entitylist
 
-def generate_negative_summaries(doc_str, sum_str):
-    return
+def generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
+    entity_cand_list = swap_entities(doc_str, sum_str)
+    # swap_pronouns(doc_str, sum_str)
+    shuffle_word_list = shuffle_words_same_POStags(sum_str)
+    missing_word_list = random_remove_words(sum_str, 0.8)
+    bert_mask_list = random_add_words(sum_str, 0.3, mask_tokenizer, mask_model)
+    # append_unrelated_sents(sum_str, source_sent_list)
+    bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
+    return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + bert_generate_list
 
 
-def load_DUC():
+def load_DUC_train():
     #DUC2001
     trainfolder_namelist = ['d01a','d02a','d03a','d07b','d09b','d10b','d16c','d17c','d18c','d20d','d21d',
     'd23d','d25e','d26e','d29e','d33f','d35f','d36f','d38g','d40g','d42g','d46h','d47h','d48h','d49i',
     'd51i','d52i','d55k','d58k','d60k']
 
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt', 'w', 'utf-8')
+    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+
+    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+
+    size = 0
     for foldername in trainfolder_namelist:
         last_char = foldername[-1]
         subfolder = foldername+last_char
@@ -331,13 +344,25 @@ def load_DUC():
                 doc = load_DUC_doc(path_to_story)
                 id2doc[story_filename] = doc
 
-        print(id2doc.keys())
-        print(id2sum.keys())
+        # print(id2doc.keys())
+        # print(id2sum.keys())
         assert len(id2doc) ==  len(id2sum)
 
         for id, doc in id2doc.items():
-            print(id, '\n', doc, '\n', id2sum.get(id))
-            exit(0)
+            # print(id, '\n', doc, '\n', id2sum.get(id))
+            doc_str = ' '.join(doc.strip().split())
+            sum_str = ' '.join(id2sum.get(id).strip().split())
+
+            writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            for neg_sum in neg_sum_list:
+                writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
+            size+=1
+            if size % 10 == 0:
+                print('doc size:', size)
+
+
+    writefile.close()
 
 
 
@@ -348,13 +373,14 @@ def load_DUC():
 
 if __name__ == "__main__":
     # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
-    # load_DUC()
+    load_DUC_train()
     # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
     # appearance_of_str('why we do there without why you come why why .', 'why')
     # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
     # tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     # random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', 0.3, tokenizer, model)
-    tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    model = AutoModelWithLMHead.from_pretrained("gpt2")
-    GPT2_generate('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', tokenizer, model)
+
+    # tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    # model = AutoModelWithLMHead.from_pretrained("gpt2")
+    # GPT2_generate('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', tokenizer, model)
