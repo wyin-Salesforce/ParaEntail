@@ -385,10 +385,11 @@ def load_DUC_test():
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
 
     '''test doc has multiple summary'''
-    duplicate_sum_path = os.listdir('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries')
+    duplicate_sum_pathstring = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries'
+    duplicate_sum_path = os.listdir(duplicate_sum_pathstring)
     folder_2_multiple = defaultdict(list)
     for foldername in duplicate_sum_path:
-        path_to_folder = os.path.join(duplicate_sum_path, foldername)
+        path_to_folder = os.path.join(duplicate_sum_pathstring, foldername)
         if os.path.isdir(path_to_folder):
             folder_2_multiple[foldername[:4]] = foldername
 
