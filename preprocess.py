@@ -54,7 +54,7 @@ def load_per_docs_file(fil):
             id2sum[doc_id] = summary.strip()
         if summary_start:
             summary +=' '+line.strip()
-    print('size:', len(id2sum))
+    # print('size:', len(id2sum))
     return id2sum
 
 def load_DUC_doc(fil):
@@ -351,7 +351,11 @@ def load_DUC_train():
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
-            sum_str = ' '.join(id2sum.get(id).strip().split())
+            summ = id2sum.get(id)
+            if summ is None:
+                print('missing:', foldername, id)
+                continue
+            sum_str = ' '.join(summ.strip().split())
 
             writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
@@ -384,3 +388,8 @@ if __name__ == "__main__":
     # tokenizer = AutoTokenizer.from_pretrained("gpt2")
     # model = AutoModelWithLMHead.from_pretrained("gpt2")
     # GPT2_generate('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', tokenizer, model)
+
+
+    '''
+    CUDA_VISIBLE_DEVICES=0
+    '''
