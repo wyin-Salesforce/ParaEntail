@@ -393,8 +393,8 @@ def load_DUC_test():
         if os.path.isdir(path_to_folder):
             folder_2_multiple[foldername[:4]].append(foldername)
 
-    print('folder_2_multiple:', folder_2_multiple)
-    exit(0)
+    # print('folder_2_multiple:', folder_2_multiple)
+    # exit(0)
     size = 0
     for foldername in test_folder_namelist:
         last_char = foldername[-1]
