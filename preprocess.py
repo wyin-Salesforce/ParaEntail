@@ -391,7 +391,7 @@ def load_DUC_test():
     for foldername in duplicate_sum_path:
         path_to_folder = os.path.join(duplicate_sum_pathstring, foldername)
         if os.path.isdir(path_to_folder):
-            folder_2_multiple[foldername[:4]] = foldername
+            folder_2_multiple[foldername[:4]].append(foldername)
 
     print('folder_2_multiple:', folder_2_multiple)
     exit(0)
