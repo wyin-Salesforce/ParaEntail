@@ -346,7 +346,7 @@ def load_DUC_train():
 
         # print(id2doc.keys())
         # print(id2sum.keys())
-        assert len(id2doc) ==  len(id2sum)
+        # assert len(id2doc) ==  len(id2sum)
 
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
@@ -364,12 +364,64 @@ def load_DUC_train():
             size+=1
             if size % 10 == 0:
                 print('doc size:', size)
-
-
     writefile.close()
 
 
+def load_DUC_test():
+    #DUC2001
+    # trainfolder_namelist = ['d01a','d02a','d03a','d07b','d09b','d10b','d16c','d17c','d18c','d20d','d21d',
+    # 'd23d','d25e','d26e','d29e','d33f','d35f','d36f','d38g','d40g','d42g','d46h','d47h','d48h','d49i',
+    # 'd51i','d52i','d55k','d58k','d60k']
 
+    test_folder_namelist = ['d04a','d05a','d06a','d08b','d11b','d12b','d13c','d14c','d15c','d19d','d22d',
+    'd24d','d27e','d28e','d30e','d31f','d32f','d34f','d37g','d39g',
+    'd41g','d43h','d44h','d45h','d50i','d53i','d54i','d56k','d57k','d59k']
+
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
+    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+
+    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+
+    size = 0
+    for foldername in test_folder_namelist:
+        last_char = foldername[-1]
+        subfolder = foldername+last_char
+        docsfolder = 'docs'
+        perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/'+foldername+'/'+subfolder+'/perdocs'
+        id2sum = load_per_docs_file(perdoc_file)
+
+        id2doc = {}
+        path_to_stories = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/'+foldername+'/docs/'
+        story_filenames_list = os.listdir(path_to_stories)
+        for story_filename in story_filenames_list:
+            path_to_story = os.path.join(path_to_stories, story_filename)
+            if os.path.isfile(path_to_story):
+                doc = load_DUC_doc(path_to_story)
+                id2doc[story_filename] = doc
+
+        # print(id2doc.keys())
+        # print(id2sum.keys())
+        # assert len(id2doc) ==  len(id2sum)
+
+        for id, doc in id2doc.items():
+            # print(id, '\n', doc, '\n', id2sum.get(id))
+            doc_str = ' '.join(doc.strip().split())
+            summ = id2sum.get(id)
+            if summ is None:
+                print('missing:', foldername, id)
+                continue
+            sum_str = ' '.join(summ.strip().split())
+
+            writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            for neg_sum in neg_sum_list:
+                writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
+            size+=1
+            if size % 10 == 0:
+                print('doc size:', size)
+    writefile.close()
 
 
 
