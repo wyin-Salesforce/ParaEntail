@@ -92,8 +92,10 @@ def load_DUC_doc(fil):
             break
         if doc_start:
             doc+=' '+line.strip()
+
+    refined_doc = doc.replace('<P>', '').replace('</P>', '')
     readfile.close()
-    return doc.strip()
+    return ' '.join(refined_doc.strip().split())
 
 def appearance_of_str(mom_str, baby_str):
     poslist = {}
@@ -366,6 +368,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     name_list = entity_cand_list_names + shuffle_word_list_names+missing_word_list_names + bert_mask_list_names+ insert_unrelated_sents_names + bert_generate_list_names
 
     return cand_list, name_list
+
 def load_DUC_train():
     #DUC2001
     trainfolder_namelist = ['d01a','d02a','d03a','d07b','d09b','d10b','d16c','d17c','d18c','d20d','d21d',
@@ -402,10 +405,10 @@ def load_DUC_train():
         prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
-            doc_str = ' '.join(doc.strip().split())
+            doc_str = doc
 
             summ = id2sum.get(id)
-            if summ is None:
+            if summ is None or len(doc_str.strip()) == 0:
                 print('missing:', foldername, id)
                 continue
 
@@ -414,10 +417,10 @@ def load_DUC_train():
 
             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             writefile.write('positive>>' +'\t'+sum_str+'\n')
-            print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
+            # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
             neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             prior_unrelated_doc = doc_str
-            print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
+            # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
@@ -493,10 +496,10 @@ def load_DUC_test():
         prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
-            doc_str = ' '.join(doc.strip().split())
+            doc_str = doc#' '.join(doc.strip().split())
 
             summ_list = id2sumlist.get(id)
-            if summ_list is None:
+            if summ_list is None or len(doc_str.strip()) == 0:
                 print('missing:', foldername, id)
                 continue
 
