@@ -296,10 +296,10 @@ def GPT2_generate(sum_str, tokenizer, model):
         # print('resulting_string:', resulting_string)
         new_seq = resulting_string[:resulting_string.rfind('.')+1]
         # print(resulting_string.rfind('.'), len(sum_str))
-        if resulting_string.rfind('.') < len(sum_str):
-            continue
-        else:
-            new_seqs.append(new_seq)
+        # if resulting_string.rfind('.') < len(sum_str):
+        #     continue
+        # else:
+        new_seqs.append(new_seq)
     # print(new_seqs)
 
     return new_seqs
