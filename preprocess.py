@@ -14,7 +14,6 @@ import en_core_web_sm
 from collections import defaultdict
 from transformers import AutoModelWithLMHead, AutoTokenizer
 # from transformers import AutoModelWithLMHead, AutoTokenizer
-from transformers import  CTRLLMHeadModel, CTRLTokenizer
 from transformers import pipeline
 
 def load_CNN_DailyMail():
@@ -292,14 +291,14 @@ def GPT2_generate(sum_str, tokenizer, model):
         input = tokenizer.encode(sequence, return_tensors="pt")
         generated = model.generate(input, max_length=max_len)
 
-        resulting_string = tokenizer.decode(generated.tolist()[0], clean_up_tokenization_spaces=True)
+        resulting_string = tokenizer.decode(generated.tolist()[0])
         # print('resulting_string:', resulting_string)
         new_seq = resulting_string[:resulting_string.rfind('.')+1]
         # print(resulting_string.rfind('.'), len(sum_str))
-        # if resulting_string.rfind('.') < len(sum_str):
-        #     continue
-        # else:
-        new_seqs.append(resulting_string)
+        if resulting_string.rfind('.') < len(sum_str):
+            continue
+        else:
+            new_seqs.append(new_seq)
     # print(new_seqs)
 
     return new_seqs
@@ -477,13 +476,7 @@ if __name__ == "__main__":
 
     # load_DUC_train()
     # load_DUC_test()
-    # load_CNN_DailyMail()
-
-    gpt2_tokenizer = AutoTokenizer.from_pretrained("ctrl")
-    gpt2_model = AutoModelWithLMHead.from_pretrained("ctrl")
-    sum_str = 'to save time, we only use the first summary to generate negative ones'
-    bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    print(bert_generate_list)
+    load_CNN_DailyMail()
 
     '''
     CUDA_VISIBLE_DEVICES=0
