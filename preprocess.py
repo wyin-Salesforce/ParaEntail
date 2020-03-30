@@ -14,6 +14,7 @@ import en_core_web_sm
 from collections import defaultdict
 from transformers import AutoModelWithLMHead, AutoTokenizer
 # from transformers import AutoModelWithLMHead, AutoTokenizer
+from transformers import  CTRLLMHeadModel, CTRLTokenizer
 from transformers import pipeline
 
 def load_CNN_DailyMail():
@@ -476,7 +477,13 @@ if __name__ == "__main__":
 
     # load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail()
+    # load_CNN_DailyMail()
+
+    gpt2_tokenizer = AutoTokenizer.from_pretrained("ctrl")
+    gpt2_model = AutoModelWithLMHead.from_pretrained("ctrl")
+    sum_str = 'to save time, we only use the first summary to generate negative ones'
+    bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
+    print(bert_generate_list)
 
     '''
     CUDA_VISIBLE_DEVICES=0
