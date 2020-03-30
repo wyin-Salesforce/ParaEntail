@@ -36,13 +36,13 @@ def load_CNN_DailyMail():
                 doc_str = parts[0].strip()
                 writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
-                writefile.write('positive>>' + sum_str+'\n')
+                writefile.write('positive>>' +'\t'+ sum_str+'\n')
                 neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
                 for neg_sum in neg_sum_list:
                     writefile.write('negative>>' +'\t'+neg_sum+'\n')
                 writefile.write('\n')
                 size+=1
-                if size % 10 == 0:
+                if size % 500 == 0:
                     print(fil_prefix, ' doc size:', size)
         readfile.close()
         writefile.close()
