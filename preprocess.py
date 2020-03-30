@@ -38,10 +38,10 @@ def load_CNN_DailyMail():
                 writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
                 writefile.write('positive>>' +'\t'+ sum_str+'\n')
-                neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+                neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
                 prior_unrelated_doc = doc_str
-                for neg_sum in neg_sum_list:
-                    writefile.write('negative>>' +'\t'+neg_sum+'\n')
+                for id, neg_sum in enumerate(neg_sum_list):
+                    writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
                 writefile.write('\n')
                 size+=1
                 if size % 500 == 0:
@@ -289,6 +289,7 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     for sentence in text_sentences:
         sum_sents.append(sentence.text)
 
+    print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
     doc_sentences = nlp(prior_unrelated_doc)
     doc_sents = []
     for sentence in doc_sentences:
@@ -344,15 +345,27 @@ def NER(input):
 
 def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
     entity_cand_list = swap_entities(doc_str, sum_str)
+    entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
     # swap_pronouns(doc_str, sum_str)
     shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.95)
+    shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
+
     missing_word_list = random_remove_words(sum_str, 0.95)
+    missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
+
     bert_mask_list = random_replace_words(sum_str, 0.05, mask_tokenizer, mask_model)
+    bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
+
     insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
+    insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
+
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + insert_unrelated_sents+bert_generate_list
+    bert_generate_list_names = ['#GPT2generate#'] * len(bert_generate_list)
 
+    cand_list= entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + insert_unrelated_sents+bert_generate_list
+    name_list = entity_cand_list_names + shuffle_word_list_names+missing_word_list_names + bert_mask_list_names+ insert_unrelated_sents_names + bert_generate_list_names
 
+    return cand_list, name_list
 def load_DUC_train():
     #DUC2001
     trainfolder_namelist = ['d01a','d02a','d03a','d07b','d09b','d10b','d16c','d17c','d18c','d20d','d21d',
@@ -401,10 +414,12 @@ def load_DUC_train():
 
             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             writefile.write('positive>>' +'\t'+sum_str+'\n')
-            neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             prior_unrelated_doc = doc_str
-            for neg_sum in neg_sum_list:
-                writefile.write('negative>>' +'\t'+neg_sum+'\n')
+            print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
+            for id, neg_sum in enumerate(neg_sum_list):
+                writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
             # for neg_sum in neg_sum_list:
             #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
@@ -493,10 +508,10 @@ def load_DUC_test():
 
             '''to save time, we only use the first summary to generate negative ones'''
             sum_str = ' '.join(summ_list[0].strip().split())
-            neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             prior_unrelated_doc = doc_str
-            for neg_sum in neg_sum_list:
-                writefile.write('negative>>' +'\t'+neg_sum+'\n')
+            for id, neg_sum in enumerate(neg_sum_list):
+                writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
             # for neg_sum in neg_sum_list:
             #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
