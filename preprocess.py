@@ -291,12 +291,14 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     for sentence in text_sentences:
         sum_sents.append(sentence.text)
 
-    print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
+    # print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
     doc_sentences = nlp(prior_unrelated_doc)
     doc_sents = []
     for sentence in doc_sentences:
         doc_sents.append(sentence.text)
-
+    if len(doc_sents) == 0:
+        print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
+        exit(0)
     random_sent_from_doc = random.choice(doc_sents)
     '''put the unrelated sent at the position 1'''
     new_sum_sents = sum_sents[:1]+[random_sent_from_doc]+sum_sents[1:]
