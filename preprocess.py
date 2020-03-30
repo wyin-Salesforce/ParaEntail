@@ -213,8 +213,8 @@ def shuffle_words_same_POStags(sum_str, prob):
         else:
             word_set.discard(token)
             assert len(word_set) >=1
-            prob = random.uniform(0, 1)
-            if prob < prob:
+            rand_prob = random.uniform(0, 1)
+            if rand_prob < prob:
                 '''do not replace'''
                 new_word_list.append(token.text)
                 continue
