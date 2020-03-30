@@ -288,13 +288,13 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     nlp = en_core_web_sm.load()
     text_sentences = nlp(sum_str)
     sum_sents = []
-    for sentence in text_sentences:
+    for sentence in text_sentences.sents:
         sum_sents.append(sentence.text)
 
     # print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
     doc_sentences = nlp(prior_unrelated_doc)
     doc_sents = []
-    for sentence in doc_sentences:
+    for sentence in doc_sentences.sents:
         doc_sents.append(sentence.text)
     if len(doc_sents) == 0:
         print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
