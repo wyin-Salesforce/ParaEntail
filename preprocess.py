@@ -278,8 +278,28 @@ def random_replace_words(sum_str, drop, tokenizer, model):
     return [' '.join(prior_sum)]
 
 def append_unrelated_sents(sum_str, prior_unrelated_doc):
+    nlp = spacy.load('en_core_web_sm')
+    text = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+    text_sentences = nlp(text)
+    for sentence in text_sentences.sents:
 
-    return
+    nlp = en_core_web_sm.load()
+    text_sentences = nlp(sum_str)
+    sum_sents = []
+    for sentence in text_sentences:
+        sum_sents.append(sentence.text)
+
+    doc_sentences = nlp(prior_unrelated_doc)
+    doc_sents = []
+    for sentence in doc_sentences:
+        doc_sents.append(sentence.text)
+
+    random_sent_from_doc = random.choice(doc_sents)
+    '''put the unrelated sent at the position 1'''
+    new_sum_sents = sum_sents[:1]+[random_sent_from_doc]+sum_sents[1:]
+
+
+    return [' '.join(new_sum_sents)]
 
 def GPT2_generate(sum_str, tokenizer, model):
     input_wordlist = sum_str.split()
@@ -328,9 +348,9 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.95)
     missing_word_list = random_remove_words(sum_str, 0.95)
     bert_mask_list = random_replace_words(sum_str, 0.05, mask_tokenizer, mask_model)
-    append_unrelated_sents(sum_str, prior_unrelated_doc)
+    insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + bert_generate_list
+    return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + insert_unrelated_sents+bert_generate_list
 
 
 def load_DUC_train():
@@ -370,18 +390,24 @@ def load_DUC_train():
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
+
             summ = id2sum.get(id)
             if summ is None:
                 print('missing:', foldername, id)
                 continue
+
+            writefile.write('document>>' +'\t'+doc_str+'\n')
             sum_str = ' '.join(summ.strip().split())
 
-            writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            writefile.write('positive>>' +'\t'+sum_str+'\n')
             neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             prior_unrelated_doc = doc_str
-
             for neg_sum in neg_sum_list:
-                writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
+                writefile.write('negative>>' +'\t'+neg_sum+'\n')
+            writefile.write('\n')
+            # for neg_sum in neg_sum_list:
+            #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
             if size % 10 == 0:
                 print('doc size:', size)
@@ -453,21 +479,27 @@ def load_DUC_test():
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
+
             summ_list = id2sumlist.get(id)
             if summ_list is None:
                 print('missing:', foldername, id)
                 continue
 
+            writefile.write('document>>' +'\t'+doc_str+'\n')
             for summm in summ_list:
                 sum_str = ' '.join(summm.strip().split())
-                writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+                # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+                writefile.write('positive>>' +'\t'+sum_str+'\n')
 
             '''to save time, we only use the first summary to generate negative ones'''
             sum_str = ' '.join(summ_list[0].strip().split())
             neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
             prior_unrelated_doc = doc_str
             for neg_sum in neg_sum_list:
-                writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
+                writefile.write('negative>>' +'\t'+neg_sum+'\n')
+            writefile.write('\n')
+            # for neg_sum in neg_sum_list:
+            #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
             if size % 10 == 0:
                 print('doc size:', size)
@@ -478,13 +510,13 @@ def load_DUC_test():
 
 
 if __name__ == "__main__":
-    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
-    sum_str = 'to save time, we only use the first summary to generate negative ones'
-    print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
+    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    # sum_str = 'to save time, we only use the first summary to generate negative ones'
+    # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
-    # load_DUC_train()
-    # load_DUC_test()
+    load_DUC_train()
+    load_DUC_test()
     # load_CNN_DailyMail()
 
     '''
