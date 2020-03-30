@@ -30,6 +30,7 @@ def load_CNN_DailyMail():
         readfile = codecs.open(readfil, 'r', 'utf-8')
         writefile = codecs.open(writefil, 'w', 'utf-8')
         size = 0
+        prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for line in readfile:
             parts = line.strip().split('\t')
             if len(parts) == 2:
@@ -37,7 +38,8 @@ def load_CNN_DailyMail():
                 writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
                 writefile.write('positive>>' +'\t'+ sum_str+'\n')
-                neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+                neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+                prior_unrelated_doc = doc_str
                 for neg_sum in neg_sum_list:
                     writefile.write('negative>>' +'\t'+neg_sum+'\n')
                 writefile.write('\n')
@@ -275,13 +277,14 @@ def random_replace_words(sum_str, drop, tokenizer, model):
 
     return [' '.join(prior_sum)]
 
-def append_unrelated_sents(sum_str, source_sent_list):
+def append_unrelated_sents(sum_str, prior_unrelated_doc):
+
     return
 
 def GPT2_generate(sum_str, tokenizer, model):
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
-    max_len = input_len+15
+    max_len = input_len+20
 
     keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
     new_seqs = []
@@ -296,9 +299,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         # print('resulting_string:', resulting_string)
         new_seq = resulting_string[:resulting_string.rfind('.')+1]
         # print(resulting_string.rfind('.'), len(sum_str))
-        if resulting_string.rfind('.') < len(sum_str):
-            continue
-        else:
+        if len(new_seq.split()) > leng:
             new_seqs.append(new_seq)
     # print(new_seqs)
 
@@ -321,13 +322,13 @@ def NER(input):
 
     return nerlabel2entitylist
 
-def generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
+def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
     entity_cand_list = swap_entities(doc_str, sum_str)
     # swap_pronouns(doc_str, sum_str)
-    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.8)
-    missing_word_list = random_remove_words(sum_str, 0.8)
-    bert_mask_list = random_replace_words(sum_str, 0.3, mask_tokenizer, mask_model)
-    # append_unrelated_sents(sum_str, source_sent_list)
+    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.95)
+    missing_word_list = random_remove_words(sum_str, 0.95)
+    bert_mask_list = random_replace_words(sum_str, 0.05, mask_tokenizer, mask_model)
+    append_unrelated_sents(sum_str, prior_unrelated_doc)
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
     return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + bert_generate_list
 
@@ -365,7 +366,7 @@ def load_DUC_train():
         # print(id2doc.keys())
         # print(id2sum.keys())
         # assert len(id2doc) ==  len(id2sum)
-
+        prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
@@ -376,7 +377,9 @@ def load_DUC_train():
             sum_str = ' '.join(summ.strip().split())
 
             writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
-            neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            prior_unrelated_doc = doc_str
+
             for neg_sum in neg_sum_list:
                 writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
@@ -446,7 +449,7 @@ def load_DUC_test():
         # print(id2doc.keys())
         # print(id2sum.keys())
         # assert len(id2doc) ==  len(id2sum)
-
+        prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = ' '.join(doc.strip().split())
@@ -461,7 +464,8 @@ def load_DUC_test():
 
             '''to save time, we only use the first summary to generate negative ones'''
             sum_str = ' '.join(summ_list[0].strip().split())
-            neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            prior_unrelated_doc = doc_str
             for neg_sum in neg_sum_list:
                 writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
