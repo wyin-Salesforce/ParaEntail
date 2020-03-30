@@ -299,7 +299,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         # if resulting_string.rfind('.') < len(sum_str):
         #     continue
         # else:
-        new_seqs.append(new_seq)
+        new_seqs.append(resulting_string)
     # print(new_seqs)
 
     return new_seqs
