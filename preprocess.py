@@ -235,7 +235,7 @@ def random_remove_words(sum_str, drop):
 
     return [' '.join(new_tokens)]
 
-def random_add_words(sum_str, drop, tokenizer, model):
+def random_replace_words(sum_str, drop, tokenizer, model):
 
     # nlp = pipeline('fill-mask', 'checkpoint-335000/', tokenizer='roberta-large')
     # print(nlp('On admission, the most common symptoms were <mask>'))
@@ -326,7 +326,7 @@ def generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gp
     # swap_pronouns(doc_str, sum_str)
     shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.8)
     missing_word_list = random_remove_words(sum_str, 0.8)
-    bert_mask_list = random_add_words(sum_str, 0.2, mask_tokenizer, mask_model)
+    bert_mask_list = random_replace_words(sum_str, 0.3, mask_tokenizer, mask_model)
     # append_unrelated_sents(sum_str, source_sent_list)
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
     return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + bert_generate_list
