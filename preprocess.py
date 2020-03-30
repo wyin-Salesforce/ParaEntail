@@ -193,7 +193,7 @@ def swap_pronouns(sum_str):
     'her': ['his']
     }
 
-def shuffle_words_same_POStags(sum_str):
+def shuffle_words_same_POStags(sum_str, prob):
     nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
     pos2words = defaultdict(list)
@@ -201,6 +201,7 @@ def shuffle_words_same_POStags(sum_str):
         pos2words[token.pos_].append(token)
     new_word_list = []
     for token in doc:
+        '''for each token, replace it by 1-prob'''
         word_set = set(pos2words.get(token.pos_))
         if len(word_set) ==  1:
             new_word_list.append(token.text)
@@ -209,7 +210,7 @@ def shuffle_words_same_POStags(sum_str):
             word_set.discard(token)
             assert len(word_set) >=1
             prob = random.uniform(0, 1)
-            if prob < 0.3:
+            if prob < prob:
                 '''do not replace'''
                 new_word_list.append(token.text)
                 continue
@@ -250,7 +251,7 @@ def random_add_words(sum_str, drop, tokenizer, model):
     for i in range(insert_size):
         prior_len = len(prior_sum)
         pos = random.randrange(prior_len-1)
-        sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos:])
+        sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos+1:])
 
 
 
@@ -323,9 +324,9 @@ def NER(input):
 def generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
     entity_cand_list = swap_entities(doc_str, sum_str)
     # swap_pronouns(doc_str, sum_str)
-    shuffle_word_list = shuffle_words_same_POStags(sum_str)
+    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.8)
     missing_word_list = random_remove_words(sum_str, 0.8)
-    bert_mask_list = random_add_words(sum_str, 0.3, mask_tokenizer, mask_model)
+    bert_mask_list = random_add_words(sum_str, 0.2, mask_tokenizer, mask_model)
     # append_unrelated_sents(sum_str, source_sent_list)
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
     return entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + bert_generate_list
@@ -473,10 +474,14 @@ def load_DUC_test():
 
 
 if __name__ == "__main__":
+    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    sum_str = 'to save time, we only use the first summary to generate negative ones'
+    print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail()
+    # load_CNN_DailyMail()
 
     '''
     CUDA_VISIBLE_DEVICES=0
