@@ -320,7 +320,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         input = tokenizer.encode(sequence, return_tensors="pt")
         generated = model.generate(input, max_length=max_len)
 
-        resulting_string = tokenizer.decode(generated.tolist()[0])
+        resulting_string = ' '.join(tokenizer.decode(generated.tolist()[0]).strip().split())
         # print('resulting_string:', resulting_string)
         new_seq = resulting_string[:resulting_string.rfind('.')+1]
         # print(resulting_string.rfind('.'), len(sum_str))
@@ -348,9 +348,11 @@ def NER(input):
     return nerlabel2entitylist
 
 def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
+    '''entity-level noise'''
     entity_cand_list = swap_entities(doc_str, sum_str)
     entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
     # swap_pronouns(doc_str, sum_str)
+    '''word-level noise'''
     shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.95)
     shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
 
@@ -359,6 +361,8 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
 
     bert_mask_list = random_replace_words(sum_str, 0.05, mask_tokenizer, mask_model)
     bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
+
+    '''sentence-level noise'''
 
     insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
     insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
