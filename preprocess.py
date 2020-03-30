@@ -17,18 +17,33 @@ from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
 
 def load_CNN_DailyMail():
-    trainfile = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/train_tokenized.txt', 'r', 'utf-8')
-    for line in trainfile:
-        parts = line.strip().split('\t')
-        if len(parts) == 2:
-            train_src.write(parts[0].strip()+'\n')
-            train_trg.write(parts[1].strip()+'\n')
-    trainfile.close()
+    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
 
-    writeval = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/val_tokenized.txt', 'r', 'utf-8')
+    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
 
-    writetest = codecs.open('/export/home/Dataset/CNN-DailyMail-Summarization/split/test_tokenized.txt', 'r', 'utf-8')
-
+    file_prefix = ['train', 'val', 'test']
+    for fil_prefix in file_prefix:
+        readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
+        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.txt'
+        readfile = codecs.open(readfil, 'r', 'utf-8')
+        writefile = codecs.open(writefil, 'w', 'utf-8')
+        size = 0
+        for line in readfile:
+            parts = line.strip().split('\t')
+            if len(parts) == 2:
+                doc_str = parts[0].strip()
+                sum_str = parts[1].strip()
+                writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+                neg_sum_list = generate_negative_summaries(doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+                for neg_sum in neg_sum_list:
+                    writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
+                size+=1
+                if size % 10 == 0:
+                    print(fil_prefix, ' doc size:', size)
+        readfile.close()
+        writefile.close()
 
 
 def load_per_docs_file(fil):
@@ -401,13 +416,14 @@ def load_DUC_test():
         subfolder = foldername+last_char
         docsfolder = 'docs'
 
+        id2sumlist = defaultdict(list)
         # /export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/original.summaries/d56kk
         perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/original.summaries'+'/'+subfolder+'/perdocs'
         id2sum = load_per_docs_file(perdoc_file)
-        '''load duplicate summary'''
-        id2sumlist = defaultdict(list)
         for idd, sum_i in id2sum.items():
             id2sumlist[idd].append(sum_i)
+
+        '''load duplicate summary'''
         for sumfolder in folder_2_multiple.get(foldername):
             #/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries/d59kg
             perdoc_file ='/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries'+'/'+sumfolder+'/perdocs'
@@ -455,20 +471,10 @@ def load_DUC_test():
 
 
 if __name__ == "__main__":
-    # load_per_docs_file('/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/training/d49i/d49ii/perdocs')
+
     # load_DUC_train()
-    load_DUC_test()
-    # NER('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices.')
-    # appearance_of_str('why we do there without why you come why why .', 'why')
-    # shuffle_words_same_POStags('Salesforce is located in San Francisco, California, why you join it')
-    # tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
-    # random_add_words('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', 0.3, tokenizer, model)
-
-    # tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    # model = AutoModelWithLMHead.from_pretrained("gpt2")
-    # GPT2_generate('Distilled models are smaller than the models they mimic. Using them instead of the large versions would help our carbon footprint.', tokenizer, model)
-
+    # load_DUC_test()
+    load_CNN_DailyMail()
 
     '''
     CUDA_VISIBLE_DEVICES=0
