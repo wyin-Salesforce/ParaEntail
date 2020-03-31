@@ -55,7 +55,6 @@ def load_CNN_DailyMail():
         readfile.close()
         writefile.close()
 
-
 def load_per_docs_file(fil):
     print('fil:', fil)
     readfile = codecs.open(fil, 'r', 'utf-8')
@@ -184,6 +183,7 @@ def swap_entities(doc_str, sum_str):
                     prior_str += entities_to_swap[0]
                     prior_end = end_1
             prior_str += sum_str[prior_end:]
+
             if prior_str.strip() != sum_str.strip():
                 negative_sum_list.append(prior_str)
 
