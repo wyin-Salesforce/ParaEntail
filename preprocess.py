@@ -15,6 +15,12 @@ from collections import defaultdict
 from transformers import AutoModelWithLMHead, AutoTokenizer
 # from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
+import numpy as np
+
+seed = 400
+random.seed(seed)
+np.random.seed(seed)
+
 
 def load_CNN_DailyMail():
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
@@ -178,7 +184,9 @@ def swap_entities(doc_str, sum_str):
                     prior_str += entities_to_swap[0]
                     prior_end = end_1
             prior_str += sum_str[prior_end:]
-
+            if prior_str.strip() == sum_str.strip():
+                print('fuck, the same old and new')
+                exit(0)
             negative_sum_list.append(prior_str)
 
             # print('origin sum:', sum_str)
@@ -430,6 +438,8 @@ def load_DUC_train():
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
+            writefile.close()
+            exit(0)
             # for neg_sum in neg_sum_list:
             #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
