@@ -261,6 +261,8 @@ def random_replace_words(sum_str, drop, tokenizer, model):
     for i in range(insert_size):
         prior_len = len(prior_sum)
         pos = random.randrange(prior_len-1)
+        '''to avoid error: Tried to access index 512 out of table with 511 rows'''
+        pos = min(pos, 250)
         sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos+1:])
 
 
