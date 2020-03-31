@@ -8,7 +8,7 @@ prior_str = 'Distilled models are smaller than the models they mimic. Using them
 
 after_str = ' our carbon footprint. Distilled models are smaller than the models they mimic. Using them instead of the large versions would help Distilled models are smaller than the models they mimic. Using them instead of the large versions would help Distilled models are smaller than the models they mimic. Using them instead of the large versions would help Distilled models are smaller than the models they mimic. Using them instead of the large versions would help Distilled models are smaller than the models they mimic. Using them instead of the large versions would help Distilled models are smaller than the models they mimic. Using them instead of the large versions would help'
 
-prior_str = ' '.join(prior_str.split()[:500])
+prior_str = ' '.join(prior_str.split()[:300])
 print('prior_str len:', len(prior_str.split()))
 print('after_str len:', len(after_str.split()))
 sequence = f"{tokenizer.mask_token}"
