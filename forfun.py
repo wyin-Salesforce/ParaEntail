@@ -1,17 +1,13 @@
-# from seg.newline.segmenter import NewLineSegmenter
-# import spacy
-#
-# nlseg = NewLineSegmenter()
-# nlp = spacy.load('en')
-# nlp.add_pipe(nlseg.set_sent_starts, name='sentence_segmenter', before='parser')
-# my_doc_text = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
-# doc = nlp(my_doc_text)
-# print(doc)
+from transformers import AutoModelWithLMHead, AutoTokenizer
+import torch
 
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
 
-import spacy
-nlp = spacy.load('en_core_web_sm')
-text = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
-text_sentences = nlp(text)
-for sentence in text_sentences.sents:
-    print('>>', sentence.text)
+sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
+
+input = tokenizer.encode(sequence, return_tensors="pt")
+mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
+
+token_logits = model(input)[0]
+print(token_logits)
