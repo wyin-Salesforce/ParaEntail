@@ -361,13 +361,13 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
     # swap_pronouns(doc_str, sum_str)
     '''word-level noise'''
-    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.95)
+    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.9)
     shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
 
-    missing_word_list = random_remove_words(sum_str, 0.95)
+    missing_word_list = random_remove_words(sum_str, 0.9)
     missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
 
-    bert_mask_list = random_replace_words(sum_str, 0.05, mask_tokenizer, mask_model)
+    bert_mask_list = random_replace_words(sum_str, 0.1, mask_tokenizer, mask_model)
     bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
 
     '''sentence-level noise'''
@@ -438,8 +438,8 @@ def load_DUC_train():
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
-            writefile.close()
-            exit(0)
+            # writefile.close()
+            # exit(0)
             # for neg_sum in neg_sum_list:
             #     writefile.write('negative' +'\t'+doc_str + '\t' + neg_sum+'\n')
             size+=1
