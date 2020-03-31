@@ -184,10 +184,8 @@ def swap_entities(doc_str, sum_str):
                     prior_str += entities_to_swap[0]
                     prior_end = end_1
             prior_str += sum_str[prior_end:]
-            if prior_str.strip() == sum_str.strip():
-                print('fuck, the same old and new')
-                exit(0)
-            negative_sum_list.append(prior_str)
+            if prior_str.strip() != sum_str.strip():
+                negative_sum_list.append(prior_str)
 
             # print('origin sum:', sum_str)
             # print('new sum:', prior_str)
