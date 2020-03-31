@@ -29,10 +29,10 @@ def load_CNN_DailyMail():
     gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
 
-    file_prefix = ['val']#['train', 'val', 'test']
+    file_prefix = ['train']#['train', 'val', 'test']
     for fil_prefix in file_prefix:
         readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
-        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.txt'
+        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail_new.txt'
         readfile = codecs.open(readfil, 'r', 'utf-8')
         writefile = codecs.open(writefil, 'w', 'utf-8')
         size = 0
