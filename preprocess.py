@@ -32,7 +32,7 @@ def load_CNN_DailyMail():
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
     gpt2_model.to(device)
 
-    file_prefix = ['train']#['train', 'val', 'test']
+    file_prefix = ['test']#['train', 'val', 'test']
     for fil_prefix in file_prefix:
         readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
         writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.txt'
@@ -361,7 +361,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
     # swap_pronouns(doc_str, sum_str)
     '''word-level noise'''
-    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.9)
+    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.5)
     shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
 
     missing_word_list = random_remove_words(sum_str, 0.2)
