@@ -53,8 +53,8 @@ def load_CNN_DailyMail():
                     writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
                 writefile.write('\n')
                 size+=1
-                if size % 500 == 0:
-                    print(fil_prefix, ' doc size:', size)
+                # if size % 500 == 0:
+                print(fil_prefix, ' doc size:', size)
         readfile.close()
         writefile.close()
 
