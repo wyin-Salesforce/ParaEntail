@@ -273,7 +273,7 @@ def random_replace_words(sum_str, drop, tokenizer, model):
         '''set max_length = 512 is necessary, but does not work gor gpt2'''
         input = tokenizer.encode(sequence, return_tensors="pt", max_length=512)
         mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
-        input.to(device)
+        input = input.to(device)
 
         token_logits = model(input)[0]
         mask_token_logits = token_logits[0, mask_token_index, :]
