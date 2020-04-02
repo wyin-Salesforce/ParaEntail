@@ -17,5 +17,6 @@ sequence = prior_str + sequence + after_str
 input = tokenizer.encode(sequence, return_tensors="pt")
 mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
 
+print('input len:', input.size)
 token_logits = model(input)[0]
 print(token_logits)
