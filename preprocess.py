@@ -208,7 +208,9 @@ def shuffle_words_same_POStags(sum_str, prob):
     doc = nlp(sum_str)
     pos2words = defaultdict(list)
     for token in doc:
+        print(token.text, '>>', token.pos_)
         pos2words[token.pos_].append(token)
+    exit(0)
     new_word_list = []
     for token in doc:
         '''for each token, replace it by 1-prob'''
