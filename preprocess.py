@@ -20,14 +20,17 @@ import numpy as np
 seed = 400
 random.seed(seed)
 np.random.seed(seed)
+device = torch.device("cuda")
 
 
 def load_CNN_DailyMail():
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_model.to(device)
 
     gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    gpt2_model.to(device)
 
     file_prefix = ['val']#['train', 'val', 'test']
     for fil_prefix in file_prefix:
