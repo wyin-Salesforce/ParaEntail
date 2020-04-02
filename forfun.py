@@ -14,7 +14,7 @@ print('after_str len:', len(after_str.split()))
 sequence = f"{tokenizer.mask_token}"
 sequence = prior_str + sequence + after_str
 
-input = tokenizer.encode(sequence, return_tensors="pt")
+input = tokenizer.encode(sequence, return_tensors="pt", max_length=512)
 mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
 
 print('input len:', input.size())
