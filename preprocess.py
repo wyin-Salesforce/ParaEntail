@@ -156,6 +156,9 @@ def swap_entities(doc_str, sum_str):
         else:
             '''if summary has more than two, swap within summary'''
             entities_to_swap = random.sample(valuelist, 2)
+            '''avoid swap in A and B'''
+            if sum_str.find(entities_to_swap[0]+' and '+entities_to_swap[1]) > -1 or sum_str.find(entities_to_swap[1]+' and '+entities_to_swap[0]) > -1:
+                continue
             pos_dict_0 = appearance_of_str(sum_str, entities_to_swap[0])
             # print('pos_dict_0:', pos_dict_0)
             pos_dict_1 = appearance_of_str(sum_str, entities_to_swap[1])
@@ -204,43 +207,46 @@ def swap_pronouns(sum_str):
     }
 
 def shuffle_words_same_POStags(sum_str, prob):
+    preferred_POStags = set(['VERB', 'NOUN', 'PROPN', 'NUM'])
     nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
     pos2words = defaultdict(list)
     for token in doc:
-        print(token.text, '>>', token.pos_)
+        # print(token.text, '>>', token.pos_)
         pos2words[token.pos_].append(token)
-    exit(0)
     new_word_list = []
     for token in doc:
-        '''for each token, replace it by 1-prob'''
-        word_set = set(pos2words.get(token.pos_))
-        if len(word_set) ==  1:
+        '''for each token, replace it by prob'''
+        if token.pos_ not in preferred_POStags:
             new_word_list.append(token.text)
-            continue
         else:
-            word_set.discard(token)
-            assert len(word_set) >=1
-            rand_prob = random.uniform(0, 1)
-            if rand_prob < prob:
-                '''do not replace'''
+            word_set = set(pos2words.get(token.pos_))
+            if len(word_set) ==  1:
                 new_word_list.append(token.text)
                 continue
             else:
-                replace_word = random.choice(list(word_set))
-                new_word_list.append(replace_word.text)
+                word_set.discard(token)
+                assert len(word_set) >=1
+                rand_prob = random.uniform(0, 1)
+                if rand_prob > prob:
+                    '''do not replace'''
+                    new_word_list.append(token.text)
+                    continue
+                else:
+                    replace_word = random.choice(list(word_set))
+                    new_word_list.append(replace_word.text)
     # print('old:', sum_str)
     # print('new:', ' '.join(new_word_list))
     return [' '.join(new_word_list)]
 
 def random_remove_words(sum_str, drop):
     tokens = sum_str.strip().split()
+    remove_size = int(len(tokens) * drop)
+    removed_indices = set(random.sample(list(range(len(tokens))),remove_size))
 
     new_tokens = []
-    for word in tokens:
-        prob = random.uniform(0, 1)
-        if prob < drop:
-            #0.8
+    for idd, word in enumerate(tokens):
+        if idd not in removed_indices:
             new_tokens.append(word)
         else:
             continue
@@ -249,31 +255,18 @@ def random_remove_words(sum_str, drop):
 
 def random_replace_words(sum_str, drop, tokenizer, model):
 
-    # nlp = pipeline('fill-mask', 'checkpoint-335000/', tokenizer='roberta-large')
-    # print(nlp('On admission, the most common symptoms were <mask>'))
-    #
-    # from transformers import pipeline
-    # print(sum_str)
-
     input_wordlist = sum_str.strip().split()
     sum_len = len(input_wordlist)
-    insert_size = int(sum_len*drop)#0.3
+    replace_size = int(sum_len*drop)#0.3
 
     prior_sum = input_wordlist
-    for i in range(insert_size):
+    for i in range(replace_size):
         prior_len = len(prior_sum)
         pos = random.randrange(prior_len-1)
         '''to avoid error: Tried to access index 512 out of table with 511 rows'''
         pos = min(pos, 200)
         sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos+1:])
 
-
-
-
-        # tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-        # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
-
-        # sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
         '''set max_length = 512 is necessary, but does not work gor gpt2'''
         input = tokenizer.encode(sequence, return_tensors="pt", max_length=512)
         mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
@@ -366,10 +359,10 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.9)
     shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
 
-    missing_word_list = random_remove_words(sum_str, 0.9)
+    missing_word_list = random_remove_words(sum_str, 0.2)
     missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
 
-    bert_mask_list = random_replace_words(sum_str, 0.1, mask_tokenizer, mask_model)
+    bert_mask_list = random_replace_words(sum_str, 0.2, mask_tokenizer, mask_model)
     bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
 
     '''sentence-level noise'''
