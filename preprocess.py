@@ -262,7 +262,7 @@ def random_replace_words(sum_str, drop, tokenizer, model):
         prior_len = len(prior_sum)
         pos = random.randrange(prior_len-1)
         '''to avoid error: Tried to access index 512 out of table with 511 rows'''
-        pos = min(pos, 100)
+        pos = min(pos, 200)
         sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos+1:])
 
 
@@ -272,8 +272,8 @@ def random_replace_words(sum_str, drop, tokenizer, model):
         # model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
 
         # sequence = f"Distilled models are smaller than the models they mimic. Using them instead of the large versions would help {tokenizer.mask_token} our carbon footprint."
-
-        input = tokenizer.encode(sequence, return_tensors="pt")
+        '''set max_length = 512 is necessary, but does not work gor gpt2'''
+        input = tokenizer.encode(sequence, return_tensors="pt", max_length=512)
         mask_token_index = torch.where(input == tokenizer.mask_token_id)[1]
 
         token_logits = model(input)[0]
