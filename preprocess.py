@@ -44,7 +44,7 @@ def load_CNN_DailyMail():
             parts = line.strip().split('\t')
             if len(parts) == 2:
                 size+=1
-                if size <= 3500:
+                if size <= 3725:
                     continue
                 doc_str = parts[0].strip()
                 # writefile.write('document>>' +'\t'+doc_str+'\n')
