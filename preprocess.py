@@ -557,8 +557,8 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    load_DUC_test()
-    # load_CNN_DailyMail()
+    # load_DUC_test()
+    load_CNN_DailyMail()
 
     '''
     CUDA_VISIBLE_DEVICES=0
