@@ -30,9 +30,10 @@ from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
 from transformers.data.processors.utils import InputExample
-
+from collections import OrderedDict
+import codecs
 from transformers import (
-    MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING,
+    # MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING,
     WEIGHTS_NAME,
     AdamW,
     AutoConfig,
@@ -40,6 +41,22 @@ from transformers import (
     AutoTokenizer,
     get_linear_schedule_with_warmup,
 )
+
+# MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING = OrderedDict(
+#     [
+#         (DistilBertConfig, DistilBertForSequenceClassification),
+#         (AlbertConfig, AlbertForSequenceClassification),
+#         (CamembertConfig, CamembertForSequenceClassification),
+#         (XLMRobertaConfig, XLMRobertaForSequenceClassification),
+#         (BartConfig, BartForSequenceClassification),
+#         (RobertaConfig, RobertaForSequenceClassification),
+#         (BertConfig, BertForSequenceClassification),
+#         (XLNetConfig, XLNetForSequenceClassification),
+#         (FlaubertConfig, FlaubertForSequenceClassification),
+#         (XLMConfig, XLMForSequenceClassification),
+#     ]
+# )
+
 from transformers import glue_compute_metrics as compute_metrics
 from transformers import glue_convert_examples_to_features as convert_examples_to_features
 from transformers import glue_output_modes as output_modes
@@ -54,12 +71,13 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-MODEL_CONFIG_CLASSES = list(MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING.keys())
-MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
-print('MODEL_TYPES:', MODEL_TYPES)
+# MODEL_CONFIG_CLASSES = list(MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING.keys())
+# MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
+# print('MODEL_TYPES:', MODEL_TYPES)
 
-ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in MODEL_CONFIG_CLASSES), (),)
-print('ALL_MODELS:', ALL_MODELS)
+# ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in MODEL_CONFIG_CLASSES), (),)
+# print('ALL_MODELS:', ALL_MODELS)
+from transformers import RobertaConfig, RobertaTokenizer, RobertaForSequenceClassification
 
 def set_seed(args):
     random.seed(args.seed)
@@ -425,7 +443,7 @@ def get_DUC_examples(filename):
 
 def main():
     '''
-    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta-large-mnli --model_name_or_path roberta-large-mnli --task_name rte
+    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large-mnli --task_name rte
     '''
     parser = argparse.ArgumentParser()
 
@@ -437,20 +455,20 @@ def main():
     #     required=True,
     #     help="The input data dir. Should contain the .tsv files (or other data files) for the task.",
     # )
-    parser.add_argument(
-        "--model_type",
-        default=None,
-        type=str,
-        required=True,
-        help="Model type selected in the list: " + ", ".join(MODEL_TYPES),
-    )
-    parser.add_argument(
-        "--model_name_or_path",
-        default=None,
-        type=str,
-        required=True,
-        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS),
-    )
+    # parser.add_argument(
+    #     "--model_type",
+    #     default=None,
+    #     type=str,
+    #     required=True,
+    #     help="Model type selected in the list: " + ", ".join(MODEL_TYPES),
+    # )
+    # parser.add_argument(
+    #     "--model_name_or_path",
+    #     default=None,
+    #     type=str,
+    #     required=True,
+    #     help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS),
+    # )
     parser.add_argument(
         "--task_name",
         default=None,
