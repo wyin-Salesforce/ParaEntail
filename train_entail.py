@@ -228,7 +228,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
 
                 if global_step % 50 == 0:
                     result = evaluate(args, model, tokenizer, eval_dataloader)
-                    print('test result:', result)
+                    # print('test result:', result)
                 # if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 #     logs = {}
                 #     if (
@@ -345,7 +345,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         #         logger.info("  %s = %s", key, str(result[key]))
         #         writer.write("%s = %s\n" % (key, str(result[key])))
 
-    return results
+    # return results
 
 
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
@@ -668,10 +668,10 @@ def main():
 
     # Training
     # if args.do_train:
-    train_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
+    train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
-    test_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
+    test_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
     eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     eval_sampler = SequentialSampler(eval_dataset)
