@@ -329,6 +329,10 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
             preds = np.argmax(preds, axis=1)
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
+
+        print('preds:', preds)
+        print('out_label_ids:', out_label_ids)
+        exit(0)
         result = compute_metrics(eval_task, preds, out_label_ids)
         results.update(result)
 
