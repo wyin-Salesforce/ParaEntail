@@ -22,7 +22,7 @@ import json
 import logging
 import os
 import random
-
+from sklearn.metrics import f1_score
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
@@ -330,11 +330,13 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
 
-        print('preds:', preds)
-        print('out_label_ids:', out_label_ids)
-        exit(0)
-        result = compute_metrics(eval_task, preds, out_label_ids)
-        results.update(result)
+        # print('preds:', preds)
+        # print('out_label_ids:', out_label_ids)
+        result = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
+        print('\t\t\t test F1:', result)
+        # exit(0)
+        # result = compute_metrics(eval_task, preds, out_label_ids)
+        # results.update(result)
 
         # output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.txt")
         # with open(output_eval_file, "w") as writer:
