@@ -666,7 +666,7 @@ def main():
     train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
     test_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
-    eval_dataset = load_and_cache_examples(args, eval_task, test_filename, tokenizer, evaluate=True)
+    eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     eval_sampler = SequentialSampler(eval_dataset)
     eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
