@@ -49,6 +49,8 @@ def load_CNN_DailyMail():
                 doc_str = parts[0].strip()
                 # writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
+                if len(sum_str.split()) > 200:
+                    continue
                 # writefile.write('positive>>' +'\t'+ sum_str+'\n')
                 neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
                 prior_unrelated_doc = doc_str
@@ -58,7 +60,7 @@ def load_CNN_DailyMail():
                 # size+=1
                 # if size % 500 == 0:
                 print(fil_prefix, ' doc size:', size)
-                exit(0)
+                # exit(0)
         readfile.close()
         # writefile.close()
 
@@ -318,10 +320,8 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     return [' '.join(new_sum_sents)]
 
 def GPT2_generate(sum_str, tokenizer, model):
-    print('sum_str:', sum_str)
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
-    print('input_len:', input_len)
     max_len = input_len+20
 
     keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
@@ -332,7 +332,6 @@ def GPT2_generate(sum_str, tokenizer, model):
 
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
-        print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = ' '.join(tokenizer.decode(generated.tolist()[0]).strip().split())
