@@ -463,9 +463,11 @@ def load_DUC_test():
     writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_model.to(device)
 
     gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    gpt2_model.to(device)
 
     '''test doc has multiple summary'''
     duplicate_sum_pathstring = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries'
