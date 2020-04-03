@@ -52,7 +52,7 @@ def load_CNN_DailyMail():
                 # writefile.write('positive>>' +'\t'+ sum_str+'\n')
                 neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
                 prior_unrelated_doc = doc_str
-                for id, neg_sum in enumerate(neg_sum_list):
+                # for id, neg_sum in enumerate(neg_sum_list):
                     # writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
                 # writefile.write('\n')
                 # size+=1
