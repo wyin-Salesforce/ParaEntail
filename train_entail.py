@@ -87,7 +87,7 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def train(args, train_dataset, model, tokenizer):
+def train(args, train_dataset, eval_dataloader, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
@@ -226,6 +226,9 @@ def train(args, train_dataset, model, tokenizer):
                 model.zero_grad()
                 global_step += 1
 
+                if global_step % 50 == 0:
+                    result = evaluate(args, model, tokenizer, eval_dataloader)
+                    print('test result:', result)
                 # if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 #     logs = {}
                 #     if (
@@ -277,23 +280,15 @@ def train(args, train_dataset, model, tokenizer):
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, filename, prefix="test set"):
+def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
-    # eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
+    eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
     # eval_outputs_dirs = (args.output_dir, args.output_dir + "-MM") if args.task_name == "mnli" else (args.output_dir,)
 
     results = {}
     # for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
     for eval_task in eval_task_names:
-        eval_dataset = load_and_cache_examples(args, eval_task, filename, tokenizer, evaluate=True)
 
-        # if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
-        #     os.makedirs(eval_output_dir)
-
-        args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
-        # Note that DistributedSampler samples randomly
-        eval_sampler = SequentialSampler(eval_dataset)
-        eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
         # multi-gpu eval
         if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
@@ -669,7 +664,14 @@ def main():
     # if args.do_train:
     train_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
     train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
-    global_step, tr_loss = train(args, train_dataset, model, tokenizer)
+
+    test_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
+    eval_dataset = load_and_cache_examples(args, eval_task, test_filename, tokenizer, evaluate=True)
+    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+    eval_sampler = SequentialSampler(eval_dataset)
+    eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
+
+    global_step, tr_loss = train(args, train_dataset, eval_dataloader, model, tokenizer)
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
     # Saving best-practices: if you use defaults names for the model, you can reload it using from_pretrained()
@@ -696,7 +698,7 @@ def main():
     #     model.to(args.device)
 
     # Evaluation
-    result = evaluate(args, model, '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', tokenizer)
+
     # results = {}
     # if args.do_eval and args.local_rank in [-1, 0]:
     #     tokenizer = AutoTokenizer.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
@@ -717,7 +719,7 @@ def main():
     #         result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
     #         results.update(result)
 
-    print(results)
+    # print(results)
 
 
 if __name__ == "__main__":
