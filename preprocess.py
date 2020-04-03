@@ -392,9 +392,11 @@ def load_DUC_train():
     writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt', 'w', 'utf-8')
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_model.to(device)
 
     gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    gpt2_model.to(device)
 
     size = 0
     for foldername in trainfolder_namelist:
@@ -549,9 +551,9 @@ if __name__ == "__main__":
     # sum_str = 'to save time, we only use the first summary to generate negative ones'
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
-    # load_DUC_train()
+    load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail()
+    # load_CNN_DailyMail()
 
     '''
     CUDA_VISIBLE_DEVICES=0
