@@ -444,7 +444,7 @@ def get_DUC_examples(filename):
 
 def main():
     '''
-    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large-mnli --task_name rte
+    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
     '''
     parser = argparse.ArgumentParser()
 
@@ -503,7 +503,7 @@ def main():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=500,
+        default=400,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
         "than this will be truncated, sequences shorter will be padded.",
