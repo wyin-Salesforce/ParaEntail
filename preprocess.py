@@ -32,31 +32,34 @@ def load_CNN_DailyMail():
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
     gpt2_model.to(device)
 
-    file_prefix = ['train']#['train', 'val', 'test']
+    file_prefix = ['val']#['train', 'val', 'test']
     for fil_prefix in file_prefix:
         readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
         writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.txt'
         readfile = codecs.open(readfil, 'r', 'utf-8')
-        writefile = codecs.open(writefil, 'w', 'utf-8')
+        # writefile = codecs.open(writefil, 'w', 'utf-8')
         size = 0
         prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
         for line in readfile:
             parts = line.strip().split('\t')
             if len(parts) == 2:
+                size+=1
+                if size <= 3500:
+                    continue
                 doc_str = parts[0].strip()
-                writefile.write('document>>' +'\t'+doc_str+'\n')
+                # writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
-                writefile.write('positive>>' +'\t'+ sum_str+'\n')
+                # writefile.write('positive>>' +'\t'+ sum_str+'\n')
                 neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
                 prior_unrelated_doc = doc_str
                 for id, neg_sum in enumerate(neg_sum_list):
-                    writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
-                writefile.write('\n')
-                size+=1
+                    # writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
+                # writefile.write('\n')
+                # size+=1
                 if size % 500 == 0:
                     print(fil_prefix, ' doc size:', size)
         readfile.close()
-        writefile.close()
+        # writefile.close()
 
 def load_per_docs_file(fil):
     print('fil:', fil)
