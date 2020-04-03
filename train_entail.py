@@ -503,7 +503,7 @@ def main():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=400,
+        default=300,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
         "than this will be truncated, sequences shorter will be padded.",
