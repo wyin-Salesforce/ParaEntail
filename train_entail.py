@@ -330,8 +330,8 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         elif args.output_mode == "regression":
             preds = np.squeeze(preds)
 
-        # print('preds:', preds)
-        # print('out_label_ids:', out_label_ids)
+        print('preds:', sum(preds), len(preds))
+        print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
         result = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
         print('\t\t\t test F1:', result)
         # exit(0)
