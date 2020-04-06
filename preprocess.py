@@ -16,6 +16,7 @@ from transformers import AutoModelWithLMHead, AutoTokenizer
 # from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
 import numpy as np
+import xmltodict
 
 seed = 400
 random.seed(seed)
@@ -551,6 +552,14 @@ def load_DUC_test():
     writefile.close()
 
 
+def load_MCTest(filenames, prefix):
+    path = '/export/home/Dataset/para_entail_datasets/MCTest/'
+    writefile = codecs.open(path+prefix+'_in_entail.txt')
+    for filename in filenames:
+        readfile = codecs.open(path+'Statements/'+filename, 'r', 'utf-8')
+        doc = xmltodict.parse(readfile.read())
+        print(len(doc['devset']))
+        print(doc['devset'][0])
 
 
 
@@ -562,7 +571,8 @@ if __name__ == "__main__":
 
     # load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail()
+    # load_CNN_DailyMail()
+    load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
 
     '''
     CUDA_VISIBLE_DEVICES=0
