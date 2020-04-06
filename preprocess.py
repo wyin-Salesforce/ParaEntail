@@ -564,7 +564,7 @@ def load_MCTest(filenames, prefix):
             print('dictt:', dictt)
             doc_str = dictt['t']
             sum_str = dictt['h']
-            label = dictt['entailment']
+            label = dictt['@entailment']
             print(doc_str)
             print(sum_str)
             print(label)
