@@ -561,6 +561,7 @@ def load_MCTest(filenames, prefix):
         size = len(file_content['devset']['pair'])
         for i in range(size):
             dictt = file_content['devset']['pair'][i]
+            print('dictt:', dictt)
             doc_str = dictt['t']
             sum_str = dictt['h']
             label = dictt['entailment']
