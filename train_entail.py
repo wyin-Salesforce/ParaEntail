@@ -117,21 +117,6 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
         optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=t_total
     )
 
-    # Check if saved optimizer or scheduler states exist
-    if os.path.isfile(os.path.join(args.model_name_or_path, "optimizer.pt")) and os.path.isfile(
-        os.path.join(args.model_name_or_path, "scheduler.pt")
-    ):
-        # Load in optimizer and scheduler states
-        optimizer.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "optimizer.pt")))
-        scheduler.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "scheduler.pt")))
-
-    if args.fp16:
-        try:
-            from apex import amp
-        except ImportError:
-            raise ImportError("Please install apex from https://www.github.com/nvidia/apex to use fp16 training.")
-        model, optimizer = amp.initialize(model, optimizer, opt_level=args.fp16_opt_level)
-
     # multi-gpu training (should be after apex fp16 initialization)
     if args.n_gpu > 1:
         model = torch.nn.DataParallel(model)
