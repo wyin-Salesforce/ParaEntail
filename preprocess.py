@@ -558,8 +558,8 @@ def load_MCTest(filenames, prefix):
     for filename in filenames:
         readfile = codecs.open(path+'Statements/'+filename, 'r', 'utf-8')
         doc = xmltodict.parse(readfile.read())
-        print(len(doc['devset']))
-        print(doc['devset'][0])
+        # print(len(doc['devset']))
+        print(doc['devset']['pair']['t'])
 
 
 
