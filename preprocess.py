@@ -554,7 +554,7 @@ def load_DUC_test():
 
 def load_MCTest(filenames, prefix):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
-    writefile = codecs.open(path+prefix+'_in_entail.txt')
+    writefile = codecs.open(path+prefix+'_in_entail.txt', 'w', 'utf-8')
     for filename in filenames:
         readfile = codecs.open(path+'Statements/'+filename, 'r', 'utf-8')
         doc = xmltodict.parse(readfile.read())
