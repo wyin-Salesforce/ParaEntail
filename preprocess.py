@@ -555,20 +555,28 @@ def load_DUC_test():
 def load_MCTest(filenames, prefix):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
     writefile = codecs.open(path+prefix+'_in_entail.txt', 'w', 'utf-8')
+    co = 0
     for filename in filenames:
         readfile = codecs.open(path+'Statements/'+filename, 'r', 'utf-8')
         file_content = xmltodict.parse(readfile.read())
         size = len(file_content['devset']['pair'])
         for i in range(size):
             dictt = file_content['devset']['pair'][i]
-            print('dictt:', dictt)
+            # print('dictt:', dictt)
             doc_str = dictt['t']
             sum_str = dictt['h']
             label = dictt['@entailment']
-            print(doc_str)
-            print(sum_str)
-            print(label)
-            exit(0)
+            if label == 'UNKNOWN':
+                writefile.write('non_entailment'+'\t'+doc_str.strip()+'\t'+sum_str.strip()+'\n')
+            else:
+                writefile.write('entailment'+'\t'+doc_str.strip()+'\t'+sum_str.strip()+'\n')
+            co+=1
+            if co % 50 ==0:
+                print('write size:', co)
+        readfile.close()
+    writefile.close()
+
+
 
         # print(len(doc['devset']['pair']))
         # print(doc['devset']['pair'][0])
@@ -585,6 +593,8 @@ if __name__ == "__main__":
     # load_DUC_test()
     # load_CNN_DailyMail()
     load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
+    load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
+    load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
 
     '''
     CUDA_VISIBLE_DEVICES=0
