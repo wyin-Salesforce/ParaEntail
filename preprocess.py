@@ -557,11 +557,20 @@ def load_MCTest(filenames, prefix):
     writefile = codecs.open(path+prefix+'_in_entail.txt', 'w', 'utf-8')
     for filename in filenames:
         readfile = codecs.open(path+'Statements/'+filename, 'r', 'utf-8')
-        doc = xmltodict.parse(readfile.read())
-        # print(len(doc['devset']))
-        # print(doc['devset'])
-        print(len(doc['devset']['pair']))
-        print(doc['devset']['pair'][0])
+        file_content = xmltodict.parse(readfile.read())
+        size = len(file_content['devset']['pair'])
+        for i in range(size):
+            dictt = file_content['devset']['pair'][i]
+            doc_str = dictt['t']
+            sum_str = dictt['h']
+            label = dictt['entailment']
+            print(doc_str)
+            print(sum_str)
+            print(label)
+            exit(0)
+
+        # print(len(doc['devset']['pair']))
+        # print(doc['devset']['pair'][0])
 
 
 
