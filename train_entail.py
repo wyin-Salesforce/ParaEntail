@@ -92,6 +92,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
 
+    max_test_f1 = 0.0
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
@@ -212,7 +213,11 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 global_step += 1
 
                 if global_step % 50 == 0:
-                    result = evaluate(args, model, tokenizer, eval_dataloader)
+                    test_f1 = evaluate(args, model, tokenizer, eval_dataloader)
+                    if test_f1 > max_test_f1:
+                        max_test_f1 = test_f1
+                    print('>>test_f1:', test_f1, ' max_test_f1:', max_test_f1)
+
                     # print('test result:', result)
                 # if args.local_rank in [-1, 0] and args.logging_steps > 0 and global_step % args.logging_steps == 0:
                 #     logs = {}
@@ -318,20 +323,9 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
 
         print('preds:', sum(preds), len(preds))
         print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
-        result = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
-        print('\t\t\t test F1:', result)
-        # exit(0)
-        # result = compute_metrics(eval_task, preds, out_label_ids)
-        # results.update(result)
+        f1 = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
+    return f1
 
-        # output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.txt")
-        # with open(output_eval_file, "w") as writer:
-        #     logger.info("***** Eval results {} *****".format(prefix))
-        #     for key in sorted(result.keys()):
-        #         logger.info("  %s = %s", key, str(result[key]))
-        #         writer.write("%s = %s\n" % (key, str(result[key])))
-
-    # return results
 
 
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
@@ -418,9 +412,9 @@ def get_DUC_examples(filename):
                 guid_id+=1
                 neg_hypo = parts[2].strip()
                 rand_prob = random.uniform(0, 1)
-                if rand_prob > 3/4:
-                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                    neg_size+=1
+                # if rand_prob > 3/5:
+                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
     return examples
@@ -510,7 +504,7 @@ def main():
         default=1,
         help="Number of updates steps to accumulate before performing a backward/update pass.",
     )
-    parser.add_argument("--learning_rate", default=5e-6, type=float, help="The initial learning rate for Adam.")
+    parser.add_argument("--learning_rate", default=1e-6, type=float, help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=0.0, type=float, help="Weight decay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float, help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float, help="Max gradient norm.")
