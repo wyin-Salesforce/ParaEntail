@@ -420,7 +420,7 @@ def get_DUC_examples(filename):
                     neg_size+=1
                 else:
                     rand_prob = random.uniform(0, 1)
-                    if rand_prob > 3/5:
+                    if rand_prob > 3/4:
                         examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                         neg_size+=1
 
