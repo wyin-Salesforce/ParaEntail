@@ -412,6 +412,8 @@ def get_DUC_examples(filename):
     start = False
     examples = []
     guid_id = -1
+    pos_size = 0
+    neg_size = 0
     for line in readfile:
         if len(line.strip()) == 0:
             start = False
@@ -424,22 +426,14 @@ def get_DUC_examples(filename):
                 guid_id+=1
                 pos_hypo = parts[1].strip()
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
-            elif parts[0] == 'negative>>':
+                pos_size+=1
+            elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
                 neg_hypo = parts[2].strip()
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-    #
-    #
-    #
-    # examples = []
-    # for (i, line) in enumerate(lines):
-    #     if i == 0:
-    #         continue
-    #     guid = "%s-%s" % (set_type, line[0])
-    #     text_a = line[1]
-    #     text_b = line[2]
-    #     label = line[-1]
-    #     examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+                neg_size+=1
+
+    print('>>pos:neg: ', pos_size, neg_size)
     return examples
 
 def main():
