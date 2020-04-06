@@ -32,8 +32,6 @@ from tqdm import tqdm, trange
 from transformers.data.processors.utils import InputExample
 from collections import OrderedDict
 import codecs
-import warnings
-warnings.filterwarnings('always')
 
 
 
@@ -514,7 +512,7 @@ def main():
         default=1,
         help="Number of updates steps to accumulate before performing a backward/update pass.",
     )
-    parser.add_argument("--learning_rate", default=1e-6, type=float, help="The initial learning rate for Adam.")
+    parser.add_argument("--learning_rate", default=5e-6, type=float, help="The initial learning rate for Adam.")
     parser.add_argument("--weight_decay", default=0.0, type=float, help="Weight decay if we apply some.")
     parser.add_argument("--adam_epsilon", default=1e-8, type=float, help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float, help="Max gradient norm.")
