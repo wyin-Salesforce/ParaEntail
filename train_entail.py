@@ -408,6 +408,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
 
 def get_DUC_examples(filename):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
+    print('loading...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
     start = False
     examples = []
@@ -430,16 +431,16 @@ def get_DUC_examples(filename):
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
                 neg_hypo = parts[2].strip()
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                neg_size+=1
+                rand_prob = random.uniform(0, 1)
+                if rand_prob > 3/4:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                    neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
     return examples
 
 def main():
-    '''
-    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
-    '''
+
     parser = argparse.ArgumentParser()
 
     # Required parameters
@@ -674,53 +675,11 @@ def main():
     global_step, tr_loss = train(args, train_dataset, eval_dataloader, model, tokenizer)
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
-    # Saving best-practices: if you use defaults names for the model, you can reload it using from_pretrained()
-    # if args.do_train and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
-    #     # Create output directory if needed
-    #     if not os.path.exists(args.output_dir) and args.local_rank in [-1, 0]:
-    #         os.makedirs(args.output_dir)
-    #
-    #     logger.info("Saving model checkpoint to %s", args.output_dir)
-    #     # Save a trained model, configuration and tokenizer using `save_pretrained()`.
-    #     # They can then be reloaded using `from_pretrained()`
-    #     model_to_save = (
-    #         model.module if hasattr(model, "module") else model
-    #     )  # Take care of distributed/parallel training
-    #     model_to_save.save_pretrained(args.output_dir)
-    #     tokenizer.save_pretrained(args.output_dir)
-    #
-    #     # Good practice: save your training arguments together with the trained model
-    #     torch.save(args, os.path.join(args.output_dir, "training_args.bin"))
-    #
-    #     # Load a trained model and vocabulary that you have fine-tuned
-    #     model = AutoModelForSequenceClassification.from_pretrained(args.output_dir)
-    #     tokenizer = AutoTokenizer.from_pretrained(args.output_dir)
-    #     model.to(args.device)
-
-    # Evaluation
-
-    # results = {}
-    # if args.do_eval and args.local_rank in [-1, 0]:
-    #     tokenizer = AutoTokenizer.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
-    #     checkpoints = [args.output_dir]
-    #     if args.eval_all_checkpoints:
-    #         checkpoints = list(
-    #             os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + "/**/" + WEIGHTS_NAME, recursive=True))
-    #         )
-    #         logging.getLogger("transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
-    #     logger.info("Evaluate the following checkpoints: %s", checkpoints)
-    #     for checkpoint in checkpoints:
-    #         global_step = checkpoint.split("-")[-1] if len(checkpoints) > 1 else ""
-    #         prefix = checkpoint.split("/")[-1] if checkpoint.find("checkpoint") != -1 else ""
-    #
-    #         model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
-    #         model.to(args.device)
-    #         result = evaluate(args, model, tokenizer, prefix=prefix)
-    #         result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
-    #         results.update(result)
-
-    # print(results)
 
 
 if __name__ == "__main__":
     main()
+
+    '''
+    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
+    '''
