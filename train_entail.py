@@ -32,6 +32,11 @@ from tqdm import tqdm, trange
 from transformers.data.processors.utils import InputExample
 from collections import OrderedDict
 import codecs
+import warnings
+warnings.filterwarnings('always')
+
+
+
 from transformers import (
     # MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING,
     WEIGHTS_NAME,
@@ -411,10 +416,15 @@ def get_DUC_examples(filename):
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
                 neg_hypo = parts[2].strip()
-                rand_prob = random.uniform(0, 1)
-                # if rand_prob > 3/5:
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                neg_size+=1
+
+                if filename.find('train_in_entail') > -1:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                    neg_size+=1
+                else:
+                    rand_prob = random.uniform(0, 1)
+                    if rand_prob > 3/5:
+                        examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                        neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
     return examples
