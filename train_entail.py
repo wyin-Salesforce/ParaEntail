@@ -32,7 +32,7 @@ from tqdm import tqdm, trange
 from transformers.data.processors.utils import InputExample
 from collections import OrderedDict
 import codecs
-
+from load_data import load_train_data, load_test_data
 
 
 from transformers import (
@@ -215,7 +215,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 model.zero_grad()
                 global_step += 1
 
-                if global_step % 50 == 0:
+                if global_step % 500 == 0:
                     test_f1 = evaluate(args, model, tokenizer, eval_dataloader)
                     if test_f1 > max_test_f1:
                         max_test_f1 = test_f1
@@ -359,7 +359,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # examples = (
     #     processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
     # )
-    examples = get_DUC_examples(filename)
+    # examples = get_DUC_examples(filename)
+    if filename == 'train':
+        examples = load_train_data()
+    else:
+        examples = load_test_data()
     features = convert_examples_to_features(
         examples,
         tokenizer,
@@ -652,11 +656,13 @@ def main():
     # Training
     # if args.do_train:
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
-    train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
+    # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
+    train_filename = 'train'
     train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
     # test_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
-    test_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/val_in_entail.txt'
+    # test_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/val_in_entail.txt'
+    test_filename = 'test'
     eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     eval_sampler = SequentialSampler(eval_dataset)

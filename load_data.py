@@ -154,7 +154,7 @@ def get_ANLI_examples(prefix):
 
 
 def load_train_data():
-    '''train size: 1120541  pos size: 269096'''
+    '''train size: 1120541  pos size: 269096; 24.01%'''
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('train')
     '''CNN'''
@@ -169,9 +169,10 @@ def load_train_data():
     train_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
     pos_size = duc_pos_size+cnn_pos_size+mctest_pos_size+fever_pos_size+anli_pos_size
     print('train size:', len(train_examples), ' pos size:', pos_size)
+    return train_examples
 
 def load_test_data():
-    '''train size: 1120541  pos size: 269096'''
+    '''test size: 125646  pos size: 14309; 11.38%'''
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('test')
     '''CNN'''
@@ -183,9 +184,10 @@ def load_test_data():
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples('test')
 
-    train_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
+    test_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
     pos_size = duc_pos_size+cnn_pos_size+mctest_pos_size+fever_pos_size+anli_pos_size
-    print('test size:', len(train_examples), ' pos size:', pos_size)
+    print('test size:', len(test_examples), ' pos size:', pos_size)
+    return test_examples
 
 if __name__ == "__main__":
     # load_train_data()
