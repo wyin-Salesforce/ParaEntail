@@ -1,5 +1,6 @@
 import json_lines
 import codecs
+from transformers.data.processors.utils import InputExample
 
 def get_DUC_examples(prefix):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
