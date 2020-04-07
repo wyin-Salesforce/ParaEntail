@@ -1,5 +1,5 @@
 import json_lines
-
+import codecs
 
 def get_DUC_examples(prefix):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -40,6 +40,7 @@ def get_DUC_examples(prefix):
                 #         neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
+    print('size:', len(examples))
     return examples
 
 
@@ -81,6 +82,7 @@ def get_CNN_DailyMail_examples(prefix):
                 #         neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
+    print('size:', len(examples))
     return examples
 
 def get_MCTest_examples(prefix):
@@ -96,6 +98,7 @@ def get_MCTest_examples(prefix):
             hypothesis = parts[2]
             label = parts[0]
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+    print('size:', len(examples))
     return examples
 
 def get_FEVER_examples(prefix):
@@ -113,6 +116,7 @@ def get_FEVER_examples(prefix):
             hypothesis = line.get('query')
             label = 'entailment' if line.get('label') == 'SUPPORTS' else 'non_entailment'
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+    print('size:', len(examples))
     return examples
 
 def get_ANLI_examples(prefix):
@@ -128,6 +132,7 @@ def get_ANLI_examples(prefix):
                 hypothesis = line.get('hypothesis')
                 label = 'entailment' if line.get('label') == 'e' else 'non_entailment'
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+    print('size:', len(examples))
     return examples
 
 
