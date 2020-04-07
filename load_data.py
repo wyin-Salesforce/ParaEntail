@@ -188,4 +188,5 @@ def load_test_data():
     print('test size:', len(train_examples), ' pos size:', pos_size)
 
 if __name__ == "__main__":
-    load_train_data()
+    # load_train_data()
+    load_test_data()
