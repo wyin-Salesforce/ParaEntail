@@ -100,7 +100,7 @@ def get_MCTest_examples(prefix):
         if len(parts) ==3:
             premise = parts[1]
             hypothesis = parts[2]
-            label = parts[0]
+            label = 'entailment' if parts[0] == 'entailment' else 'not_entailment'
             if label == 'entailment':
                 pos_size+=1
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
@@ -122,7 +122,7 @@ def get_FEVER_examples(prefix):
             guid_id+=1
             premise = line.get('context')
             hypothesis = line.get('query')
-            label = 'entailment' if line.get('label') == 'SUPPORTS' else 'non_entailment'
+            label = 'entailment' if line.get('label') == 'SUPPORTS' else 'not_entailment'
             if label == 'entailment':
                 pos_size+=1
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
@@ -143,7 +143,7 @@ def get_ANLI_examples(prefix):
                 guid_id+=1
                 premise = line.get('context')
                 hypothesis = line.get('hypothesis')
-                label = 'entailment' if line.get('label') == 'e' else 'non_entailment'
+                label = 'entailment' if line.get('label') == 'e' else 'not_entailment'
                 if label == 'entailment':
                     pos_size+=1
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
