@@ -353,6 +353,8 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # else:
     # logger.info("Creating features from dataset file at %s", args.data_dir)
     label_list = processor.get_labels()
+    print('label_list:', label_list)
+    exit(0)
     if task in ["mnli", "mnli-mm"] and args.model_type in ["roberta", "xlmroberta"]:
         # HACK(label indices are swapped in RoBERTa pretrained model)
         label_list[1], label_list[2] = label_list[2], label_list[1]
