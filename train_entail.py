@@ -660,12 +660,13 @@ def main():
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
     train_filename = 'train'
-    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
     # test_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
     # test_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/val_in_entail.txt'
     test_filename = 'test'
     eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
+    exit(0)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     eval_sampler = SequentialSampler(eval_dataset)
     eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)

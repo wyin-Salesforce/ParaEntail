@@ -24,11 +24,19 @@ def get_DUC_examples(prefix):
             elif parts[0] == 'positive>>':
                 guid_id+=1
                 pos_hypo = parts[1].strip()
+                if len(premise) == 0 or len(pos_hypo)==0:
+                    print('premise:', premise)
+                    print('hypothesis:', pos_hypo)
+                    exit(0)
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
                 neg_hypo = parts[2].strip()
+                if len(premise) == 0 or len(neg_hypo)==0:
+                    print('premise:', premise)
+                    print('hypothesis:', neg_hypo)
+                    exit(0)
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # if filename.find('train_in_entail') > -1:
@@ -67,6 +75,10 @@ def get_CNN_DailyMail_examples(prefix):
             elif parts[0] == 'positive>>':
                 guid_id+=1
                 pos_hypo = parts[1].strip()
+                if len(premise) == 0 or len(pos_hypo)==0:
+                    print('premise:', premise)
+                    print('hypothesis:', pos_hypo)
+                    exit(0)
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
@@ -74,6 +86,10 @@ def get_CNN_DailyMail_examples(prefix):
                 neg_hypo = parts[2].strip()
 
                 # if filename.find('train_in_entail') > -1:
+                if len(premise) == 0 or len(neg_hypo)==0:
+                    print('premise:', premise)
+                    print('neg_hypo:', neg_hypo)
+                    exit(0)
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # else:
@@ -103,6 +119,10 @@ def get_MCTest_examples(prefix):
             label = 'entailment' if parts[0] == 'entailment' else 'not_entailment'
             if label == 'entailment':
                 pos_size+=1
+            if len(premise) == 0 or len(hypothesis)==0:
+                print('premise:', premise)
+                print('hypothesis:', hypothesis)
+                exit(0)
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
@@ -125,6 +145,10 @@ def get_FEVER_examples(prefix):
             label = 'entailment' if line.get('label') == 'SUPPORTS' else 'not_entailment'
             if label == 'entailment':
                 pos_size+=1
+            if len(premise) == 0 or len(hypothesis)==0:
+                print('premise:', premise)
+                print('hypothesis:', hypothesis)
+                exit(0)
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
@@ -146,6 +170,10 @@ def get_ANLI_examples(prefix):
                 label = 'entailment' if line.get('label') == 'e' else 'not_entailment'
                 if label == 'entailment':
                     pos_size+=1
+                if len(premise) == 0 or len(hypothesis)==0:
+                    print('premise:', premise)
+                    print('hypothesis:', hypothesis)
+                    exit(0)
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
