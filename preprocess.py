@@ -584,13 +584,15 @@ def load_MCTest(filenames, prefix):
         # print(doc['devset']['pair'][0])
 
 def recover_FEVER_dev_test_labels():
-    readfile = codecs.open('/export/home/Dataset/FEVER_paper_version/paper_dev.jsonl', 'r', 'utf-8')
+    files = ['paper_dev.jsonl', 'paper_test.jsonl']
     id2label = {}
-    for line in json_lines.reader(readfile):
-        id = line.get('id')
-        label = line.get('label')
-        id2label[str(id)] =  label
-    readfile.close()
+    for fil in files:
+        readfile = codecs.open('/export/home/Dataset/FEVER_paper_version/'+fil, 'r', 'utf-8')
+        for line in json_lines.reader(readfile):
+            id = line.get('id')
+            label = line.get('label')
+            id2label[str(id)] =  label
+        readfile.close()
     readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.jsonl', 'r', 'utf-8')
     writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w', 'utf-8')
 
