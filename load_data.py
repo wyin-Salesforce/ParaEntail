@@ -25,8 +25,8 @@ def get_DUC_examples(prefix):
                 guid_id+=1
                 pos_hypo = parts[1].strip()
                 if len(premise) == 0 or len(pos_hypo)==0:
-                    print('DUC premise:', premise)
-                    print('hypothesis:', pos_hypo)
+                    # print('DUC premise:', premise)
+                    # print('hypothesis:', pos_hypo)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
@@ -34,8 +34,8 @@ def get_DUC_examples(prefix):
                 guid_id+=1
                 neg_hypo = parts[2].strip()
                 if len(premise) == 0 or len(neg_hypo)==0:
-                    print('DUC premise:', premise)
-                    print('hypothesis:', neg_hypo)
+                    # print('DUC premise:', premise)
+                    # print('hypothesis:', neg_hypo)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
@@ -76,8 +76,8 @@ def get_CNN_DailyMail_examples(prefix):
                 guid_id+=1
                 pos_hypo = parts[1].strip()
                 if len(premise) == 0 or len(pos_hypo)==0:
-                    print('CNN premise:', premise)
-                    print('hypothesis:', pos_hypo)
+                    # print('CNN premise:', premise)
+                    # print('hypothesis:', pos_hypo)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
@@ -87,8 +87,8 @@ def get_CNN_DailyMail_examples(prefix):
 
                 # if filename.find('train_in_entail') > -1:
                 if len(premise) == 0 or len(neg_hypo)==0:
-                    print('CNN premise:', premise)
-                    print('neg_hypo:', neg_hypo)
+                    # print('CNN premise:', premise)
+                    # print('neg_hypo:', neg_hypo)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
@@ -120,8 +120,8 @@ def get_MCTest_examples(prefix):
             if label == 'entailment':
                 pos_size+=1
             if len(premise) == 0 or len(hypothesis)==0:
-                print('MCTest premise:', premise)
-                print('hypothesis:', hypothesis)
+                # print('MCTest premise:', premise)
+                # print('hypothesis:', hypothesis)
                 continue
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('MCTest size:', len(examples))
@@ -149,10 +149,10 @@ def get_FEVER_examples(prefix):
             if label == 'entailment':
                 pos_size+=1
             if len(premise) == 0 or len(hypothesis)==0:
-                print('FEVER premise:', premise)
-                print('hypothesis:', hypothesis)
-                print(line)
-                exit(0)
+                # print('FEVER premise:', premise)
+                # print('hypothesis:', hypothesis)
+                # print(line)
+                # exit(0)
                 continue
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('FEVER size:', len(examples))
@@ -176,8 +176,8 @@ def get_ANLI_examples(prefix):
                 if label == 'entailment':
                     pos_size+=1
                 if len(premise) == 0 or len(hypothesis)==0:
-                    print('ANLI premise:', premise)
-                    print('hypothesis:', hypothesis)
+                    # print('ANLI premise:', premise)
+                    # print('hypothesis:', hypothesis)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('ANLI size:', len(examples))
