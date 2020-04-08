@@ -581,6 +581,28 @@ def load_MCTest(filenames, prefix):
         # print(len(doc['devset']['pair']))
         # print(doc['devset']['pair'][0])
 
+def recover_FEVER_dev_test_labels():
+    readfile = codecs.open('/export/home/Dataset/FEVER_paper_version/paper_dev.jsonl', 'r', 'utf-8')
+    id2label = {}
+    for line in json_lines.reader(readfile):
+        id = line.get('id')
+        label = line.get('label')
+        id2label[str(id)] ==  label
+    readfile.close()
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.jsonl', 'r', 'utf-8')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w', 'utf-8')
+
+    for line in json_lines.reader(readfile):
+        id = line.get('cid')
+        gold_label = id2label.get(id)
+        if gold_label is None:
+            print(line)
+            exit(0)
+        line['label'] = gold_label
+        writefile.write(line+'\n')
+    readfile.close()
+    writefile.close()
+    print('recover over')
 
 
 if __name__ == "__main__":
@@ -592,10 +614,11 @@ if __name__ == "__main__":
     # load_DUC_train()
     # load_DUC_test()
     # load_CNN_DailyMail()
-    load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
-    load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
-    load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
+    # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
+    # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
+    # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
 
+    recover_FEVER_dev_test_labels()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
