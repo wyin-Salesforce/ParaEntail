@@ -17,6 +17,7 @@ from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers import pipeline
 import numpy as np
 import xmltodict
+import json_lines
 
 seed = 400
 random.seed(seed)
