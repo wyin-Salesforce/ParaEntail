@@ -49,7 +49,7 @@ def get_DUC_examples(prefix):
                 #         neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
-    print('size:', len(examples))
+    print('DUC size:', len(examples))
     return examples, pos_size
 
 
@@ -99,7 +99,7 @@ def get_CNN_DailyMail_examples(prefix):
                 #         neg_size+=1
 
     print('>>pos:neg: ', pos_size, neg_size)
-    print('size:', len(examples))
+    print('CNN size:', len(examples))
     return examples, pos_size
 
 def get_MCTest_examples(prefix):
@@ -124,16 +124,19 @@ def get_MCTest_examples(prefix):
                 print('hypothesis:', hypothesis)
                 continue
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
-    print('size:', len(examples))
+    print('MCTest size:', len(examples))
     return examples, pos_size
 
 def get_FEVER_examples(prefix):
     '''
     train_fitems.jsonl, dev_fitems.jsonl, test_fitems.jsonl
+    dev_fitems.label.recovered.jsonl
     '''
     examples = []
     path = '/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/'
     filename = path+prefix+'_fitems.jsonl'
+    if prefix == 'test':
+        filename = path+'dev_fitems.label.recovered.jsonl'
     print('loading FEVER...', filename)
     guid_id = 0
     pos_size = 0
@@ -150,7 +153,7 @@ def get_FEVER_examples(prefix):
                 print('hypothesis:', hypothesis)
                 continue
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
-    print('size:', len(examples))
+    print('FEVER size:', len(examples))
     return examples, pos_size
 
 def get_ANLI_examples(prefix):
@@ -175,7 +178,7 @@ def get_ANLI_examples(prefix):
                     print('hypothesis:', hypothesis)
                     continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
-    print('size:', len(examples))
+    print('ANLI size:', len(examples))
     return examples, pos_size
 
 
