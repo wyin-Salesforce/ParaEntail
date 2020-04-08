@@ -680,5 +680,5 @@ if __name__ == "__main__":
     main()
 
     '''
-    CUDA_VISIBLE_DEVICES=0 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
+    CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
     '''
