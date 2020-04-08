@@ -18,6 +18,7 @@ from transformers import pipeline
 import numpy as np
 import xmltodict
 import json_lines
+import json
 
 seed = 400
 random.seed(seed)
@@ -591,7 +592,7 @@ def recover_FEVER_dev_test_labels():
         id2label[str(id)] =  label
     readfile.close()
     readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.jsonl', 'r', 'utf-8')
-    writefile = json_lines.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w', 'utf-8')
 
     for line in json_lines.reader(readfile):
         id = line.get('cid')
@@ -600,7 +601,7 @@ def recover_FEVER_dev_test_labels():
             print(line)
             exit(0)
         line['label'] = gold_label
-        writefile.write(line+'\n')
+        writefile.write(json.dumps(line)+'\n')
     readfile.close()
     writefile.close()
     print('recover over')
