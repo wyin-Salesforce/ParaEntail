@@ -27,7 +27,7 @@ def get_DUC_examples(prefix):
                 if len(premise) == 0 or len(pos_hypo)==0:
                     print('premise:', premise)
                     print('hypothesis:', pos_hypo)
-                    exit(0)
+                    continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
@@ -36,7 +36,7 @@ def get_DUC_examples(prefix):
                 if len(premise) == 0 or len(neg_hypo)==0:
                     print('premise:', premise)
                     print('hypothesis:', neg_hypo)
-                    exit(0)
+                    continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # if filename.find('train_in_entail') > -1:
@@ -78,7 +78,7 @@ def get_CNN_DailyMail_examples(prefix):
                 if len(premise) == 0 or len(pos_hypo)==0:
                     print('premise:', premise)
                     print('hypothesis:', pos_hypo)
-                    exit(0)
+                    continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
@@ -89,7 +89,7 @@ def get_CNN_DailyMail_examples(prefix):
                 if len(premise) == 0 or len(neg_hypo)==0:
                     print('premise:', premise)
                     print('neg_hypo:', neg_hypo)
-                    exit(0)
+                    continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # else:
@@ -122,7 +122,7 @@ def get_MCTest_examples(prefix):
             if len(premise) == 0 or len(hypothesis)==0:
                 print('premise:', premise)
                 print('hypothesis:', hypothesis)
-                exit(0)
+                continue
             examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
@@ -148,7 +148,7 @@ def get_FEVER_examples(prefix):
             if len(premise) == 0 or len(hypothesis)==0:
                 print('premise:', premise)
                 print('hypothesis:', hypothesis)
-                exit(0)
+                continue
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
@@ -173,7 +173,7 @@ def get_ANLI_examples(prefix):
                 if len(premise) == 0 or len(hypothesis)==0:
                     print('premise:', premise)
                     print('hypothesis:', hypothesis)
-                    exit(0)
+                    continue
                 examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('size:', len(examples))
     return examples, pos_size
