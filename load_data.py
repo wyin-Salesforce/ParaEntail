@@ -151,6 +151,8 @@ def get_FEVER_examples(prefix):
             if len(premise) == 0 or len(hypothesis)==0:
                 print('FEVER premise:', premise)
                 print('hypothesis:', hypothesis)
+                print(line)
+                exit(0)
                 continue
             examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('FEVER size:', len(examples))
