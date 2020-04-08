@@ -588,7 +588,7 @@ def recover_FEVER_dev_test_labels():
     for line in json_lines.reader(readfile):
         id = line.get('id')
         label = line.get('label')
-        id2label[str(id)] ==  label
+        id2label[str(id)] =  label
     readfile.close()
     readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.jsonl', 'r', 'utf-8')
     writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w', 'utf-8')
