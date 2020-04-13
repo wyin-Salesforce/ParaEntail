@@ -220,7 +220,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                     if test_f1 > max_test_f1:
                         max_test_f1 = test_f1
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypothesis_only/'
                         output_dir = os.path.join(raw_output_dir, "f1.{}".format(max_test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -343,9 +343,9 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_train_data(hypo_only=False)
+        examples = load_train_data(hypo_only=True)
     else:
-        examples = load_test_data(hypo_only=False)
+        examples = load_test_data(hypo_only=True)
     features = convert_examples_to_features(
         examples,
         tokenizer,
@@ -658,7 +658,9 @@ def main():
 
 if __name__ == "__main__":
     main()
-
     '''
-    CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail.py --model_type roberta --model_name_or_path roberta-large --task_name rte
+    this program is a copy of the train_entail.py; it uses roberta-large for NLI
+    '''
+    '''
+    CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail_hypothesis_only.py --model_type roberta --model_name_or_path roberta-large --task_name rte > log.hypo.only.20200413.txt 2>&1
     '''

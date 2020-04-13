@@ -2,7 +2,7 @@ import json_lines
 import codecs
 from transformers.data.processors.utils import InputExample
 
-def get_DUC_examples(prefix):
+def get_DUC_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/DUC/'
     filename = path+prefix+'_in_entail.txt'
@@ -28,7 +28,11 @@ def get_DUC_examples(prefix):
                     # print('DUC premise:', premise)
                     # print('hypothesis:', pos_hypo)
                     continue
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
@@ -37,7 +41,11 @@ def get_DUC_examples(prefix):
                     # print('DUC premise:', premise)
                     # print('hypothesis:', neg_hypo)
                     continue
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=None, label='not_entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # if filename.find('train_in_entail') > -1:
                 #     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
@@ -53,7 +61,7 @@ def get_DUC_examples(prefix):
     return examples, pos_size
 
 
-def get_CNN_DailyMail_examples(prefix):
+def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
     filename = path+prefix+'_in_entail.txt'
@@ -79,7 +87,10 @@ def get_CNN_DailyMail_examples(prefix):
                     # print('CNN premise:', premise)
                     # print('hypothesis:', pos_hypo)
                     continue
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
                 pos_size+=1
             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
                 guid_id+=1
@@ -90,7 +101,11 @@ def get_CNN_DailyMail_examples(prefix):
                     # print('CNN premise:', premise)
                     # print('neg_hypo:', neg_hypo)
                     continue
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=None, label='not_entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
                 # else:
                 #     rand_prob = random.uniform(0, 1)
@@ -102,7 +117,7 @@ def get_CNN_DailyMail_examples(prefix):
     print('CNN size:', len(examples))
     return examples, pos_size
 
-def get_MCTest_examples(prefix):
+def get_MCTest_examples(prefix, hypo_only=False):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
     filename = path+prefix+'_in_entail.txt'
     print('loading MCTest...', filename)
@@ -123,11 +138,15 @@ def get_MCTest_examples(prefix):
                 # print('MCTest premise:', premise)
                 # print('hypothesis:', hypothesis)
                 continue
-            examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+
+            if hypo_only:
+                examples.append(InputExample(guid=prefix+str(guid_id), text_a=hypothesis, text_b=None, label=label))
+            else:
+                examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('MCTest size:', len(examples))
     return examples, pos_size
 
-def get_FEVER_examples(prefix):
+def get_FEVER_examples(prefix, hypo_only=False):
     '''
     train_fitems.jsonl, dev_fitems.jsonl, test_fitems.jsonl
     dev_fitems.label.recovered.jsonl
@@ -154,11 +173,15 @@ def get_FEVER_examples(prefix):
                 # print(line)
                 # exit(0)
                 continue
-            examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+
+            if hypo_only:
+                examples.append(InputExample(guid=str(guid_id), text_a=hypothesis, text_b=None, label=label))
+            else:
+                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('FEVER size:', len(examples))
     return examples, pos_size
 
-def get_ANLI_examples(prefix):
+def get_ANLI_examples(prefix, hypo_only=False):
     folders = ['R1', 'R2', 'R3']
     examples = []
     guid_id = 0
@@ -179,43 +202,46 @@ def get_ANLI_examples(prefix):
                     # print('ANLI premise:', premise)
                     # print('hypothesis:', hypothesis)
                     continue
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=hypothesis, text_b=None, label=label))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('ANLI size:', len(examples))
     return examples, pos_size
 
 
 
 
-def load_train_data():
+def load_train_data(hypo_only=False):
     '''train size: 1120541  pos size: 269096; 24.01%'''
     '''DUC'''
-    duc_examples, duc_pos_size = get_DUC_examples('train')
+    duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)
     '''CNN'''
-    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train')
+    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
     '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('train')
+    mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
     '''FEVER'''
-    fever_examples, fever_pos_size = get_FEVER_examples('train')
+    fever_examples, fever_pos_size = get_FEVER_examples('train', hypo_only=hypo_only)
     '''ANLI'''
-    anli_examples, anli_pos_size = get_ANLI_examples('train')
+    anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
     train_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
     pos_size = duc_pos_size+cnn_pos_size+mctest_pos_size+fever_pos_size+anli_pos_size
     print('train size:', len(train_examples), ' pos size:', pos_size)
     return train_examples
 
-def load_test_data():
+def load_test_data(hypo_only=False):
     '''test size: 125646  pos size: 14309; 11.38%'''
     '''DUC'''
-    duc_examples, duc_pos_size = get_DUC_examples('test')
+    duc_examples, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
-    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test')
+    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
     '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('test')
+    mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
     '''FEVER'''
-    fever_examples, fever_pos_size = get_FEVER_examples('test')
+    fever_examples, fever_pos_size = get_FEVER_examples('test', hypo_only=hypo_only)
     '''ANLI'''
-    anli_examples, anli_pos_size = get_ANLI_examples('test')
+    anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
     test_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
     pos_size = duc_pos_size+cnn_pos_size+mctest_pos_size+fever_pos_size+anli_pos_size
