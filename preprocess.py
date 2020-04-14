@@ -20,6 +20,9 @@ import xmltodict
 import json_lines
 import json
 import csv
+import pandas as pd
+
+
 seed = 400
 random.seed(seed)
 np.random.seed(seed)
@@ -610,17 +613,24 @@ def recover_FEVER_dev_test_labels():
 
 def preprocess_curation():
     filename = '/export/home/Dataset/Curation_summarization/curation-corpus/curation-corpus-base-with-articles.csv'
-    with open(filename, newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-        row_co = 0
-        for row in spamreader:
-            print(len(row))
-            print(row)
-            if row_co>0:
-                article_content = row[2].strip()
-                print('article_content:', article_content)
-                exit(0)
-            row_co+=1
+    df = pd.read_csv(filename)
+    text_list = df['article_content']
+    print('text_list length:', len(text_list))
+    print('text_list 0:', text_list[0])
+
+
+
+    # with open(filename, newline='') as csvfile:
+    #     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+    #     row_co = 0
+    #     for row in spamreader:
+    #         print(len(row))
+    #         print(row)
+    #         if row_co>0:
+    #             article_content = row[2].strip()
+    #             print('article_content:', article_content)
+    #             exit(0)
+    #         row_co+=1
 
 if __name__ == "__main__":
     # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
