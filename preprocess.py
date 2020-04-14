@@ -698,6 +698,9 @@ def load_Curation():
         parts = line.strip().split('\t')
         if len(parts) ==2:
             size+=1
+            print('size:', size)
+            if size < 480:
+                continue
             if size <=20000:
                 writefile = write_train
             elif size>20000 and size <=27000:
