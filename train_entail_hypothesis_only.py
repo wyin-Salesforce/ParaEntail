@@ -185,8 +185,10 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 inputs["token_type_ids"] = (
                     batch[2] if args.model_type in ["bert", "xlnet", "albert"] else None
                 )  # XLM, DistilBERT, RoBERTa, and XLM-RoBERTa don't use segment_ids
-            outputs = model(**inputs)
+            '''pls note that we changed the roberta output, it has (logits, sequence_output)'''
+            outputs, _ = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
+            print('loss:', loss)
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
@@ -286,7 +288,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
                     inputs["token_type_ids"] = (
                         batch[2] if args.model_type in ["bert", "xlnet", "albert"] else None
                     )  # XLM, DistilBERT, RoBERTa, and XLM-RoBERTa don't use segment_ids
-                outputs = model(**inputs)
+                outputs, _ = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
 
                 eval_loss += tmp_eval_loss.mean().item()
