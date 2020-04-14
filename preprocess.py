@@ -631,7 +631,7 @@ def preprocess_curation():
             # delete unwanted tags:
             for e in soup(['figure', 'script']):
                 e.decompose()
-            text = soup.find('p').get_text().strip()
+            text = soup.find_all('p').get_text().strip()
         except Exception:
             text = "Exception"
         if i ==1:
