@@ -626,19 +626,22 @@ def preprocess_curation():
     df = pd.read_csv(filename)
     for i in progress_bar(range(df.shape[0])):
         try:
-            soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), 'html.parser')#features="lxml")
+            soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), features="lxml")
 
             # delete unwanted tags:
             for e in soup(['figure', 'script']):
                 e.decompose()
 
-            text = soup.find_all('p').get_text().strip()
+            # p_list = soup.find_all('p')
+            # for para in p_list:
+            #     para_text = ' '.join(para.get_text().strip().split())
+            # text = soup.find_all('p').get_text().strip()
         except Exception:
             text = "Exception"
         if i ==0:
             p_list = soup.find_all('p')
             for para in p_list:
-                print(para.get_text().strip())
+                print(' '.join(para.get_text().strip().split()))
             # print(text)
             exit(0)
 
