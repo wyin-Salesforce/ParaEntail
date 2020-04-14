@@ -337,6 +337,7 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     return [' '.join(new_sum_sents)]
 
 def GPT2_generate(sum_str, tokenizer, model):
+    print('sum_str:', sum_str)
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
     max_len = input_len+20
@@ -711,7 +712,7 @@ def load_Curation():
                 writefile.close()
                 writefile = write_test
 
-
+            print('parts:', parts)
             doc_str = parts[0].strip()
             sum_str = parts[1].strip()
 
