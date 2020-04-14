@@ -699,7 +699,7 @@ def load_Curation():
         if len(parts) ==2:
             size+=1
             print('size:', size)
-            if size < 480:
+            if size < 242:
                 continue
             if size <=20000:
                 writefile = write_train
@@ -724,7 +724,7 @@ def load_Curation():
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
-            size+=1
+            # size+=1
             if size % 10 == 0:
                 print('doc size:', size)
     writefile.close()
