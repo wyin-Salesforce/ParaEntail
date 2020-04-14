@@ -631,8 +631,8 @@ def preprocess_curation():
 
         url = df.iloc[i][0]
         print('url:', url)
-        print('url:', df.iloc[i][1])
-        print('url:', df.iloc[i][2])
+        print('headline:', df.iloc[i][1])
+        print('sum:', df.iloc[i][2])
         sum = ' '.join(df.iloc[i][2].strip().split())
         url2sum[url] =sum
     print('summary size:', len(url2sum))
