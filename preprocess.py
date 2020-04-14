@@ -631,10 +631,12 @@ def preprocess_curation():
             # delete unwanted tags:
             for e in soup(['figure', 'script']):
                 e.decompose()
+
             text = soup.find_all('p').get_text().strip()
         except Exception:
             text = "Exception"
         if i ==1:
+            print(soup.find_all('p'))
             print(text)
             exit(0)
 
