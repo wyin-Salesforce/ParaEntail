@@ -755,7 +755,10 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    '''
+    ERROR: longformer 0.1 has requirement torch==1.2.0, but you'll have torch 1.4.0 which is incompatible.
+    ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
+    '''
     '''
     CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail_longformer.py --model_type roberta --model_name_or_path longformer-large-4096/ --task_name rte > log.longformer.20200413.txt 2>&1
     '''

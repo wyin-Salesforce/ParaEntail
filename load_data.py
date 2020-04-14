@@ -251,3 +251,8 @@ def load_test_data(hypo_only=False):
 if __name__ == "__main__":
     # load_train_data()
     load_test_data()
+
+    '''
+    train size: 1404446  pos size: 304352
+    test size: 123857  pos size: 20975
+    '''
