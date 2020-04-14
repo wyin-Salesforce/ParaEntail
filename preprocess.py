@@ -634,8 +634,9 @@ def preprocess_curation():
             text = soup.get_text().strip()
         except Exception:
             text = "Exception"
-        print(text)
-        exit(0)
+        if i ==1:
+            print(text)
+            exit(0)
 
     # text_list = df['article_content']
     # print('text_list length:', len(text_list))
