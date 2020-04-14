@@ -222,7 +222,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                     if test_f1 > max_test_f1:
                         max_test_f1 = test_f1
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypothesis_only_wo_FEVER/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypothesis_only_FEVER/'
                         output_dir = os.path.join(raw_output_dir, "f1.{}".format(max_test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -664,5 +664,5 @@ if __name__ == "__main__":
     this program is a copy of the train_entail.py; it uses roberta-large for NLI
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1 python -u train_entail_hypothesis_only.py --model_type roberta --model_name_or_path roberta-large --task_name rte > log.hypo.only.wo.FEVER.20200413.txt 2>&1
+    CUDA_VISIBLE_DEVICES=0,1 python -u train_entail_hypothesis_only.py --model_type roberta --model_name_or_path roberta-large --task_name rte > log.hypo.only.FEVER.20200413.txt 2>&1
     '''
