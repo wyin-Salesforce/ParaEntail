@@ -19,7 +19,7 @@ import numpy as np
 import xmltodict
 import json_lines
 import json
-
+import csv
 seed = 400
 random.seed(seed)
 np.random.seed(seed)
@@ -608,6 +608,17 @@ def recover_FEVER_dev_test_labels():
     writefile.close()
     print('recover over')
 
+def preprocess_curation():
+    filename = '/export/home/Dataset/Curation_summarization/curation-corpus/curation-corpus-base-with-articles.csv'
+    with open(filename, newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        row_co = 0
+        for row in spamreader:
+            if row_co>0:
+                article_content = row[2].strip()
+                print('article_content:', article_content)
+                exit(0)
+            row_co+=1
 
 if __name__ == "__main__":
     # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
@@ -622,7 +633,8 @@ if __name__ == "__main__":
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
 
-    recover_FEVER_dev_test_labels()
+    # recover_FEVER_dev_test_labels()
+    preprocess_curation()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
