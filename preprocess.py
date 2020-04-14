@@ -337,7 +337,7 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     return [' '.join(new_sum_sents)]
 
 def GPT2_generate(sum_str, tokenizer, model):
-    print('sum_str:', sum_str)
+    # print('sum_str:', sum_str)
     input_wordlist = sum_str.split()
     input_len = len(input_wordlist)
     max_len = input_len+20
@@ -347,10 +347,10 @@ def GPT2_generate(sum_str, tokenizer, model):
     for leng in keep_lengths:
 
         sequence = ' '.join(input_wordlist[:leng])#f"Hugging Face is based in DUMBO, New York City, and is"
-        print('sequence:', sequence)
+        # print('sequence:', sequence)
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
-        print('input:', input)
+        # print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = ' '.join(tokenizer.decode(generated.tolist()[0]).strip().split())
@@ -696,13 +696,14 @@ def load_Curation():
 
     size = 0
     prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+    invalid_size = 0
     for line in readfile:
         parts = line.strip().split('\t')
         if len(parts) ==2:
             size+=1
-            print('size:', size)
-            if size < 242:
-                continue
+            # print('size:', size)
+            # if size < 242:
+            #     continue
             if size <=20000:
                 writefile = write_train
             elif size>20000 and size <=27000:
@@ -712,9 +713,12 @@ def load_Curation():
                 writefile.close()
                 writefile = write_test
 
-            print('parts:', parts)
+            # print('parts:', parts)
             doc_str = parts[0].strip()
             sum_str = parts[1].strip()
+            if len(doc_str.split()) <10 or len(sum_str.split()) < 10:
+                invalid_size+=1
+                continue
 
             writefile.write('document>>' +'\t'+doc_str+'\n')
             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
@@ -729,7 +733,10 @@ def load_Curation():
             # size+=1
             if size % 10 == 0:
                 print('doc size:', size)
+        else:
+            invalid_size+=1
     writefile.close()
+    print('over, invalid_size:', invalid_size)
 
 if __name__ == "__main__":
     # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
