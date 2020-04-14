@@ -21,6 +21,16 @@ import json_lines
 import json
 import csv
 import pandas as pd
+from fastprogress.fastprogress import progress_bar
+import aiohttp
+import asyncio
+from bs4 import BeautifulSoup
+import csv
+from fastprogress.fastprogress import progress_bar
+import os
+import pandas as pd
+from readability import Document
+from sys import argv
 
 
 seed = 400
@@ -614,9 +624,18 @@ def recover_FEVER_dev_test_labels():
 def preprocess_curation():
     filename = '/export/home/Dataset/Curation_summarization/curation-corpus/curation-corpus-base-with-articles.csv'
     df = pd.read_csv(filename)
-    text_list = df['article_content']
-    print('text_list length:', len(text_list))
-    print('text_list 0:', text_list[0])
+    for i in progress_bar(range(df.shape[0])):
+        try:
+            text = BeautifulSoup(
+                Document(df.iloc[i][1]).summary(), features="lxml").get_text().strip()
+        except Exception:
+            text = "Exception"
+        print(text)
+        exit(0)
+
+    # text_list = df['article_content']
+    # print('text_list length:', len(text_list))
+    # print('text_list 0:', text_list[0])
 
 
 
