@@ -229,15 +229,15 @@ def load_train_data(hypo_only=False):
                         # duc_examples+
                         # cnn_examples+
                         # mctest_examples+
-                        fever_examples
-                        # anli_examples
+                        # fever_examples
+                        anli_examples
                         )
     pos_size = (
                 # duc_pos_size+
                 # cnn_pos_size+
                 # mctest_pos_size+
-                fever_pos_size
-                # anli_pos_size
+                # fever_pos_size
+                anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size)
     return train_examples
