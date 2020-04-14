@@ -614,6 +614,8 @@ def preprocess_curation():
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
         row_co = 0
         for row in spamreader:
+            print(len(row))
+            print(row)
             if row_co>0:
                 article_content = row[2].strip()
                 print('article_content:', article_content)
