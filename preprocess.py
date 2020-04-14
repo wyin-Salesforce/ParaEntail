@@ -629,7 +629,7 @@ def preprocess_curation():
             soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), features="lxml")
 
             # delete unwanted tags:
-            for e in soup(['figure', 'script']):
+            for e in soup(['figure', 'script', 'div']):
                 e.decompose()
 
             text = soup.find_all('p').get_text().strip()
