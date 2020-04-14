@@ -621,14 +621,25 @@ def recover_FEVER_dev_test_labels():
     writefile.close()
     print('recover over')
 
+
 def preprocess_curation():
+    '''first load summaries'''
+    filename = '/export/home/Dataset/Curation_summarization/curation-corpus/curation-corpus-base.csv'
+    url2sum = {}
+    df = pd.read_csv(filename)
+    for i in progress_bar(range(df.shape[0])):
+
+        url = df.iloc[i][0]
+        sum = ' '.join(df.iloc[i][2].strip().split())
+        url2sum[url] =sum
+    print('summary size:', len(url2sum))
+
     filename = '/export/home/Dataset/Curation_summarization/curation-corpus/curation-corpus-base-with-articles.csv'
     url2doc = {}
     df = pd.read_csv(filename)
     for i in progress_bar(range(df.shape[0])):
         try:
-            url = df.iloc[i][0]
-            print(url)
+            url_new = df.iloc[i][0]
             soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), features="lxml")
 
             # delete unwanted tags:
@@ -641,10 +652,22 @@ def preprocess_curation():
                 doc+= ' '+para.get_text().strip()
                 # print(' '.join(para.get_text().strip().split()))
             full_doc = ' '.join(doc.strip().split())
-            print(full_doc)
-            exit(0)
         except Exception:
-            text = "Exception"
+            full_doc = "Exception"
+
+        if full_doc!='Exception':
+            url2doc[url_new] = full_doc
+    print('doc size:', len(url2doc))
+
+    writefile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'w', 'utf-8')
+    valid_size = 0
+    for url, doc in url2doc.items():
+        sum = url2sum.get(url)
+        if sum is not None:
+            writefile.write(doc+'\t'+sum+'\n')
+            valid_size+=1
+    writefile.close()
+    print('write  over:', valid_size)
 
 
 
