@@ -626,7 +626,7 @@ def preprocess_curation():
     df = pd.read_csv(filename)
     for i in progress_bar(range(df.shape[0])):
         try:
-            soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), features="lxml")
+            soup = BeautifulSoup(Document(df.iloc[i][1]).summary(), 'html.parser')#features="lxml")
 
             # delete unwanted tags:
             for e in soup(['figure', 'script']):
