@@ -630,6 +630,9 @@ def preprocess_curation():
     for i in progress_bar(range(df.shape[0])):
 
         url = df.iloc[i][0]
+        print('url:', url)
+        print('url:', df.iloc[i][1])
+        print('url:', df.iloc[i][2])
         sum = ' '.join(df.iloc[i][2].strip().split())
         url2sum[url] =sum
     print('summary size:', len(url2sum))
