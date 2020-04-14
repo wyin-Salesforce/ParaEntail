@@ -349,7 +349,7 @@ def GPT2_generate(sum_str, tokenizer, model):
 
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
-        generated = model.generate(input, max_length=max_len, eos_token_id =model.config.eos_token_id)
+        generated = model.generate(input, max_length=max_len)
 
         resulting_string = ' '.join(tokenizer.decode(generated.tolist()[0]).strip().split())
         # print('resulting_string:', resulting_string)
