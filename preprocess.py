@@ -660,7 +660,7 @@ def preprocess_curation():
         except Exception:
             full_doc = "Exception"
 
-        if full_doc!='Exception':
+        if full_doc != 'Exception':
             url2doc[url_new] = full_doc
     print('doc size:', len(url2doc))
 
@@ -675,24 +675,54 @@ def preprocess_curation():
     print('write  over:', valid_size)
 
 
+def load_Curation():
+    '''
+    this function load 40K curation, and gneerate the negative summaries
+    '''
 
-    # text_list = df['article_content']
-    # print('text_list length:', len(text_list))
-    # print('text_list 0:', text_list[0])
+    write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.txt', 'w', 'utf-8')
+    write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.txt', 'w', 'utf-8')
+    write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.txt', 'w', 'utf-8')
+    readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
+    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_model.to(device)
+
+    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    gpt2_model.to(device)
+
+    size = 0
+    prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+    for line in readfile:
+        parts = line.strip().split('\t')
+        if len(parts) ==2:
+            size+=1
+            if size <=20000:
+                writefile = write_train
+            elif size>20000 and size <=27000:
+                writefile = write_dev
+            else:
+                writefile = write_test
 
 
+            doc_str = parts[0].strip()
+            sum_str = parts[1].strip()
 
-    # with open(filename, newline='') as csvfile:
-    #     spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-    #     row_co = 0
-    #     for row in spamreader:
-    #         print(len(row))
-    #         print(row)
-    #         if row_co>0:
-    #             article_content = row[2].strip()
-    #             print('article_content:', article_content)
-    #             exit(0)
-    #         row_co+=1
+            writefile.write('document>>' +'\t'+doc_str+'\n')
+            # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+            writefile.write('positive>>' +'\t'+sum_str+'\n')
+            # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            prior_unrelated_doc = doc_str
+            # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
+            for id, neg_sum in enumerate(neg_sum_list):
+                writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
+            writefile.write('\n')
+            size+=1
+            if size % 10 == 0:
+                print('doc size:', size)
+    writefile.close()
 
 if __name__ == "__main__":
     # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
@@ -708,7 +738,9 @@ if __name__ == "__main__":
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
 
     # recover_FEVER_dev_test_labels()
-    preprocess_curation()
+
+    # preprocess_curation()
+    load_Curation()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
