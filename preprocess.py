@@ -639,10 +639,14 @@ def preprocess_curation():
         except Exception:
             text = "Exception"
         if i ==0:
+            doc = ''
             p_list = soup.find_all('p')
             for para in p_list:
+                doc+= ' '+para.get_text().strip()
                 print(' '.join(para.get_text().strip().split()))
             # print(text)
+
+            print('\nfull doc:\n'+' '.join(doc.strip().split()))
             exit(0)
 
     # text_list = df['article_content']
