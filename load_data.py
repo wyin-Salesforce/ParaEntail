@@ -225,6 +225,8 @@ def load_train_data(hypo_only=False):
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
+    # print('duc_examples size:', len(duc_examples))
+    # print('cnn_examples size:', len(cnn_examples))
     train_examples = (
                         duc_examples+
                         cnn_examples
@@ -240,6 +242,7 @@ def load_train_data(hypo_only=False):
                 # anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size)
+    exit(0)
     return train_examples
 
 def load_test_data(hypo_only=False):
