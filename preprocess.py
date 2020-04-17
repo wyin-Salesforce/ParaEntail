@@ -705,12 +705,13 @@ def load_Curation():
             # if size < 242:
             #     continue
             if size <=20000:
+                continue
                 writefile = write_train
             elif size>20000 and size <=27000:
-                writefile.close()
+                # writefile.close()
                 writefile = write_dev
             else:
-                writefile.close()
+                # writefile.close()
                 writefile = write_test
 
             # print('parts:', parts)
