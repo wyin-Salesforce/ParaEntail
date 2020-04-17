@@ -226,17 +226,17 @@ def load_train_data(hypo_only=False):
     anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
     train_examples = (
-                        # duc_examples+
-                        # cnn_examples+
+                        duc_examples+
+                        cnn_examples
                         # mctest_examples+
-                        fever_examples
+                        # fever_examples
                         # anli_examples
                         )
     pos_size = (
-                # duc_pos_size+
-                # cnn_pos_size+
+                duc_pos_size+
+                cnn_pos_size
                 # mctest_pos_size+
-                fever_pos_size
+                # fever_pos_size
                 # anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size)
@@ -255,8 +255,21 @@ def load_test_data(hypo_only=False):
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
-    test_examples = duc_examples+cnn_examples+mctest_examples+fever_examples+anli_examples
-    pos_size = duc_pos_size+cnn_pos_size+mctest_pos_size+fever_pos_size+anli_pos_size
+    test_examples = (
+                        duc_examples+
+                        cnn_examples
+                        # mctest_examples+
+                        # fever_examples
+                        # anli_examples
+                        )
+    pos_size = (
+                duc_pos_size+
+                cnn_pos_size
+                # mctest_pos_size+
+                # fever_pos_size
+                # anli_pos_size
+                )
+
     print('test size:', len(test_examples), ' pos size:', pos_size)
     return test_examples
 
