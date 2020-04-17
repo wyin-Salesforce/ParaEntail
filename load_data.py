@@ -242,7 +242,6 @@ def load_train_data(hypo_only=False):
                 # anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size)
-    exit(0)
     return train_examples
 
 def load_test_data(hypo_only=False):
