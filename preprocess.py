@@ -682,7 +682,7 @@ def load_Curation():
     this function load 40K curation, and gneerate the negative summaries
     '''
 
-    write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.txt', 'w', 'utf-8')
+    # write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.txt', 'w', 'utf-8')
     write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.txt', 'w', 'utf-8')
     write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.txt', 'w', 'utf-8')
     readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
@@ -706,7 +706,7 @@ def load_Curation():
             #     continue
             if size <=20000:
                 continue
-                writefile = write_train
+                # writefile = write_train
             elif size>20000 and size <=27000:
                 # writefile.close()
                 writefile = write_dev
