@@ -186,7 +186,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 inputs["token_type_ids"] = (
                     batch[2] if args.model_type in ["bert", "xlnet", "albert"] else None
                 )  # XLM, DistilBERT, RoBERTa, and XLM-RoBERTa don't use segment_ids
-            outputs = model(**inputs)
+            outputs, _ = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
 
             if args.n_gpu > 1:
@@ -290,7 +290,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
                     inputs["token_type_ids"] = (
                         batch[2] if args.model_type in ["bert", "xlnet", "albert"] else None
                     )  # XLM, DistilBERT, RoBERTa, and XLM-RoBERTa don't use segment_ids
-                outputs = model(**inputs)
+                outputs, _ = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
 
                 eval_loss += tmp_eval_loss.mean().item()
