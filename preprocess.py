@@ -747,7 +747,7 @@ def split_DUC():
     writefile = writedev
     for line in readfile:
         if len(line.strip()) ==0:
-            if ex_co < 100:
+            if ex_co < 99:
                 writefile = writedev
             else:
                 writefile = writetest
