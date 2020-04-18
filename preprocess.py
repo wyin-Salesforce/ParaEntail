@@ -744,6 +744,7 @@ def split_DUC():
     writedev = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.txt', 'w', 'utf-8')
     writetest = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
     ex_co = 0
+    writefile = writedev
     for line in readfile:
         if len(line.strip()) ==0:
             if ex_co < 100:
