@@ -32,7 +32,7 @@ from tqdm import tqdm, trange
 from transformers.data.processors.utils import InputExample
 from collections import OrderedDict
 import codecs
-from load_data import load_train_data, load_test_data
+from load_data import load_train_data, load_test_data, load_dev_data
 
 
 from transformers import (
@@ -90,11 +90,12 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def train(args, train_dataset, eval_dataloader, model, tokenizer):
+def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
 
+    max_dev_f1 = 0.0
     max_test_f1 = 0.0
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
@@ -216,12 +217,15 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 global_step += 1
 
                 if global_step % 500 == 0:
-                    test_f1 = evaluate(args, model, tokenizer, eval_dataloader)
-                    if test_f1 > max_test_f1:
-                        max_test_f1 = test_f1
+                    dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
+                    if dev_f1 > max_dev_f1:
+                        max_dev_f1 = dev_f1
+                        test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+                        print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1, ' test f1:', test_f1)
+
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/'
-                        output_dir = os.path.join(raw_output_dir, "f1.{}".format(max_test_f1))
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/full_data/'
+                        output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
                         model_to_save = (
@@ -236,7 +240,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                         torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                         torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                         logger.info("Saving optimizer and scheduler states to %s", output_dir)
-                    print('>>test_f1:', test_f1, ' max_test_f1:', max_test_f1)
+                    print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
 
 
 
@@ -344,8 +348,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # examples = get_DUC_examples(filename)
     if filename == 'train':
         examples = load_train_data(hypo_only=False)
+    elif filename == 'dev':
+        examples = load_dev_data(hypo_only=False)
     else:
         examples = load_test_data(hypo_only=False)
+
     features = convert_examples_to_features(
         examples,
         tokenizer,
@@ -503,7 +510,7 @@ def main():
     parser.add_argument("--adam_epsilon", default=1e-8, type=float, help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float, help="Max gradient norm.")
     parser.add_argument(
-        "--num_train_epochs", default=100.0, type=float, help="Total number of training epochs to perform.",
+        "--num_train_epochs", default=5.0, type=float, help="Total number of training epochs to perform.",
     )
     parser.add_argument(
         "--max_steps",
@@ -639,19 +646,22 @@ def main():
     # if args.do_train:
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
-    train_filename = 'train'
-    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
-    # test_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
-    # test_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/val_in_entail.txt'
-    test_filename = 'test'
-    eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
+    train_dataset = load_and_cache_examples(args, args.task_name, 'train', tokenizer, evaluate=False)
+    dev_dataset = load_and_cache_examples(args, args.task_name, 'dev', tokenizer, evaluate=True)
+    test_dataset = load_and_cache_examples(args, args.task_name, 'test', tokenizer, evaluate=True)
+
+
     # exit(0)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
-    eval_sampler = SequentialSampler(eval_dataset)
-    eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
+    dev_sampler = SequentialSampler(dev_dataset)
+    dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
-    global_step, tr_loss = train(args, train_dataset, eval_dataloader, model, tokenizer)
+    test_sampler = SequentialSampler(test_dataset)
+    test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
+
+
+    global_step, tr_loss = train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer)
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
