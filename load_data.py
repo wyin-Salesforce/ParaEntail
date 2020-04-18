@@ -60,6 +60,50 @@ def get_DUC_examples(prefix, hypo_only=False):
     print('DUC size:', len(examples))
     return examples, pos_size
 
+def get_Curation_examples(prefix, hypo_only=False):
+    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
+    path = '/export/home/Dataset/para_entail_datasets/Curation/'
+    filename = path+prefix+'_in_entail.txt'
+    print('loading Curation...', filename)
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    start = False
+    examples = []
+    guid_id = -1
+    pos_size = 0
+    neg_size = 0
+    for line in readfile:
+        if len(line.strip()) == 0:
+            start = False
+        else:
+            parts = line.strip().split('\t')
+            if parts[0] == 'document>>':
+                start = True
+                premise = parts[1].strip()
+            elif parts[0] == 'positive>>':
+                guid_id+=1
+                pos_hypo = parts[1].strip()
+                if len(premise) == 0 or len(pos_hypo)==0:
+                    continue
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
+                pos_size+=1
+            elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
+                guid_id+=1
+                neg_hypo = parts[2].strip()
+                if len(premise) == 0 or len(neg_hypo)==0:
+                    continue
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=None, label='not_entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                neg_size+=1
+
+    print('>>pos:neg: ', pos_size, neg_size)
+    print('Curation size:', len(examples))
+    return examples, pos_size
 
 def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -220,8 +264,8 @@ def load_train_data(hypo_only=False):
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
     '''MCTest'''
     mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
-    '''FEVER'''
-    fever_examples, fever_pos_size = get_FEVER_examples('train', hypo_only=hypo_only)
+    '''Curation'''
+    curation_examples, curation_pos_size = get_Curation_examples('train', hypo_only=hypo_only)
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
@@ -231,14 +275,14 @@ def load_train_data(hypo_only=False):
                         # duc_examples+
                         # cnn_examples
                         # mctest_examples+
-                        fever_examples
+                        curation_examples
                         # anli_examples
                         )
     pos_size = (
                 # duc_pos_size+
                 # cnn_pos_size
                 # mctest_pos_size+
-                fever_pos_size
+                curation_pos_size
                 # anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size)
@@ -253,8 +297,8 @@ def load_test_data(hypo_only=False):
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
     '''MCTest'''
     mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
-    '''FEVER'''
-    fever_examples, fever_pos_size = get_FEVER_examples('test', hypo_only=hypo_only)
+    '''Curation'''
+    curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
@@ -262,14 +306,14 @@ def load_test_data(hypo_only=False):
                         # duc_examples+
                         # cnn_examples
                         # mctest_examples+
-                        fever_examples
+                        curation_examples
                         # anli_examples
                         )
     pos_size = (
                 # duc_pos_size+
                 # cnn_pos_size
                 # mctest_pos_size+
-                fever_pos_size
+                curation_pos_size
                 # anli_pos_size
                 )
 

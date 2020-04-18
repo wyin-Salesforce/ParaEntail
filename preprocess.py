@@ -739,6 +739,31 @@ def load_Curation():
     writefile.close()
     print('over, invalid_size:', invalid_size)
 
+def split_DUC():
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail_original.txt', 'r', 'utf-8')
+    writedev = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.txt', 'w', 'utf-8')
+    writetest = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
+    ex_co = 0
+    for line in readfile:
+        if len(line.strip()) ==0:
+            if ex_co < 100:
+                writefile = writedev
+            else:
+                writefile = writetest
+            ex_co +=1
+        else:
+            writefile.write(line.strip()+'\n')
+
+    readfile.close()
+    writedev.close()
+    writetest.close()
+
+
+
+
+
+
+
 if __name__ == "__main__":
     # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
@@ -755,7 +780,10 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    load_Curation()
+    # load_Curation()
+
+
+    split_DUC()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
