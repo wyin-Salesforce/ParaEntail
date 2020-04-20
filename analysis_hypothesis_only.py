@@ -32,7 +32,7 @@ from tqdm import tqdm, trange
 from transformers.data.processors.utils import InputExample
 from collections import OrderedDict
 import codecs
-from load_data import load_train_data, load_test_data, load_dev_data
+from analysisi_load_data import load_train_data, load_test_data, load_dev_data
 
 
 from transformers import (
