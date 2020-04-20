@@ -283,8 +283,8 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         # for batch in eval_dataloader:
             model.eval()
             batch = tuple(t.to(args.device) for t in batch)
-            print('batch:', batch)
-            exit(0)
+            # print('batch:', batch)
+            # exit(0)
 
             with torch.no_grad():
                 inputs = {"input_ids": batch[0], "attention_mask": batch[1], "labels": batch[3]}
