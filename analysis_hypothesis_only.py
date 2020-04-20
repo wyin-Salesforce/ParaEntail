@@ -313,7 +313,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         print('preds:', sum(preds), len(preds))
         print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
         f1 = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
-    return f1
+    return f1, list(preds)
 
 
 
@@ -334,11 +334,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_train_data(hypo_only=True)
+        examples, extra_labels = load_train_data(hypo_only=True)
     elif filename == 'dev':
-        examples = load_dev_data(hypo_only=True)
+        examples, extra_labels = load_dev_data(hypo_only=True)
     else:
-        examples = load_test_data(hypo_only=True)
+        examples, extra_labels = load_test_data(hypo_only=True)
 
     features = convert_examples_to_features(
         examples,
@@ -367,7 +367,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         all_labels = torch.tensor([f.label for f in features], dtype=torch.float)
 
     dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
-    return dataset
+    return dataset, extra_labels
 
 def get_DUC_examples(filename):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -636,7 +636,7 @@ def main():
 
     # train_dataset = load_and_cache_examples(args, args.task_name, 'train', tokenizer, evaluate=False)
     # dev_dataset = load_and_cache_examples(args, args.task_name, 'dev', tokenizer, evaluate=True)
-    test_dataset = load_and_cache_examples(args, args.task_name, 'test', tokenizer, evaluate=True)
+    test_dataset, test_extra_labels = load_and_cache_examples(args, args.task_name, 'test', tokenizer, evaluate=True)
 
 
     # exit(0)
@@ -648,10 +648,26 @@ def main():
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
 
-    test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    test_f1, test_pred_label_list = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
     print('test_f1:', test_f1)
     # global_step, tr_loss = train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer)
     # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+
+    assert len(test_pred_label_list) == len(test_extra_labels)
+    probe_types = ['#SwapEnt#>>', '#ReplaceWord#>>', '#InsertUnrelatedSent#>>', '#GPT2generate#>>', 'not_entailment']
+    f1_list = []
+    for probe_type in probe_types:
+        size_i = 0
+        hit_i = 0
+        for i, type in enumerate(test_extra_labels):
+            if type == probe_type:
+                size_i+=1
+                if test_pred_label_list[i] == 1:
+                    hit_i+=1
+        acc_i = hit_i/size_i
+        f1_list.append(acc_i)
+    print('f1_list:', f1_list)
+
 
 
 
