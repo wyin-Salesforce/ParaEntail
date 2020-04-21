@@ -1,5 +1,6 @@
 import json_lines
 import codecs
+import random
 from transformers.data.processors.utils import InputExample
 
 def get_DUC_examples(prefix, hypo_only=False):
