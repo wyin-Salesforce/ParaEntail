@@ -389,10 +389,10 @@ def GPT2_generate(sum_str, tokenizer, model):
 
 
         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
-        # print('sequence:', sequence)
+        print('sequence:', sequence)
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
-        # print('input:', input)
+        print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0]).strip().split()
@@ -828,9 +828,9 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    # load_DUC_test()
-    load_CNN_DailyMail('val')
-    load_CNN_DailyMail('test')
+    load_DUC_test()
+    # load_CNN_DailyMail('val')
+    # load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
