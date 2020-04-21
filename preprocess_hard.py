@@ -812,66 +812,6 @@ def split_DUC():
 
 
 
-def generate_adversarial_for_summary_data(folder):
-    '''
-    for our generated negative summary data, we found hypothesis-only bias,
-    to remove it, we add some positive hypothesis from other pairs to be negative
-    both in training, dev and test. The reason we also do this for training, because we really
-    want to the system to learn that a hypothesis might be negative in other premise, but maybe
-    positive here
-    to test: we create two, one from test, one from training
-
-    '''
-    pos_summary_2_doc = {}
-    read_train = codecs.open(folder+'/train_in_entail.txt', 'r', 'utf-8')
-    # readfile = codecs.open(filename, 'r', 'utf-8')
-    start = False
-    for line in read_train:
-        if len(line.strip()) == 0:
-            start = False
-        else:
-            parts = line.strip().split('\t')
-            if parts[0] == 'document>>':
-                start = True
-                premise = parts[1].strip()
-            elif parts[0] == 'positive>>' and start:
-                guid_id+=1
-                pos_hypo = parts[1].strip()
-                if len(premise) == 0 or len(pos_hypo)==0:
-                    continue
-                else:
-                    pos_summary_2_doc[pos_hypo] = premise
-            else:
-                continue
-    read_train.close()
-
-    '''extend training set'''
-    read_train = codecs.open(folder+'/train_in_entail.txt', 'r', 'utf-8')
-    write_train = codecs.open(folder+'_adversarial_version/train_in_entail.txt', 'w', 'utf-8')
-
-    doc = ''
-    for line in read_train:
-        if len(line.strip()) !=0:
-            write_train.write(line.strip()+'\n')
-            parts = line.strip().split('\t')
-            if parts[0] == 'document>>':
-                doc = parts[1].strip()
-        else:
-            '''append 5 negative summaries from other pairs'''
-            summary_sample_list = random.sample(list(pos_summary_2_doc.keys()), 5)
-            for summary_sample in summary_sample_list:
-                if pos_summary_2_doc.get(summary_sample) != doc:
-                    write_train.write('negative>>' +'\t'+'#FromOtherPair#'+'>>\t'+summary_sample+'\n')
-            write_train.write('\n')
-            doc = ''
-    write_train.close()
-    read_train.close()
-
-    '''extend dev and test'''
-    filenames = ['dev_in_entail.txt', 'test_in_entail.txt']
-    for filename in filenames:
-        readfile =
-
 
 
 
