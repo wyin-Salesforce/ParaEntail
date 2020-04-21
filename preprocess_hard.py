@@ -830,9 +830,9 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    load_DUC_test()
-    # load_CNN_DailyMail('val')
-    # load_CNN_DailyMail('test')
+    # load_DUC_test()
+    load_CNN_DailyMail('val')
+    load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
