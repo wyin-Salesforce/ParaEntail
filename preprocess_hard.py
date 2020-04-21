@@ -735,8 +735,8 @@ def load_Curation():
     '''
 
     # write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.txt', 'w', 'utf-8')
-    write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.txt', 'w', 'utf-8')
-    write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.txt', 'w', 'utf-8')
+    write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt', 'w', 'utf-8')
+    write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt', 'w', 'utf-8')
     readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
@@ -831,8 +831,8 @@ if __name__ == "__main__":
 
     # load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail('val')
-    load_CNN_DailyMail('test')
+    # load_CNN_DailyMail('val')
+    # load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
@@ -840,7 +840,7 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    # load_Curation()
+    load_Curation()
 
 
     # split_DUC()
