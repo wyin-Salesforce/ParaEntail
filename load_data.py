@@ -58,7 +58,22 @@ def get_DUC_examples(prefix, hypo_only=False):
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('DUC size:', len(examples))
-    return examples, pos_size
+    if prefix == 'train':
+        new_examples = []
+        new_pos_size = 0
+        new_neg_size = 0
+        for ex in examples:
+            if ex.label == 'not_entailment':
+                if random.uniform(1.0) <= pos_size/neg_size:
+                    new_examples.append(ex)
+                    new_neg_size+=1
+            else:
+                new_examples.append(ex)
+                new_pos_size+=1
+        print('>>new pos:neg: ', new_pos_size, new_neg_size)
+        return new_examples, new_pos_size
+    else:
+        return examples, pos_size
 
 def get_Curation_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -103,7 +118,24 @@ def get_Curation_examples(prefix, hypo_only=False):
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('Curation size:', len(examples))
-    return examples, pos_size
+    if prefix == 'train':
+        new_examples = []
+        new_pos_size = 0
+        new_neg_size = 0
+        for ex in examples:
+            if ex.label == 'not_entailment':
+                if random.uniform(1.0) <= pos_size/neg_size:
+                    new_examples.append(ex)
+                    new_neg_size+=1
+            else:
+                new_examples.append(ex)
+                new_pos_size+=1
+        print('>>new pos:neg: ', new_pos_size, new_neg_size)
+        return new_examples, new_pos_size
+    else:
+        return examples, pos_size
+
+
 
 def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -159,7 +191,22 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('CNN size:', len(examples))
-    return examples, pos_size
+    if prefix == 'train':
+        new_examples = []
+        new_pos_size = 0
+        new_neg_size = 0
+        for ex in examples:
+            if ex.label == 'not_entailment':
+                if random.uniform(1.0) <= pos_size/neg_size:
+                    new_examples.append(ex)
+                    new_neg_size+=1
+            else:
+                new_examples.append(ex)
+                new_pos_size+=1
+        print('>>new pos:neg: ', new_pos_size, new_neg_size)
+        return new_examples, new_pos_size
+    else:
+        return examples, pos_size
 
 def get_MCTest_examples(prefix, hypo_only=False):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
@@ -230,6 +277,7 @@ def get_ANLI_examples(prefix, hypo_only=False):
     examples = []
     guid_id = 0
     pos_size = 0
+    neg_size = 0
     path = '/export/home/Dataset/para_entail_datasets/ANLI/anli_v0.1/'
     for folder in folders:
         filename = path+folder+'/'+prefix+'.jsonl'
@@ -240,18 +288,34 @@ def get_ANLI_examples(prefix, hypo_only=False):
                 premise = line.get('context')
                 hypothesis = line.get('hypothesis')
                 label = 'entailment' if line.get('label') == 'e' else 'not_entailment'
+                if len(premise) == 0 or len(hypothesis)==0:
+                    continue
                 if label == 'entailment':
                     pos_size+=1
-                if len(premise) == 0 or len(hypothesis)==0:
-                    # print('ANLI premise:', premise)
-                    # print('hypothesis:', hypothesis)
-                    continue
+                else:
+                    neg_size+=1
                 if hypo_only:
                     examples.append(InputExample(guid=str(guid_id), text_a=hypothesis, text_b=None, label=label))
                 else:
                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+    print('>>pos:neg: ', pos_size, neg_size)
     print('ANLI size:', len(examples))
-    return examples, pos_size
+    if prefix == 'train':
+        new_examples = []
+        new_pos_size = 0
+        new_neg_size = 0
+        for ex in examples:
+            if ex.label == 'not_entailment':
+                if random.uniform(1.0) <= pos_size/neg_size:
+                    new_examples.append(ex)
+                    new_neg_size+=1
+            else:
+                new_examples.append(ex)
+                new_pos_size+=1
+        print('>>new pos:neg: ', new_pos_size, new_neg_size)
+        return new_examples, new_pos_size
+    else:
+        return examples, pos_size
 
 
 

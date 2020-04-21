@@ -224,7 +224,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                         print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1, ' test f1:', test_f1)
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only_train_balanced/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -655,5 +655,5 @@ if __name__ == "__main__":
     main()
 
     '''
-    CUDA_VISIBLE_DEVICES=3,4,5 python -u train_entail_hypothesis_only.py --model_type roberta --model_name_or_path roberta-large --task_name rte --comment 'hypo only' > log.hypo.only.20200418.txt 2>&1
+    CUDA_VISIBLE_DEVICES=1,2,3,4,5 python -u train_entail_hypothesis_only.py --model_type roberta --model_name_or_path roberta-large --task_name rte --comment 'hypo only balanced train' > log.hypo.only.balancedtrain.txt 2>&1
     '''
