@@ -385,14 +385,16 @@ def GPT2_generate(sum_str, tokenizer, model):
         remaining_sents = sum_sents[sent_id+1:]
 
         know_word_list_length = len(know_word_list)
+        if know_word_list_length == 0:
+            continue
 
 
 
         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
-        print('sequence:', sequence)
+        # print('sequence:', sequence)
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
-        print('input:', input)
+        # print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0]).strip().split()
