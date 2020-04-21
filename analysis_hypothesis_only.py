@@ -675,5 +675,5 @@ if __name__ == "__main__":
     main()
 
     '''
-    CUDA_VISIBLE_DEVICES=3,4,5 python -u analysis_hypothesis_only.py --model_type roberta --model_name_or_path /export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only/f1.dev.0.6016298020954598.test0.5693315958914611 --task_name rte --comment 'hypo only'
+    CUDA_VISIBLE_DEVICES=3,4,5 python -u analysis_hypothesis_only.py --model_type roberta --model_name_or_path /export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only_train_balanced/f1.dev.0.5476762121923413.test0.5284138147990024 --task_name rte --comment 'hypo only'
     '''
