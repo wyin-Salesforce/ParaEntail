@@ -281,16 +281,34 @@ def random_remove_words(sum_str, drop):
 
 def random_replace_words(sum_str, drop, tokenizer, model):
 
-    input_wordlist = sum_str.strip().split()
+    preferred_POStags = set(['VERB', 'NOUN', 'PROPN', 'NUM'])
+    nlp = en_core_web_sm.load()
+    doc = nlp(sum_str)
+    # pos2words = defaultdict(list)
+    input_wordlist = []
+    input_postag_list = []
+    for token in doc:
+        # print(token.text, '>>', token.pos_)
+        # pos2words[token.pos_].append(token)
+        input_wordlist.append(token.text)
+        input_postag_list.append(token.pos_)
+
+    # input_wordlist = sum_str.strip().split()
     sum_len = len(input_wordlist)
     replace_size = int(sum_len*drop)#0.3
+    replace_size = min(replace_size, 8)
 
     prior_sum = input_wordlist
+    replaced_position_set = set()
     for i in range(replace_size):
         prior_len = len(prior_sum)
-        pos = random.randrange(prior_len-1)
-        '''to avoid error: Tried to access index 512 out of table with 511 rows'''
-        pos = min(pos, 200)
+        '''start to find a place to replace the word, only if it was replace before, and some pos tags'''
+        pos = min(random.randrange(prior_len-1), 200)
+        while pos in replaced_position_set or input_postag_list[pos] not in preferred_POStags:
+            pos = min(random.randrange(prior_len-1), 200)
+
+
+
         sequence = ' '.join(prior_sum[:pos])+' '+ f"{tokenizer.mask_token}" + ' '+ ' '.join(prior_sum[pos+1:])
 
         '''set max_length = 512 is necessary, but does not work gor gpt2'''
@@ -305,7 +323,8 @@ def random_replace_words(sum_str, drop, tokenizer, model):
         # print(top_5_tokens)
 
         prior_sum = sequence.replace(tokenizer.mask_token, tokenizer.decode([top_5_tokens[0]])).split()
-        # print(' '.join(prior_sum))
+
+        replaced_position_set.add(pos)
 
     return [' '.join(prior_sum)]
 
@@ -337,28 +356,59 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     return [' '.join(new_sum_sents)]
 
 def GPT2_generate(sum_str, tokenizer, model):
-    # print('sum_str:', sum_str)
-    input_wordlist = sum_str.split()
-    input_len = len(input_wordlist)
-    max_len = input_len+20
+    nlp = en_core_web_sm.load()
+    text_sentences = nlp(sum_str)
+    sum_sents = []
+    for sentence in text_sentences.sents:
+        sum_sents.append(sentence.text) # string
 
-    keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
+    sent_size = len(sum_sents)
+
+
+    # input_wordlist = sum_str.split()
+    # input_len = len(input_wordlist)
+    max_len = 50
+
+    # keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
     new_seqs = []
-    for leng in keep_lengths:
+    for _ in range(1):
+        '''which sentence to split'''
+        sent_id = random.sample(list(range(sent_size)), 1)[0]
+        sent_len = len(sum_sents[sent_id].split())
+        '''which word to split'''
+        word_id = random.sample(list(range(sent_len)), 1)[0]
+        know_word_list = []
+        for i in range(sent_id-1):
+            for word in sum_sents[i].split():
+                know_word_list.append(word)
+        know_word_list+=sum_sents[sent_id].split()[:word_id]
+        remaining_sents = sum_sents[sent_id+1:]
 
-        sequence = ' '.join(input_wordlist[:leng])#f"Hugging Face is based in DUMBO, New York City, and is"
+        know_word_list_length = len(know_word_list)
+
+
+
+        sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
         # print('sequence:', sequence)
         input = tokenizer.encode(sequence, return_tensors="pt")
         input = input.to(device)
         # print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
-        resulting_string = ' '.join(tokenizer.decode(generated.tolist()[0]).strip().split())
+        resulting_string = tokenizer.decode(generated.tolist()[0]).strip().split()
+
+        for lengthh in range(know_word_list_length, len(resulting_string)):
+            if resulting_string[lengthh] != '.':
+                know_word_list.append(resulting_string[lengthh])
+            else:
+                break
         # print('resulting_string:', resulting_string)
-        new_seq = resulting_string[:resulting_string.rfind('.')+1]
-        # print(resulting_string.rfind('.'), len(sum_str))
-        if len(new_seq.split()) > leng:
-            new_seqs.append(new_seq)
+        for remain_sent in remaining_sents:
+            for word in remain_sent.split():
+                know_word_list.append(word)
+        new_seq = know_word_list
+
+        new_seqs.append(' '.join(new_seq))
     # print(new_seqs)
 
     return new_seqs
@@ -386,25 +436,25 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
     # swap_pronouns(doc_str, sum_str)
     '''word-level noise'''
-    shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.5)
-    shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
-
-    missing_word_list = random_remove_words(sum_str, 0.2)
-    missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
+    # shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.5)
+    # shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
+    #
+    # missing_word_list = random_remove_words(sum_str, 0.2)
+    # missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
 
     bert_mask_list = random_replace_words(sum_str, 0.2, mask_tokenizer, mask_model)
     bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
 
     '''sentence-level noise'''
 
-    insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
-    insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
+    # insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
+    # insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
 
     bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    bert_generate_list_names = ['#GPT2generate#'] * len(bert_generate_list)
+    bert_generate_list_names = ['#InsertUnrelatedSent#'] * len(bert_generate_list)
 
-    cand_list= entity_cand_list + shuffle_word_list + missing_word_list + bert_mask_list + insert_unrelated_sents+bert_generate_list
-    name_list = entity_cand_list_names + shuffle_word_list_names+missing_word_list_names + bert_mask_list_names+ insert_unrelated_sents_names + bert_generate_list_names
+    cand_list= entity_cand_list  + bert_mask_list +bert_generate_list
+    name_list = entity_cand_list_names + bert_mask_list_names + bert_generate_list_names
 
     return cand_list, name_list
 
@@ -485,7 +535,7 @@ def load_DUC_test():
     'd24d','d27e','d28e','d30e','d31f','d32f','d34f','d37g','d39g',
     'd41g','d43h','d44h','d45h','d50i','d53i','d54i','d56k','d57k','d59k']
 
-    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt', 'w', 'utf-8')
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     mask_model.to(device)
@@ -838,7 +888,7 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    # load_DUC_test()
+    load_DUC_test()
     # load_CNN_DailyMail()
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
@@ -850,7 +900,7 @@ if __name__ == "__main__":
     # load_Curation()
 
 
-    split_DUC()
+    # split_DUC()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
