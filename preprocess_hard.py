@@ -379,7 +379,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         '''which word to split'''
         word_id = random.sample(list(range(sent_len)), 1)[0]
         know_word_list = []
-        for i in range(sent_id-1):
+        for i in range(sent_id):
             for word in sum_sents[i].split():
                 know_word_list.append(word)
         know_word_list+=sum_sents[sent_id].split()[:word_id]
