@@ -39,7 +39,7 @@ np.random.seed(seed)
 device = torch.device("cuda")
 
 
-def load_CNN_DailyMail():
+def load_CNN_DailyMail(prefix):
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     mask_model.to(device)
@@ -48,10 +48,10 @@ def load_CNN_DailyMail():
     gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
     gpt2_model.to(device)
 
-    file_prefix = ['val']#['train', 'val', 'test']
+    file_prefix = [prefix]#['train', 'val', 'test']
     for fil_prefix in file_prefix:
         readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
-        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.txt'
+        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.harsh.txt'
         readfile = codecs.open(readfil, 'r', 'utf-8')
         writefile = codecs.open(writefil, 'w', 'utf-8')
         size = 0
@@ -828,8 +828,9 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    load_DUC_test()
-    # load_CNN_DailyMail()
+    # load_DUC_test()
+    load_CNN_DailyMail('val')
+    load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
