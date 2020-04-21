@@ -65,7 +65,7 @@ def get_DUC_examples(prefix, hypo_only=False):
         new_neg_size = 0
         for ex in examples:
             if ex.label == 'not_entailment':
-                if random.uniform(1.0) <= pos_size/neg_size:
+                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
                     new_examples.append(ex)
                     new_neg_size+=1
             else:
@@ -125,7 +125,7 @@ def get_Curation_examples(prefix, hypo_only=False):
         new_neg_size = 0
         for ex in examples:
             if ex.label == 'not_entailment':
-                if random.uniform(1.0) <= pos_size/neg_size:
+                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
                     new_examples.append(ex)
                     new_neg_size+=1
             else:
@@ -198,7 +198,7 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
         new_neg_size = 0
         for ex in examples:
             if ex.label == 'not_entailment':
-                if random.uniform(1.0) <= pos_size/neg_size:
+                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
                     new_examples.append(ex)
                     new_neg_size+=1
             else:
@@ -307,7 +307,7 @@ def get_ANLI_examples(prefix, hypo_only=False):
         new_neg_size = 0
         for ex in examples:
             if ex.label == 'not_entailment':
-                if random.uniform(1.0) <= pos_size/neg_size:
+                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
                     new_examples.append(ex)
                     new_neg_size+=1
             else:
