@@ -364,6 +364,7 @@ def GPT2_generate(sum_str, tokenizer, model):
 
     sent_size = len(sum_sents)
 
+    print('sum_sents:', sum_sents)
 
     # input_wordlist = sum_str.split()
     # input_len = len(input_wordlist)
@@ -388,6 +389,9 @@ def GPT2_generate(sum_str, tokenizer, model):
         if know_word_list_length == 0:
             continue
 
+        print('sent_id:', sent_id,  ' word_id:', word_id)
+        print('know_word_list:', know_word_list)
+        print('know_word_list_length:', know_word_list_length)
 
 
         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
@@ -398,8 +402,10 @@ def GPT2_generate(sum_str, tokenizer, model):
         generated = model.generate(input, max_length=max_len)
 
         resulting_string = tokenizer.decode(generated.tolist()[0]).strip().split()
+        print('resulting_string:', resulting_string)
 
         for lengthh in range(know_word_list_length, len(resulting_string)):
+            print('resulting_string[lengthh]:', resulting_string[lengthh])
             if resulting_string[lengthh] != '.':
                 know_word_list.append(resulting_string[lengthh])
             else:
@@ -409,6 +415,8 @@ def GPT2_generate(sum_str, tokenizer, model):
             for word in remain_sent.split():
                 know_word_list.append(word)
         new_seq = know_word_list
+        print('new_seq:', new_seq)
+        exit(0)
 
         new_seqs.append(' '.join(new_seq))
     # print(new_seqs)
