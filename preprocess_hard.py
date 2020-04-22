@@ -389,14 +389,7 @@ def GPT2_generate(sum_str, tokenizer, model):
         kept_sent = sum_sents[:sent_id]
         remaining_sents = sum_sents[sent_id+1:]
 
-        # know_word_list_length = len(know_word_list)
-        # if know_word_list_length == 0:
-        #     continue
-
-        # print('sent_id:', sent_id,  ' word_id:', word_id)
-        print('know_word_list:', know_word_list)
-        # print('know_word_list_length:', know_word_list_length)
-
+        # print('know_word_list:', know_word_list)
 
         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
         # print('sequence:', sequence)
@@ -415,9 +408,9 @@ def GPT2_generate(sum_str, tokenizer, model):
         selected_sent = [resulting_sents[sent_id]]
 
         new_seq = kept_sent+selected_sent+remaining_sents
-        # new_seq = know_word_list
-        print('new_seq:', new_seq)
-        exit(0)
+        # # new_seq = know_word_list
+        # print('new_seq:', new_seq)
+        # exit(0)
 
         new_seqs.append(' '.join(new_seq))
     # print(new_seqs)
@@ -839,7 +832,7 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    # load_DUC_test()
+    load_DUC_test()
     # load_CNN_DailyMail('val')
     # load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
@@ -849,7 +842,7 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    load_Curation()
+    # load_Curation()
 
 
     # split_DUC()
