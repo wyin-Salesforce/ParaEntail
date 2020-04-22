@@ -570,7 +570,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     # insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
 
     # bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    print('ctrl generate...')
+    # print('ctrl generate...')
     bert_generate_list = CTRL_generate(sum_str, gpt2_tokenizer, gpt2_model, replace=True)
     bert_generate_list_names = ['#ReplaceUnrelatedSent#'] * len(bert_generate_list)
 
@@ -585,7 +585,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     for sentence in doc_sentences.sents:
         doc_sents.append(sentence.text)
     for cand_i in cand_list:
-        print('haha...')
+        # print('haha...')
         cand_i_premise = insert_unrelated_sents_random_location(cand_i, doc_sents)
         # print('haha')
         # cand_i_premise = CTRL_generate(cand_i, gpt2_tokenizer, gpt2_model, replace=False)
@@ -902,14 +902,14 @@ def preprocess_curation():
     print('write  over:', valid_size)
 
 
-def load_Curation():
+def load_Curation(prefix):
     '''
     this function load 40K curation, and gneerate the negative summaries
     '''
 
-    # write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.txt', 'w', 'utf-8')
-    write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt', 'w', 'utf-8')
-    write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt', 'w', 'utf-8')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/'+prefix+'_in_entail.harsh.txt', 'w', 'utf-8')
+    # write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt', 'w', 'utf-8')
+    # write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt', 'w', 'utf-8')
     readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
@@ -929,44 +929,130 @@ def load_Curation():
     for line in readfile:
         parts = line.strip().split('\t')
         if len(parts) ==2:
-            size+=1
-            # print('size:', size)
-            # if size < 242:
-            #     continue
-            if size <=20000:
-                continue
-                # writefile = write_train
-            elif size>20000 and size <=27000:
-                # writefile.close()
-                writefile = write_dev
-            else:
-                # writefile.close()
-                writefile = write_test
-
             # print('parts:', parts)
             doc_str = parts[0].strip()
             sum_str = parts[1].strip()
             if len(doc_str.split()) <10 or len(sum_str.split()) < 10:
                 invalid_size+=1
                 continue
+            else:
+                '''valid'''
+                size+=1
+                if prefix == 'train':
+                    if size > 20000:
+                        break
+                elif prefix == 'dev':
+                    if size <=20000:
+                        continue
+                    elif size > 27000:
+                        break
+                else:
+                    if size <=27000:
+                        continue
 
-            writefile.write('document>>' +'\t'+doc_str+'\n')
-            # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
-            writefile.write('positive>>' +'\t'+sum_str+'\n')
-            # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
-            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
-            prior_unrelated_doc = doc_str
-            # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
-            for id, neg_sum in enumerate(neg_sum_list):
-                writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
-            writefile.write('\n')
-            # size+=1
-            if size % 10 == 0:
-                print('doc size:', size)
+
+
+                writefile.write('document>>' +'\t'+doc_str+'\n')
+                # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+                # writefile.write('positive>>' +'\t'+sum_str+'\n')
+                writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+sum_str+'\n')
+                # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
+                neg_sum_list, neg_sum_namelist, neg_sum_list_premise = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
+                prior_unrelated_doc = doc_str
+                # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
+                for id, neg_sum in enumerate(neg_sum_list):
+                    writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
+                writefile.write('\n')
+
+                '''
+                finish the original doc, now start
+                (neg_sum --> pos_sum) -- negative
+                (neg_sum --> neg_sum) -- positive
+                (neg_sum&unrelatedSent --> neg_sum) -- positive
+                '''
+                for idd, neg_sum_i in enumerate(neg_sum_list):
+                    writefile.write('document>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
+                    writefile.write('\n')
+
+                    writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
+                    writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('\n')
+
+                if size % 10 == 0:
+                    print('doc size:', size)
         else:
             invalid_size+=1
     writefile.close()
     print('over, invalid_size:', invalid_size)
+
+
+# def load_Curation():
+#     '''
+#     this function load 40K curation, and gneerate the negative summaries
+#     '''
+#
+#     write_train = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt', 'w', 'utf-8')
+#     write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt', 'w', 'utf-8')
+#     write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt', 'w', 'utf-8')
+#     readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
+#     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+#     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+#     mask_model.to(device)
+#
+#     # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+#     # gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+#     # gpt2_model.to(device)
+#
+#     ctrl_tokenizer = CTRLTokenizer.from_pretrained('ctrl')
+#     ctrl_model = CTRLLMHeadModel.from_pretrained('ctrl')
+#     ctrl_model.to(device)
+#
+#     size = 0
+#     prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+#     invalid_size = 0
+#     for line in readfile:
+#         parts = line.strip().split('\t')
+#         if len(parts) ==2:
+#             size+=1
+#             # print('size:', size)
+#             # if size < 242:
+#             #     continue
+#             if size <=20000:
+#                 continue
+#                 # writefile = write_train
+#             elif size>20000 and size <=27000:
+#                 # writefile.close()
+#                 writefile = write_dev
+#             else:
+#                 # writefile.close()
+#                 writefile = write_test
+#
+#             # print('parts:', parts)
+#             doc_str = parts[0].strip()
+#             sum_str = parts[1].strip()
+#             if len(doc_str.split()) <10 or len(sum_str.split()) < 10:
+#                 invalid_size+=1
+#                 continue
+#
+#             writefile.write('document>>' +'\t'+doc_str+'\n')
+#             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
+#             writefile.write('positive>>' +'\t'+sum_str+'\n')
+#             # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
+#             neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
+#             prior_unrelated_doc = doc_str
+#             # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
+#             for id, neg_sum in enumerate(neg_sum_list):
+#                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
+#             writefile.write('\n')
+#             # size+=1
+#             if size % 10 == 0:
+#                 print('doc size:', size)
+#         else:
+#             invalid_size+=1
+#     writefile.close()
+#     print('over, invalid_size:', invalid_size)
 
 def split_DUC():
     readfile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail_original.txt', 'r', 'utf-8')
@@ -1006,8 +1092,9 @@ if __name__ == "__main__":
     # sum_str = 'to save time, we only use the first summary to generate negative ones'
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
-    load_DUC_train()
-    load_DUC_test()
+    # load_DUC_train()
+    # load_DUC_test()
+
     # load_CNN_DailyMail('val')
     # load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
@@ -1017,7 +1104,9 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    # load_Curation()
+    load_Curation('train')
+    # load_Curation('dev')
+    # load_Curation('test')
 
 
     # split_DUC()
