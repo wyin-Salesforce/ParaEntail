@@ -31,7 +31,7 @@ import os
 import pandas as pd
 from readability import Document
 from sys import argv
-
+from transformers import CTRLLMHeadModel, CTRLTokenizer
 
 seed = 400
 random.seed(seed)
@@ -355,6 +355,93 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
 
     return [' '.join(new_sum_sents)]
 
+
+def CTRL_generate(sum_str, tokenizer, model):
+    nlp = en_core_web_sm.load()
+    text_sentences = nlp(sum_str)
+    sum_sents = []
+    for sentence in text_sentences.sents:
+        sum_sents.append(sentence.text) # string
+
+    sent_size = len(sum_sents)
+
+
+
+    print('sum_sents:', sum_sents)
+
+    # input_wordlist = sum_str.split()
+    # input_len = len(input_wordlist)
+    max_len = len(sum_str.split())+20
+
+    # keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
+    new_seqs = []
+    if sent_size <2:
+        return new_seqs
+    for _ in range(1):
+        '''which sentence to split'''
+        sent_id = random.sample(list(range(1, sent_size)), 1)[0]
+        # sent_len = len(sum_sents[sent_id].split())
+        '''which word to split'''
+        # word_id = random.sample(list(range(sent_len)), 1)[0]
+        know_word_list = []
+        for i in range(sent_id):
+            for word in sum_sents[i].split():
+                know_word_list.append(word)
+        kept_sent = sum_sents[:sent_id]
+        remaining_sents = sum_sents[sent_id+1:]
+
+        prompt_text = 'Links '+' '.join(kept_sent)# if args.prompt else input("Model prompt >>> ")
+        # preprocessed_prompt_text = prompt_text#prepare_ctrl_input(args, model, tokenizer, prompt_text)
+        encoded_prompt = tokenizer.encode(
+            prompt_text, add_special_tokens=False, return_tensors="pt", add_space_before_punct_symbol=True
+            )
+        encoded_prompt = encoded_prompt.to(device)
+        output_sequences = model.generate(
+            input_ids=encoded_prompt,
+            max_length=max_len + len(encoded_prompt[0]),
+            temperature=0.1,
+            top_k=0,
+            top_p=0.9,
+            repetition_penalty=1.2,
+            do_sample=True,
+            num_return_sequences=1,
+        )
+        if len(output_sequences.shape) > 2:
+            output_sequences.squeeze_()
+        generated_sequences = []
+        for generated_sequence_idx, generated_sequence in enumerate(output_sequences):
+            # print("=== GENERATED SEQUENCE {} ===".format(generated_sequence_idx + 1))
+            generated_sequence = generated_sequence.tolist()
+            text = tokenizer.decode(generated_sequence, clean_up_tokenization_spaces=True)
+            text = text[: text.find(args.stop_token) if args.stop_token else None]
+            total_sequence = (
+                prompt_text + text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
+                )
+
+            generated_sequences.append(total_sequence)
+            break
+
+        resulting_sentences = nlp(' '.join(generated_sequences))
+        resulting_sents = []
+        for new_sentence in resulting_sentences.sents:
+            resulting_sents.append(new_sentence.text) # string
+
+        print('sent_id:', sent_id)
+        print('resulting_sents:', resulting_sents)
+        selected_sent = [resulting_sents[sent_id]]
+
+        new_seq = kept_sent+selected_sent+remaining_sents
+        # # new_seq = know_word_list
+        print('new_seq:', new_seq)
+        exit(0)
+
+        new_seqs.append(' '.join(new_seq))
+    # print(new_seqs)
+
+    return new_seqs
+
+
+
 def GPT2_generate(sum_str, tokenizer, model):
     nlp = en_core_web_sm.load()
     text_sentences = nlp(sum_str)
@@ -456,7 +543,8 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     # insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
     # insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
 
-    bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
+    # bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
+    bert_generate_list = CTRL_generate(sum_str, gpt2_tokenizer, gpt2_model)
     bert_generate_list_names = ['#InsertUnrelatedSent#'] * len(bert_generate_list)
 
     cand_list= entity_cand_list  + bert_mask_list +bert_generate_list
@@ -475,9 +563,12 @@ def load_DUC_train():
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     mask_model.to(device)
 
-    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
-    gpt2_model.to(device)
+    # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    # gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    # gpt2_model.to(device)
+    ctrl_tokenizer = CTRLTokenizer.from_pretrained('ctrl')
+    ctrl_model = CTRLLMHeadModel.from_pretrained('ctrl')
+    ctrl_model.to(device)
 
     size = 0
     for foldername in trainfolder_namelist:
@@ -515,7 +606,7 @@ def load_DUC_train():
             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             writefile.write('positive>>' +'\t'+sum_str+'\n')
             # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
-            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
             prior_unrelated_doc = doc_str
             # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
             for id, neg_sum in enumerate(neg_sum_list):
@@ -546,9 +637,12 @@ def load_DUC_test():
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     mask_model.to(device)
 
-    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
-    gpt2_model.to(device)
+    # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    # gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    # gpt2_model.to(device)
+    ctrl_tokenizer = CTRLTokenizer.from_pretrained('ctrl')
+    ctrl_model = CTRLLMHeadModel.from_pretrained('ctrl')
+    ctrl_model.to(device)
 
     '''test doc has multiple summary'''
     duplicate_sum_pathstring = '/export/home/Dataset/para_entail_datasets/DUC/DUC_data/data/duc01/data/test/duplicate.summaries'
@@ -612,7 +706,7 @@ def load_DUC_test():
 
             '''to save time, we only use the first summary to generate negative ones'''
             sum_str = ' '.join(summ_list[0].strip().split())
-            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
             prior_unrelated_doc = doc_str
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')

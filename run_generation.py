@@ -27,16 +27,16 @@ import torch
 from transformers import (
     CTRLLMHeadModel,
     CTRLTokenizer,
-    GPT2LMHeadModel,
-    GPT2Tokenizer,
-    OpenAIGPTLMHeadModel,
-    OpenAIGPTTokenizer,
-    TransfoXLLMHeadModel,
-    TransfoXLTokenizer,
-    XLMTokenizer,
-    XLMWithLMHeadModel,
-    XLNetLMHeadModel,
-    XLNetTokenizer,
+    # GPT2LMHeadModel,
+    # GPT2Tokenizer,
+    # OpenAIGPTLMHeadModel,
+    # OpenAIGPTTokenizer,
+    # TransfoXLLMHeadModel,
+    # TransfoXLTokenizer,
+    # XLMTokenizer,
+    # XLMWithLMHeadModel,
+    # XLNetLMHeadModel,
+    # XLNetTokenizer,
 )
 
 
@@ -47,13 +47,13 @@ logger = logging.getLogger(__name__)
 
 MAX_LENGTH = int(10000)  # Hardcoded max length to avoid infinite loop
 
-MODEL_CLASSES = {
-    "gpt2": (GPT2LMHeadModel, GPT2Tokenizer),
-    "ctrl": (CTRLLMHeadModel, CTRLTokenizer),
-    "openai-gpt": (OpenAIGPTLMHeadModel, OpenAIGPTTokenizer),
-    "xlnet": (XLNetLMHeadModel, XLNetTokenizer),
-    "transfo-xl": (TransfoXLLMHeadModel, TransfoXLTokenizer),
-    "xlm": (XLMWithLMHeadModel, XLMTokenizer),
+# MODEL_CLASSES = {
+#     "gpt2": (GPT2LMHeadModel, GPT2Tokenizer),
+#     "ctrl": (CTRLLMHeadModel, CTRLTokenizer),
+    # "openai-gpt": (OpenAIGPTLMHeadModel, OpenAIGPTTokenizer),
+    # "xlnet": (XLNetLMHeadModel, XLNetTokenizer),
+    # "transfo-xl": (TransfoXLLMHeadModel, TransfoXLTokenizer),
+    # "xlm": (XLMWithLMHeadModel, XLMTokenizer),
 }
 
 # Padding text to help Transformer-XL and XLNet with short prompts as proposed by Aman Rusia
@@ -194,31 +194,27 @@ def main():
     set_seed(args)
 
     # Initialize the model and tokenizer
-    try:
-        args.model_type = args.model_type.lower()
-        model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    except KeyError:
-        raise KeyError("the model {} you specified is not supported. You are welcome to add it and open a PR :)")
+    # try:
+    args.model_type = args.model_type.lower()
 
-    tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path)
-    model = model_class.from_pretrained(args.model_name_or_path)
+    tokenizer = CTRLTokenizer.from_pretrained('ctrl')
+    model = CTRLLMHeadModel.from_pretrained('ctrl')
     model.to(args.device)
 
     args.length = adjust_length_to_model(args.length, max_sequence_length=model.config.max_position_embeddings)
     logger.info(args)
 
-    prompt_text = args.prompt if args.prompt else input("Model prompt >>> ")
+    prompt_text = args.prompt# if args.prompt else input("Model prompt >>> ")
 
     # Different models need different input formatting and/or extra arguments
-    requires_preprocessing = args.model_type in PREPROCESSING_FUNCTIONS.keys()
-    if requires_preprocessing:
-        prepare_input = PREPROCESSING_FUNCTIONS.get(args.model_type)
-        preprocessed_prompt_text = prepare_input(args, model, tokenizer, prompt_text)
-        encoded_prompt = tokenizer.encode(
-            preprocessed_prompt_text, add_special_tokens=False, return_tensors="pt", add_space_before_punct_symbol=True
-        )
-    else:
-        encoded_prompt = tokenizer.encode(prompt_text, add_special_tokens=False, return_tensors="pt")
+    # requires_preprocessing = args.model_type in PREPROCESSING_FUNCTIONS.keys()
+    # if requires_preprocessing:
+    # prepare_input = PREPROCESSING_FUNCTIONS.get(args.model_type)
+    preprocessed_prompt_text = prepare_ctrl_input(args, model, tokenizer, prompt_text)
+    encoded_prompt = tokenizer.encode(
+        preprocessed_prompt_text, add_special_tokens=False, return_tensors="pt", add_space_before_punct_symbol=True
+    )
+
     encoded_prompt = encoded_prompt.to(args.device)
 
     output_sequences = model.generate(
@@ -239,7 +235,7 @@ def main():
     generated_sequences = []
 
     for generated_sequence_idx, generated_sequence in enumerate(output_sequences):
-        print("=== GENERATED SEQUENCE {} ===".format(generated_sequence_idx + 1))
+        # print("=== GENERATED SEQUENCE {} ===".format(generated_sequence_idx + 1))
         generated_sequence = generated_sequence.tolist()
 
         # Decode text
@@ -254,7 +250,7 @@ def main():
         )
 
         generated_sequences.append(total_sequence)
-        print(total_sequence)
+        break
 
     return generated_sequences
 
