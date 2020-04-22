@@ -38,6 +38,7 @@ random.seed(seed)
 np.random.seed(seed)
 device = torch.device("cuda")
 
+nlp = en_core_web_sm.load()
 
 def load_CNN_DailyMail(prefix):
     mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
@@ -237,7 +238,6 @@ def swap_pronouns(sum_str):
 
 def shuffle_words_same_POStags(sum_str, prob):
     preferred_POStags = set(['VERB', 'NOUN', 'PROPN', 'NUM'])
-    nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
     pos2words = defaultdict(list)
     for token in doc:
@@ -285,7 +285,6 @@ def random_remove_words(sum_str, drop):
 def random_replace_words(sum_str, drop, tokenizer, model):
 
     preferred_POStags = set(['VERB', 'NOUN', 'PROPN', 'NUM'])
-    nlp = en_core_web_sm.load()
     doc = nlp(sum_str)
     # pos2words = defaultdict(list)
     input_wordlist = []
@@ -337,7 +336,7 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     # text_sentences = nlp(text)
     # for sentence in text_sentences.sents:
 
-    nlp = en_core_web_sm.load()
+
     text_sentences = nlp(sum_str)
     sum_sents = []
     for sentence in text_sentences.sents:
@@ -365,7 +364,7 @@ def insert_unrelated_sents_random_location(sum_str, doc_sents):
     # text_sentences = nlp(text)
     # for sentence in text_sentences.sents:
 
-    nlp = en_core_web_sm.load()
+
     text_sentences = nlp(sum_str)
     sum_sents = []
     for sentence in text_sentences.sents:
@@ -380,7 +379,7 @@ def insert_unrelated_sents_random_location(sum_str, doc_sents):
     return ' '.join(new_sum_sents)
 
 def CTRL_generate(sum_str, tokenizer, model, replace = False):
-    nlp = en_core_web_sm.load()
+
     text_sentences = nlp(sum_str)
     sum_sents = []
     for sentence in text_sentences.sents:
@@ -442,7 +441,7 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
 
             generate_part = text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
 
-            print('prompt_text:', prompt_text)
+            # print('prompt_text:', prompt_text)
             # print('generate_part:', generate_part)
             # # exit(0)
             generated_sequences.append(generate_part.strip())
@@ -460,72 +459,6 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
 
         new_seq = kept_sent+selected_sent+remaining_sents
         # # # new_seq = know_word_list
-        print('new_seq:', new_seq)
-        exit(0)
-
-        new_seqs.append(' '.join(new_seq))
-    # print(new_seqs)
-
-    return new_seqs
-
-
-
-def GPT2_generate(sum_str, tokenizer, model):
-    nlp = en_core_web_sm.load()
-    text_sentences = nlp(sum_str)
-    sum_sents = []
-    for sentence in text_sentences.sents:
-        sum_sents.append(sentence.text) # string
-
-    sent_size = len(sum_sents)
-
-
-
-    print('sum_sents:', sum_sents)
-
-    # input_wordlist = sum_str.split()
-    # input_len = len(input_wordlist)
-    max_len = len(sum_str.split())+20
-
-    # keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
-    new_seqs = []
-    if sent_size <2:
-        return new_seqs
-    for _ in range(1):
-        '''which sentence to split'''
-        sent_id = random.sample(list(range(1, sent_size)), 1)[0]
-        # sent_len = len(sum_sents[sent_id].split())
-        '''which word to split'''
-        # word_id = random.sample(list(range(sent_len)), 1)[0]
-        know_word_list = []
-        for i in range(sent_id):
-            for word in sum_sents[i].split():
-                know_word_list.append(word)
-        kept_sent = sum_sents[:sent_id]
-        remaining_sents = sum_sents[sent_id+1:]
-
-        # print('know_word_list:', know_word_list)
-
-        sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
-        # print('sequence:', sequence)
-        input = tokenizer.encode(sequence, return_tensors="pt")
-        input = input.to(device)
-        # print('input:', input)
-        generated = model.generate(input, max_length=max_len)
-
-        resulting_string = tokenizer.decode(generated.tolist()[0]).strip()
-
-        resulting_sentences = nlp(resulting_string)
-        resulting_sents = []
-        for new_sentence in resulting_sentences.sents:
-            resulting_sents.append(new_sentence.text) # string
-
-        print('sent_id:', sent_id)
-        print('resulting_sents:', resulting_sents)
-        selected_sent = [resulting_sents[sent_id]]
-
-        new_seq = kept_sent+selected_sent+remaining_sents
-        # # new_seq = know_word_list
         # print('new_seq:', new_seq)
         # exit(0)
 
@@ -535,9 +468,74 @@ def GPT2_generate(sum_str, tokenizer, model):
     return new_seqs
 
 
+
+# def GPT2_generate(sum_str, tokenizer, model):
+#     text_sentences = nlp(sum_str)
+#     sum_sents = []
+#     for sentence in text_sentences.sents:
+#         sum_sents.append(sentence.text) # string
+#
+#     sent_size = len(sum_sents)
+#
+#
+#
+#     print('sum_sents:', sum_sents)
+#
+#     # input_wordlist = sum_str.split()
+#     # input_len = len(input_wordlist)
+#     max_len = len(sum_str.split())+20
+#
+#     # keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
+#     new_seqs = []
+#     if sent_size <2:
+#         return new_seqs
+#     for _ in range(1):
+#         '''which sentence to split'''
+#         sent_id = random.sample(list(range(1, sent_size)), 1)[0]
+#         # sent_len = len(sum_sents[sent_id].split())
+#         '''which word to split'''
+#         # word_id = random.sample(list(range(sent_len)), 1)[0]
+#         know_word_list = []
+#         for i in range(sent_id):
+#             for word in sum_sents[i].split():
+#                 know_word_list.append(word)
+#         kept_sent = sum_sents[:sent_id]
+#         remaining_sents = sum_sents[sent_id+1:]
+#
+#         # print('know_word_list:', know_word_list)
+#
+#         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
+#         # print('sequence:', sequence)
+#         input = tokenizer.encode(sequence, return_tensors="pt")
+#         input = input.to(device)
+#         # print('input:', input)
+#         generated = model.generate(input, max_length=max_len)
+#
+#         resulting_string = tokenizer.decode(generated.tolist()[0]).strip()
+#
+#         resulting_sentences = nlp(resulting_string)
+#         resulting_sents = []
+#         for new_sentence in resulting_sentences.sents:
+#             resulting_sents.append(new_sentence.text) # string
+#
+#         print('sent_id:', sent_id)
+#         print('resulting_sents:', resulting_sents)
+#         selected_sent = [resulting_sents[sent_id]]
+#
+#         new_seq = kept_sent+selected_sent+remaining_sents
+#         # # new_seq = know_word_list
+#         # print('new_seq:', new_seq)
+#         # exit(0)
+#
+#         new_seqs.append(' '.join(new_seq))
+#     # print(new_seqs)
+#
+#     return new_seqs
+
+
 def NER(input):
 
-    nlp = en_core_web_sm.load()
+
     # doc = nlp('European authorities fined Google a record $5.1 billion on Wednesday for abusing its power in the mobile phone market and ordered the company to alter its practices')
     doc = nlp(input)
 
@@ -581,7 +579,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
 
     '''now, for all negative summaries, we forward to CTRL to get their premise by insert unrelated sent'''
     premise_cand_list = []
-    nlp = en_core_web_sm.load()
+
     doc_sentences = nlp(doc_str)
     doc_sents = []
     for sentence in doc_sentences.sents:
