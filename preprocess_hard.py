@@ -1112,8 +1112,8 @@ if __name__ == "__main__":
     # load_DUC_train()
     # load_DUC_test()
 
-    load_CNN_DailyMail('train')
-    # load_CNN_DailyMail('val')
+    # load_CNN_DailyMail('train')
+    load_CNN_DailyMail('val')
     # load_CNN_DailyMail('test')
 
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
