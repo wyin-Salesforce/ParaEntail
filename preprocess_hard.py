@@ -364,6 +364,8 @@ def GPT2_generate(sum_str, tokenizer, model):
 
     sent_size = len(sum_sents)
 
+
+
     print('sum_sents:', sum_sents)
 
     # input_wordlist = sum_str.split()
@@ -372,6 +374,8 @@ def GPT2_generate(sum_str, tokenizer, model):
 
     # keep_lengths = [int(input_len*0.3), int(input_len*0.6), int(input_len*0.9)]
     new_seqs = []
+    if sent_size <2:
+        return new_seqs
     for _ in range(1):
         '''which sentence to split'''
         sent_id = random.sample(list(range(1, sent_size)), 1)[0]
@@ -385,13 +389,13 @@ def GPT2_generate(sum_str, tokenizer, model):
         kept_sent = sum_sents[:sent_id]
         remaining_sents = sum_sents[sent_id+1:]
 
-        know_word_list_length = len(know_word_list)
-        if know_word_list_length == 0:
-            continue
+        # know_word_list_length = len(know_word_list)
+        # if know_word_list_length == 0:
+        #     continue
 
-        print('sent_id:', sent_id,  ' word_id:', word_id)
+        # print('sent_id:', sent_id,  ' word_id:', word_id)
         print('know_word_list:', know_word_list)
-        print('know_word_list_length:', know_word_list_length)
+        # print('know_word_list_length:', know_word_list_length)
 
 
         sequence = ' '.join(know_word_list)#f"Hugging Face is based in DUMBO, New York City, and is"
