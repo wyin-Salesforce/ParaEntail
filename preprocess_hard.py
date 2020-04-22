@@ -413,7 +413,8 @@ def CTRL_generate(sum_str, tokenizer, model):
             # print("=== GENERATED SEQUENCE {} ===".format(generated_sequence_idx + 1))
             generated_sequence = generated_sequence.tolist()
             text = tokenizer.decode(generated_sequence, clean_up_tokenization_spaces=True)
-            text = text[: text.find(args.stop_token) if args.stop_token else None]
+            # text = text[: text.find(args.stop_token) if args.stop_token else None]
+            # text = text[: text.find(None) if None else None]
             total_sequence = (
                 prompt_text + text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
                 )
