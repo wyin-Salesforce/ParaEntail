@@ -654,7 +654,7 @@ def main():
     # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
     assert len(test_pred_label_list) == len(test_extra_labels)
-    probe_types = ['#SwapEnt#>>', '#ReplaceWord#>>', '#InsertUnrelatedSent#>>', '#GPT2generate#>>', 'not_entailment']
+    probe_types = ['#SwapEnt#>>', '#ReplaceWord#>>', '#InsertUnrelatedSent#>>']
     f1_list = []
     for probe_type in probe_types:
         size_i = 0
@@ -675,5 +675,5 @@ if __name__ == "__main__":
     main()
 
     '''
-    CUDA_VISIBLE_DEVICES=6,7 python -u analysis_hypothesis_only.py --model_type roberta --model_name_or_path /export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only_train_balanced/f1.dev.0.5476762121923413.test0.5284138147990024 --task_name rte --comment 'hypo only'
+    CUDA_VISIBLE_DEVICES=7 python -u analysis_hypothesis_only.py --model_type roberta --model_name_or_path /export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only_train_balanced/f1.dev.0.5867506953074146.test0.5742538975501115 --task_name rte --comment 'hypo only'
     '''

@@ -5,7 +5,8 @@ from transformers.data.processors.utils import InputExample
 def get_DUC_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/DUC/'
-    filename = path+prefix+'_in_entail.txt'
+    # filename = path+prefix+'_in_entail.txt'
+    filename = path+prefix+'_in_entail.harsh.txt'
     print('loading DUC...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
     start = False
@@ -361,34 +362,34 @@ def load_test_data(hypo_only=False):
     '''DUC'''
     duc_examples, duc_extra_labels, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
-    cnn_examples, cnn_extra_labels, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_extra_labels, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
-    '''Curation'''
-    curation_examples, curation_extra_labels, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
-    '''ANLI'''
-    anli_examples, anli_extra_labels, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
+    # cnn_examples, cnn_extra_labels, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
+    # '''MCTest'''
+    # mctest_examples, mctest_extra_labels, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
+    # '''Curation'''
+    # curation_examples, curation_extra_labels, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
+    # '''ANLI'''
+    # anli_examples, anli_extra_labels, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
     test_examples = (
-                        duc_examples+
-                        cnn_examples+
-                        mctest_examples+
-                        curation_examples+
-                        anli_examples
+                        duc_examples
+                        # cnn_examples+
+                        # mctest_examples+
+                        # curation_examples+
+                        # anli_examples
                         )
     test_extra_labels = (
-                        duc_extra_labels+
-                        cnn_extra_labels+
-                        mctest_extra_labels+
-                        curation_extra_labels+
-                        anli_extra_labels
+                        duc_extra_labels
+                        # cnn_extra_labels+
+                        # mctest_extra_labels+
+                        # curation_extra_labels+
+                        # anli_extra_labels
                         )
     pos_size = (
-                duc_pos_size+
-                cnn_pos_size+
-                mctest_pos_size+
-                curation_pos_size+
-                anli_pos_size
+                duc_pos_size
+                # cnn_pos_size+
+                # mctest_pos_size+
+                # curation_pos_size+
+                # anli_pos_size
                 )
 
     print('test size:', len(test_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(test_examples))
