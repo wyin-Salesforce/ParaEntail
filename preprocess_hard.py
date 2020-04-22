@@ -419,7 +419,7 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
         encoded_prompt = encoded_prompt.to(device)
         output_sequences = model.generate(
             input_ids=encoded_prompt,
-            max_length=20 + len(encoded_prompt[0]),
+            max_length=40 + len(encoded_prompt[0]),
             temperature=0.1,
             top_k=0,
             top_p=0.9,
@@ -443,19 +443,20 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
             generate_part = text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
 
             print('prompt_text:', prompt_text)
-            print('generate_part:', generate_part)
-            # exit(0)
-            generated_sequences.append(generate_part)
+            # print('generate_part:', generate_part)
+            # # exit(0)
+            generated_sequences.append(generate_part.strip())
             break
 
         resulting_sentences = nlp(generated_sequences[0])
-        resulting_sents = []
+        selected_sent = []
         for new_sentence in resulting_sentences.sents:
-            resulting_sents.append(new_sentence.text) # string
+            selected_sent.append(new_sentence.text) # string
+            break
 
         # print('sent_id:', sent_id)
         # print('resulting_sents:', resulting_sents)
-        selected_sent = [resulting_sents[0]]
+        # selected_sent = resulting_sents#[resulting_sents[0]]
 
         new_seq = kept_sent+selected_sent+remaining_sents
         # # # new_seq = know_word_list
