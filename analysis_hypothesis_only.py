@@ -312,8 +312,8 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
 
         print('preds:', sum(preds), len(preds))
         print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
-        f1 = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
-    return f1, list(preds)
+        # f1 = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
+    return list(preds), list(out_label_ids)
 
 
 
@@ -648,10 +648,21 @@ def main():
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
 
-    test_f1, test_pred_label_list = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
-    print('test_f1:', test_f1)
-    # global_step, tr_loss = train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer)
-    # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+    test_pred_label_list, test_gold_label_list = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    test_f1 = f1_score(test_gold_label_list, test_pred_label_list, pos_label= 0, average='binary')
+
+
+    recall_pos = 0
+    total_pos_size = 0
+    for id, gold_label in test_gold_label_list:
+        if gold_label == 0:
+            total_pos_size+=1
+            if test_pred_label_list[id] == 1:
+                recall_pos+=1
+    recall_pos = recall_pos/total_pos_size
+
+    print('test_f1:', test_f1, ' recall_pos:', recall_pos)
+
 
     assert len(test_pred_label_list) == len(test_extra_labels)
     probe_types = ['#SwapEnt#>>', '#ReplaceWord#>>', '#InsertUnrelatedSent#>>']
@@ -666,13 +677,17 @@ def main():
                     hit_i+=1
         acc_i = hit_i/size_i
         f1_list.append(acc_i)
-    print('f1_list:', f1_list)
+    print('recall_list:', f1_list)
 
 
 
 
 if __name__ == "__main__":
     main()
+    '''
+    test_f1: 0.6753246753246753
+    f1_list: [0.7643260694108152, 0.7894736842105263, 0.631578947368421]
+    '''
 
     '''
     CUDA_VISIBLE_DEVICES=7 python -u analysis_hypothesis_only.py --model_type roberta --model_name_or_path /export/home/Dataset/BERT_pretrained_mine/paragraph_entail/hypo_only_train_balanced/f1.dev.0.5867506953074146.test0.5742538975501115 --task_name rte --comment 'hypo only'
