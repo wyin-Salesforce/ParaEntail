@@ -16,5 +16,5 @@ import random
 out_label_ids = [1]*1847+[0]*909
 preds = [1]*2756
 
-f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
+f1 = f1_score(out_label_ids, preds, pos_label= 1, average='binary')
 print(f1)
