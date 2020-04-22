@@ -371,15 +371,6 @@ def insert_unrelated_sents_random_location(sum_str, doc_sents):
     for sentence in text_sentences.sents:
         sum_sents.append(sentence.text)
 
-    # print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
-    # nlp = en_core_web_sm.load()
-    # doc_sentences = nlp(prior_unrelated_doc)
-    # doc_sents = []
-    # for sentence in doc_sentences.sents:
-    #     doc_sents.append(sentence.text)
-    # if len(doc_sents) == 0:
-    #     print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
-    #     exit(0)
     random_sent_from_doc = random.choice(doc_sents)
     '''put the unrelated sent at the position 1'''
     random_position = random.sample(list(range(len(sum_sents))), 1)[0]
@@ -428,7 +419,7 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
         encoded_prompt = encoded_prompt.to(device)
         output_sequences = model.generate(
             input_ids=encoded_prompt,
-            max_length=max_len + len(encoded_prompt[0]),
+            max_length=20 + len(encoded_prompt[0]),
             temperature=0.1,
             top_k=0,
             top_p=0.9,
@@ -449,6 +440,9 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
                 prompt_text + text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
                 )
 
+            print('prompt_text:', prompt_text)
+            print('total_sequence:', total_sequence)
+            exit(0)
             generated_sequences.append(total_sequence)
             break
 
