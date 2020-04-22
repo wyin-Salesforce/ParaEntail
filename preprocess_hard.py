@@ -68,17 +68,34 @@ def load_CNN_DailyMail(prefix):
                 # if size <= 3725:
                 #     continue
                 doc_str = parts[0].strip()
-                writefile.write('document>>' +'\t'+doc_str+'\n')
                 sum_str = parts[1].strip()
                 if len(sum_str.split()) > 200:
                     skip_overlong_sum_size+=1
                     continue
-                writefile.write('positive>>' +'\t'+ sum_str+'\n')
-                neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
+                writefile.write('document>>' +'\t'+doc_str+'\n')
+                writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+sum_str+'\n')
+                neg_sum_list, neg_sum_namelist, neg_sum_list_premise = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
                 prior_unrelated_doc = doc_str
                 for id, neg_sum in enumerate(neg_sum_list):
                     writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
                 writefile.write('\n')
+
+                '''
+                finish the original doc, now start
+                (neg_sum --> pos_sum) -- negative
+                (neg_sum --> neg_sum) -- positive
+                (neg_sum&unrelatedSent --> neg_sum) -- positive
+                '''
+                for idd, neg_sum_i in enumerate(neg_sum_list):
+                    writefile.write('document>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
+                    writefile.write('\n')
+
+                    writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
+                    writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('\n')
+
                 size+=1
                 if size % 500 == 0:
                     print(fil_prefix, ' doc size:', size)
@@ -1095,8 +1112,10 @@ if __name__ == "__main__":
     # load_DUC_train()
     # load_DUC_test()
 
+    load_CNN_DailyMail('train')
     # load_CNN_DailyMail('val')
     # load_CNN_DailyMail('test')
+
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
@@ -1106,7 +1125,7 @@ if __name__ == "__main__":
     # preprocess_curation()
     # load_Curation('train')
     # load_Curation('dev')
-    load_Curation('test')
+    # load_Curation('test')
 
 
     # split_DUC()
