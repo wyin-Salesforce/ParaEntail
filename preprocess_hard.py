@@ -555,6 +555,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     '''now, for all negative summaries, we forward to CTRL to get their premise by insert unrelated sent'''
     premise_cand_list = []
     for cand_i in cand_list:
+        print('haha')
         cand_i_premise = CTRL_generate(cand_i, gpt2_tokenizer, gpt2_model, replace=False)
         premise_cand_list.append(cand_i_premise[0])
 
