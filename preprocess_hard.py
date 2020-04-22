@@ -405,6 +405,8 @@ def GPT2_generate(sum_str, tokenizer, model):
         for new_sentence in resulting_sentences.sents:
             resulting_sents.append(new_sentence.text) # string
 
+        print('sent_id:', sent_id)
+        print('resulting_sents:', resulting_sents)
         selected_sent = [resulting_sents[sent_id]]
 
         new_seq = kept_sent+selected_sent+remaining_sents
