@@ -654,7 +654,7 @@ def main():
 
     recall_pos = 0
     total_pos_size = 0
-    for id, gold_label in test_gold_label_list:
+    for id, gold_label in enumerate(test_gold_label_list):
         if gold_label == 0:
             total_pos_size+=1
             if test_pred_label_list[id] == 1:
