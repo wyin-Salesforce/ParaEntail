@@ -4,9 +4,9 @@ from sklearn.metrics import f1_score
 import random
 
 '''random baseline'''
-out_label_ids = [1]*1847+[0]*909
+out_label_ids = [1]*3694+[0]*2756
 preds = []
-for i in range(2756):
+for i in range(6450):
     prob = random.uniform(0, 1)
     if prob > 0.5:
         preds.append(0)
