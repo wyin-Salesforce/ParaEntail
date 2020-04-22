@@ -651,7 +651,7 @@ def main():
     test_pred_label_list, test_gold_label_list = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
     test_f1 = f1_score(test_gold_label_list, test_pred_label_list, pos_label= 0, average='binary')
 
-
+    '''we check how many entailment were falsely classified as negative'''
     recall_pos = 0
     total_pos_size = 0
     for id, gold_label in enumerate(test_gold_label_list):
@@ -685,7 +685,7 @@ def main():
 if __name__ == "__main__":
     main()
     '''
-    test_f1: 0.6753246753246753
+    test_f1: 0.6753246753246753, pos_2_neg_ratio: 22.77%
     f1_list: [0.7643260694108152, 0.7894736842105263, 0.631578947368421]
     '''
 

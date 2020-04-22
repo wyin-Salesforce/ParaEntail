@@ -53,14 +53,9 @@ def get_DUC_examples(prefix, hypo_only=False):
                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                     extra_labels.append(parts[1])
                 neg_size+=1
-                # if filename.find('train_in_entail') > -1:
-                #     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                #     neg_size+=1
-                # else:
-                #     rand_prob = random.uniform(0, 1)
-                #     if rand_prob > 3/4:
-                #         examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                #         neg_size+=1
+
+                examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=pos_hypo, label='not_entailment'))
+                examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=neg_hypo, label='entailment'))
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('DUC size:', len(examples))
