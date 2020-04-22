@@ -367,7 +367,7 @@ def CTRL_generate(sum_str, tokenizer, model):
 
 
 
-    print('sum_sents:', sum_sents)
+    # print('sum_sents:', sum_sents)
 
     # input_wordlist = sum_str.split()
     # input_len = len(input_wordlist)
@@ -427,14 +427,14 @@ def CTRL_generate(sum_str, tokenizer, model):
         for new_sentence in resulting_sentences.sents:
             resulting_sents.append(new_sentence.text) # string
 
-        print('sent_id:', sent_id)
-        print('resulting_sents:', resulting_sents)
+        # print('sent_id:', sent_id)
+        # print('resulting_sents:', resulting_sents)
         selected_sent = [resulting_sents[sent_id]]
 
         new_seq = kept_sent+selected_sent+remaining_sents
-        # # new_seq = know_word_list
-        print('new_seq:', new_seq)
-        exit(0)
+        # # # new_seq = know_word_list
+        # print('new_seq:', new_seq)
+        # exit(0)
 
         new_seqs.append(' '.join(new_seq))
     # print(new_seqs)
