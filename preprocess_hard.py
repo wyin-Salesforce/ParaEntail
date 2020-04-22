@@ -436,29 +436,31 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
             text = tokenizer.decode(generated_sequence, clean_up_tokenization_spaces=True)
             # text = text[: text.find(args.stop_token) if args.stop_token else None]
             # text = text[: text.find(None) if None else None]
-            total_sequence = (
-                prompt_text + text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
-                )
+            # total_sequence = (
+            #     prompt_text + text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
+            #     )
+
+            generate_part = text[len(tokenizer.decode(encoded_prompt[0], clean_up_tokenization_spaces=True)) :]
 
             print('prompt_text:', prompt_text)
-            print('total_sequence:', total_sequence)
-            exit(0)
-            generated_sequences.append(total_sequence)
+            print('generate_part:', generate_part)
+            # exit(0)
+            generated_sequences.append(generate_part)
             break
 
-        resulting_sentences = nlp(' '.join(generated_sequences))
+        resulting_sentences = nlp(generated_sequences[0])
         resulting_sents = []
         for new_sentence in resulting_sentences.sents:
             resulting_sents.append(new_sentence.text) # string
 
         # print('sent_id:', sent_id)
         # print('resulting_sents:', resulting_sents)
-        selected_sent = [resulting_sents[sent_id]]
+        selected_sent = [resulting_sents[0]]
 
         new_seq = kept_sent+selected_sent+remaining_sents
         # # # new_seq = know_word_list
-        # print('new_seq:', new_seq)
-        # exit(0)
+        print('new_seq:', new_seq)
+        exit(0)
 
         new_seqs.append(' '.join(new_seq))
     # print(new_seqs)
