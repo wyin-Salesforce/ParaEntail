@@ -575,6 +575,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     # insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
 
     # bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
+    print('ctrl generate...')
     bert_generate_list = CTRL_generate(sum_str, gpt2_tokenizer, gpt2_model, replace=True)
     bert_generate_list_names = ['#ReplaceUnrelatedSent#'] * len(bert_generate_list)
 
@@ -589,6 +590,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     for sentence in doc_sentences.sents:
         doc_sents.append(sentence.text)
     for cand_i in cand_list:
+        print('haha...')
         cand_i_premise = insert_unrelated_sents_random_location(cand_i, doc_sents)
         # print('haha')
         # cand_i_premise = CTRL_generate(cand_i, gpt2_tokenizer, gpt2_model, replace=False)
@@ -636,7 +638,7 @@ def load_DUC_train():
         # print(id2sum.keys())
         # assert len(id2doc) ==  len(id2sum)
         prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
-        print('start scan all docs....')
+        # print('start scan all docs....')
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = doc
