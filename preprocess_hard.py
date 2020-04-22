@@ -844,9 +844,13 @@ def load_Curation():
     mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
     mask_model.to(device)
 
-    gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
-    gpt2_model.to(device)
+    # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+    # gpt2_model = AutoModelWithLMHead.from_pretrained("gpt2")
+    # gpt2_model.to(device)
+
+    ctrl_tokenizer = CTRLTokenizer.from_pretrained('ctrl')
+    ctrl_model = CTRLLMHeadModel.from_pretrained('ctrl')
+    ctrl_model.to(device)
 
     size = 0
     prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
@@ -879,7 +883,7 @@ def load_Curation():
             # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             writefile.write('positive>>' +'\t'+sum_str+'\n')
             # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
-            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model)
+            neg_sum_list, neg_sum_namelist = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
             prior_unrelated_doc = doc_str
             # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
             for id, neg_sum in enumerate(neg_sum_list):
@@ -933,8 +937,8 @@ if __name__ == "__main__":
 
     # load_DUC_train()
     # load_DUC_test()
-    load_CNN_DailyMail('val')
-    load_CNN_DailyMail('test')
+    # load_CNN_DailyMail('val')
+    # load_CNN_DailyMail('test')
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
@@ -942,7 +946,7 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    # load_Curation()
+    load_Curation()
 
 
     # split_DUC()
