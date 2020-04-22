@@ -374,15 +374,15 @@ def GPT2_generate(sum_str, tokenizer, model):
     new_seqs = []
     for _ in range(1):
         '''which sentence to split'''
-        sent_id = random.sample(list(range(sent_size)), 1)[0]
-        sent_len = len(sum_sents[sent_id].split())
+        sent_id = random.sample(list(range(1, sent_size)), 1)[0]
+        # sent_len = len(sum_sents[sent_id].split())
         '''which word to split'''
-        word_id = random.sample(list(range(sent_len)), 1)[0]
+        # word_id = random.sample(list(range(sent_len)), 1)[0]
         know_word_list = []
         for i in range(sent_id):
             for word in sum_sents[i].split():
                 know_word_list.append(word)
-        know_word_list+=sum_sents[sent_id].split()[:word_id]
+        kept_sent = sum_sents[:sent_id]
         remaining_sents = sum_sents[sent_id+1:]
 
         know_word_list_length = len(know_word_list)
@@ -401,20 +401,17 @@ def GPT2_generate(sum_str, tokenizer, model):
         # print('input:', input)
         generated = model.generate(input, max_length=max_len)
 
-        resulting_string = tokenizer.decode(generated.tolist()[0]).strip().split()
-        print('resulting_string:', resulting_string)
+        resulting_string = tokenizer.decode(generated.tolist()[0]).strip()
 
-        for lengthh in range(know_word_list_length, len(resulting_string)):
-            print('resulting_string[lengthh]:', resulting_string[lengthh])
-            if resulting_string[lengthh] != '.':
-                know_word_list.append(resulting_string[lengthh])
-            else:
-                break
-        # print('resulting_string:', resulting_string)
-        for remain_sent in remaining_sents:
-            for word in remain_sent.split():
-                know_word_list.append(word)
-        new_seq = know_word_list
+        resulting_sentences = nlp(resulting_string)
+        resulting_sents = []
+        for new_sentence in resulting_sentences.sents:
+            resulting_sents.append(new_sentence.text) # string
+
+        selected_sent = [resulting_sents[sent_id]]
+
+        new_seq = kept_sent+selected_sent+remaining_sents
+        # new_seq = know_word_list
         print('new_seq:', new_seq)
         exit(0)
 
