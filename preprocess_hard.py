@@ -359,6 +359,35 @@ def append_unrelated_sents(sum_str, prior_unrelated_doc):
     return [' '.join(new_sum_sents)]
 
 
+def insert_unrelated_sents_random_location(sum_str, doc_sents):
+    # nlp = spacy.load('en_core_web_sm')
+    # text = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+    # text_sentences = nlp(text)
+    # for sentence in text_sentences.sents:
+
+    nlp = en_core_web_sm.load()
+    text_sentences = nlp(sum_str)
+    sum_sents = []
+    for sentence in text_sentences.sents:
+        sum_sents.append(sentence.text)
+
+    # print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
+    # nlp = en_core_web_sm.load()
+    # doc_sentences = nlp(prior_unrelated_doc)
+    # doc_sents = []
+    # for sentence in doc_sentences.sents:
+    #     doc_sents.append(sentence.text)
+    # if len(doc_sents) == 0:
+    #     print('append_unrelated_sents.prior_unrelated_doc:', prior_unrelated_doc)
+    #     exit(0)
+    random_sent_from_doc = random.choice(doc_sents)
+    '''put the unrelated sent at the position 1'''
+    random_position = random.sample(list(range(len(sum_sents))), 1)[0]
+    new_sum_sents = sum_sents[:random_position]+[random_sent_from_doc]+sum_sents[random_position:]
+
+
+    return ' '.join(new_sum_sents)
+
 def CTRL_generate(sum_str, tokenizer, model, replace = False):
     nlp = en_core_web_sm.load()
     text_sentences = nlp(sum_str)
@@ -554,10 +583,16 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
 
     '''now, for all negative summaries, we forward to CTRL to get their premise by insert unrelated sent'''
     premise_cand_list = []
+    nlp = en_core_web_sm.load()
+    doc_sentences = nlp(doc_str)
+    doc_sents = []
+    for sentence in doc_sentences.sents:
+        doc_sents.append(sentence.text)
     for cand_i in cand_list:
-        print('haha')
-        cand_i_premise = CTRL_generate(cand_i, gpt2_tokenizer, gpt2_model, replace=False)
-        premise_cand_list.append(cand_i_premise[0])
+        cand_i_premise = insert_unrelated_sents_random_location(cand_i, doc_sents)
+        # print('haha')
+        # cand_i_premise = CTRL_generate(cand_i, gpt2_tokenizer, gpt2_model, replace=False)
+        premise_cand_list.append(cand_i_premise)
 
 
     return cand_list, name_list, premise_cand_list
@@ -601,6 +636,7 @@ def load_DUC_train():
         # print(id2sum.keys())
         # assert len(id2doc) ==  len(id2sum)
         prior_unrelated_doc = "Donald John Trump is the 45th and current president of the United States. Before entering politics, he was a businessman and television personality. Trump was born and raised in Queens, a borough of New York City, and received a bachelor's degree in economics from the Wharton School."
+        print('start scan all docs....')
         for id, doc in id2doc.items():
             # print(id, '\n', doc, '\n', id2sum.get(id))
             doc_str = doc
