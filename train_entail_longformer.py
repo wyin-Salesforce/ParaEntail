@@ -703,8 +703,10 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
+    longformer_path = 'longformer-large-4096'
+    '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
-        args.config_name if args.config_name else args.model_name_or_path,
+        longformer_path,
         num_labels=num_labels,
         finetuning_task=args.task_name,
         cache_dir=args.cache_dir if args.cache_dir else None,
@@ -722,7 +724,7 @@ def main():
     # )
 
 
-    longformer_path = 'longformer-large-4096'
+    # longformer_path = 'longformer-large-4096'
     model = LongformerForSequenceClassification.from_pretrained(
         longformer_path,
         from_tf=bool(".ckpt" in longformer_path),
