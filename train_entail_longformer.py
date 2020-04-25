@@ -725,12 +725,7 @@ def main():
         cache_dir=args.cache_dir if args.cache_dir else None,
     )
     tokenizer.max_len = model.config.max_position_embeddings
-    # model = AutoModelForSequenceClassification.from_pretrained(
-    #     args.model_name_or_path,
-    #     from_tf=bool(".ckpt" in args.model_name_or_path),
-    #     config=config,
-    #     cache_dir=args.cache_dir if args.cache_dir else None,
-    # )
+
 
 
     # longformer_path = 'longformer-large-4096'
