@@ -431,7 +431,7 @@ class LongformerForSequenceClassification(BertPreTrainedModel):
         self.Longformer = Longformer(config)
         self.classifier = RobertaClassificationHead(config)
 
-    @add_start_docstrings_to_callable(ROBERTA_INPUTS_DOCSTRING)
+
     def forward(
         self,
         input_ids=None,
