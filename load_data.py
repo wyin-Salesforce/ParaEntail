@@ -6,7 +6,7 @@ from transformers.data.processors.utils import InputExample
 def get_DUC_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/DUC/'
-    filename = path+prefix+'_in_entail.txt'
+    filename = path+prefix+'_in_entail.harsh.txt'
     print('loading DUC...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
     start = False
