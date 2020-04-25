@@ -326,29 +326,28 @@ def load_train_data(hypo_only=False):
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)
     '''CNN'''
-    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
-    '''Curation'''
-    curation_examples, curation_pos_size = get_Curation_examples('train', hypo_only=hypo_only)
-    '''ANLI'''
-    anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
+    # cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
+    # '''MCTest'''
+    # mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
+    # '''Curation'''
+    # curation_examples, curation_pos_size = get_Curation_examples('train', hypo_only=hypo_only)
+    # '''ANLI'''
+    # anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
-    # print('duc_examples size:', len(duc_examples))
-    # print('cnn_examples size:', len(cnn_examples))
+
     train_examples = (
-                        duc_examples+
-                        cnn_examples+
-                        mctest_examples+
-                        curation_examples+
-                        anli_examples
+                        duc_examples
+                        # cnn_examples+
+                        # mctest_examples+
+                        # curation_examples+
+                        # anli_examples
                         )
     pos_size = (
-                duc_pos_size+
-                cnn_pos_size+
-                mctest_pos_size+
-                curation_pos_size+
-                anli_pos_size
+                duc_pos_size
+                # cnn_pos_size+
+                # mctest_pos_size+
+                # curation_pos_size+
+                # anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 
@@ -392,27 +391,27 @@ def load_test_data(hypo_only=False):
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
-    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
-    '''Curation'''
-    curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
-    '''ANLI'''
-    anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
+    # cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
+    # '''MCTest'''
+    # mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
+    # '''Curation'''
+    # curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
+    # '''ANLI'''
+    # anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
     test_examples = (
-                        duc_examples+
-                        cnn_examples+
-                        mctest_examples+
-                        curation_examples+
-                        anli_examples
+                        duc_examples
+                        # cnn_examples+
+                        # mctest_examples+
+                        # curation_examples+
+                        # anli_examples
                         )
     pos_size = (
-                duc_pos_size+
-                cnn_pos_size+
-                mctest_pos_size+
-                curation_pos_size+
-                anli_pos_size
+                duc_pos_size
+                # cnn_pos_size+
+                # mctest_pos_size+
+                # curation_pos_size+
+                # anli_pos_size
                 )
 
     print('test size:', len(test_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(test_examples))

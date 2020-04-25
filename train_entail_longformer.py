@@ -216,7 +216,8 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 model.zero_grad()
                 global_step += 1
 
-                if global_step % 500 == 0:
+                # if global_step % 500 == 0:
+                if global_step % 5 == 0:
                     test_f1 = evaluate(args, model, tokenizer, eval_dataloader)
                     if test_f1 > max_test_f1:
                         max_test_f1 = test_f1
