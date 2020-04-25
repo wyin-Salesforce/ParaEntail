@@ -724,7 +724,7 @@ def main():
         config=config,
         cache_dir=args.cache_dir if args.cache_dir else None,
     )
-    tokenizer.max_len = 3000#model.config.max_position_embeddings
+    tokenizer.max_len = 2000#model.config.max_position_embeddings
     # model = AutoModelForSequenceClassification.from_pretrained(
     #     args.model_name_or_path,
     #     from_tf=bool(".ckpt" in args.model_name_or_path),
