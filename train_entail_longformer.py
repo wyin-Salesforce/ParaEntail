@@ -152,19 +152,19 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
     epochs_trained = 0
     steps_trained_in_current_epoch = 0
     # Check if continuing training from a checkpoint
-    if os.path.exists(args.model_name_or_path):
-        # set global_step to global_step of last saved checkpoint from model path
-        try:
-            global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
-        except ValueError:
-            global_step = 0
-        epochs_trained = global_step // (len(train_dataloader) // args.gradient_accumulation_steps)
-        steps_trained_in_current_epoch = global_step % (len(train_dataloader) // args.gradient_accumulation_steps)
-
-        logger.info("  Continuing training from checkpoint, will skip to saved global_step")
-        logger.info("  Continuing training from epoch %d", epochs_trained)
-        logger.info("  Continuing training from global step %d", global_step)
-        logger.info("  Will skip the first %d steps in the first epoch", steps_trained_in_current_epoch)
+    # if os.path.exists(args.model_name_or_path):
+    #     # set global_step to global_step of last saved checkpoint from model path
+    #     try:
+    #         global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
+    #     except ValueError:
+    #         global_step = 0
+    #     epochs_trained = global_step // (len(train_dataloader) // args.gradient_accumulation_steps)
+    #     steps_trained_in_current_epoch = global_step % (len(train_dataloader) // args.gradient_accumulation_steps)
+    #
+    #     logger.info("  Continuing training from checkpoint, will skip to saved global_step")
+    #     logger.info("  Continuing training from epoch %d", epochs_trained)
+    #     logger.info("  Continuing training from global step %d", global_step)
+    #     logger.info("  Will skip the first %d steps in the first epoch", steps_trained_in_current_epoch)
 
     tr_loss, logging_loss = 0.0, 0.0
     model.zero_grad()
@@ -722,9 +722,10 @@ def main():
     # )
 
 
+    longformer_path = 'longformer-large-4096'
     model = LongformerForSequenceClassification.from_pretrained(
-        args.model_name_or_path,
-        from_tf=bool(".ckpt" in args.model_name_or_path),
+        longformer_path,
+        from_tf=bool(".ckpt" in longformer_path),
         config=config,
         cache_dir=args.cache_dir if args.cache_dir else None,
     )
@@ -763,5 +764,5 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail_longformer.py --model_type roberta --model_name_or_path longformer-large-4096/ --task_name rte > log.longformer.20200413.txt 2>&1
+    CUDA_VISIBLE_DEVICES=4,5,6,7 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta --task_name rte > log.longformer.20200413.txt 2>&1
     '''
