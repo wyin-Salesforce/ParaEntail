@@ -30,7 +30,7 @@ model = Longformer.from_pretrained('longformer-large-4096/')
 tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
 tokenizer.max_len = model.config.max_position_embeddings
 
-SAMPLE_TEXT = ' '.join(['Hello world! '] * 1000)  # long input document
+SAMPLE_TEXT = ' '.join(['Hello world! '] * 500)  # long input document
 SAMPLE_TEXT = f'{tokenizer.cls_token}{SAMPLE_TEXT}{tokenizer.eos_token}'
 
 input_ids = torch.tensor(tokenizer.encode(SAMPLE_TEXT)).unsqueeze(0)  # batch of size 1
