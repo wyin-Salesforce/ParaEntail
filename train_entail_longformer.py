@@ -717,6 +717,13 @@ def main():
         do_lower_case=args.do_lower_case,
         cache_dir=args.cache_dir if args.cache_dir else None,
     )
+    model = LongformerForSequenceClassification.from_pretrained(
+        longformer_path,
+        from_tf=bool(".ckpt" in longformer_path),
+        config=config,
+        cache_dir=args.cache_dir if args.cache_dir else None,
+    )
+    tokenizer.max_len = model.config.max_position_embeddings
     # model = AutoModelForSequenceClassification.from_pretrained(
     #     args.model_name_or_path,
     #     from_tf=bool(".ckpt" in args.model_name_or_path),
@@ -726,12 +733,7 @@ def main():
 
 
     # longformer_path = 'longformer-large-4096'
-    model = LongformerForSequenceClassification.from_pretrained(
-        longformer_path,
-        from_tf=bool(".ckpt" in longformer_path),
-        config=config,
-        cache_dir=args.cache_dir if args.cache_dir else None,
-    )
+
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
