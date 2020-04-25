@@ -35,7 +35,7 @@ from collections import OrderedDict
 import codecs
 from load_data import load_train_data, load_test_data
 from transformers.modeling_bert import BertPreTrainedModel
-from transformers.modeling_roberts import RobertaClassificationHead
+from transformers.modeling_roberta import RobertaClassificationHead
 
 
 from transformers import (
