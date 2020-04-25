@@ -420,7 +420,7 @@ def get_DUC_examples(filename):
 
 class LongformerForSequenceClassification(BertPreTrainedModel):
     config_class = RobertaConfig
-    pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
+    # pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP
     base_model_prefix = "roberta"
 
     def __init__(self, config):
