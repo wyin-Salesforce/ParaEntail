@@ -43,7 +43,8 @@ from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
     AutoTokenizer,
-    get_linear_schedule_with_warmup,
+    # get_linear_schedule_with_warmup,
+    WarmupLinearSchedule,
 )
 
 # MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING = OrderedDict(
@@ -118,7 +119,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
     ]
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
-    scheduler = get_linear_schedule_with_warmup(
+    scheduler = WarmupLinearSchedule(
         optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=t_total
     )
 
