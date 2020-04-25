@@ -440,7 +440,7 @@ class LongformerForSequenceClassification(BertPreTrainedModel):
         token_type_ids=None,
         position_ids=None,
         head_mask=None,
-        inputs_embeds=None,
+        # inputs_embeds=None, #the BertModel in Longformer does not have this parameter
         labels=None,
     ):
         r"""
@@ -487,7 +487,7 @@ class LongformerForSequenceClassification(BertPreTrainedModel):
             token_type_ids=token_type_ids,
             position_ids=position_ids,
             head_mask=head_mask,
-            inputs_embeds=inputs_embeds,
+            # inputs_embeds=inputs_embeds,
         )
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
