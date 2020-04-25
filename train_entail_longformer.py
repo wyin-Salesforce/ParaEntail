@@ -34,6 +34,7 @@ from longformer.longformer import Longformer
 from collections import OrderedDict
 import codecs
 from load_data import load_train_data, load_test_data
+from transformers.modeling_bert import BertPreTrainedModel
 
 
 from transformers import (
