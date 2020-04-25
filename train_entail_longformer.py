@@ -122,7 +122,7 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
 
     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
     scheduler = WarmupLinearSchedule(
-        optimizer, num_warmup_steps=args.warmup_steps, num_training_steps=t_total
+        optimizer, warmup_steps=args.warmup_steps, t_total=t_total
     )
 
     # multi-gpu training (should be after apex fp16 initialization)
