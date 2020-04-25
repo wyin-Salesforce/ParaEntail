@@ -359,7 +359,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         output_mode=output_mode,
         pad_on_left=bool(args.model_type in ["xlnet"]),  # pad on the left for xlnet
         pad_token=tokenizer.pad_token_id,
-        pad_token_segment_id=tokenizer.pad_token_type_id,
+        # pad_token_segment_id=tokenizer.pad_token_type_id,
     )
     # if args.local_rank in [-1, 0]:
     #     logger.info("Saving features into cached file %s", cached_features_file)
@@ -429,7 +429,7 @@ class LongformerForSequenceClassification(BertPreTrainedModel):
         self.num_labels = config.num_labels
 
         # self.roberta = RobertaModel(config)
-        self.Longformer = Longformer(config)
+        self.roberta = Longformer(config)
         self.classifier = RobertaClassificationHead(config)
 
 
@@ -481,7 +481,7 @@ class LongformerForSequenceClassification(BertPreTrainedModel):
         loss, logits = outputs[:2]
 
         """
-        outputs = self.Longformer(
+        outputs = self.roberta(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids,
