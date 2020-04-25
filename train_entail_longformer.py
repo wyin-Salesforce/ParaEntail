@@ -312,8 +312,10 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
 
         print('preds:', sum(preds), len(preds))
         print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
-        f1 = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
-    return f1
+        f1_pos = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
+        f1_neg = f1_score(list(out_label_ids), list(preds), pos_label= 1, average='binary')
+        print('>>test_f1_pos:', f1_pos, ' test_f1_neg:', f1_neg)
+    return (f1_pos+f1_neg)/2
 
 
 
