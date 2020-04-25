@@ -24,7 +24,8 @@ def get_DUC_examples(prefix, hypo_only=False):
                 premise = parts[1].strip()
             elif parts[0] == 'positive>>':
                 guid_id+=1
-                pos_hypo = parts[1].strip()
+                # pos_hypo = parts[1].strip()
+                pos_hypo = parts[2].strip() # harsh version
                 if len(premise) == 0 or len(pos_hypo)==0:
                     # print('DUC premise:', premise)
                     # print('hypothesis:', pos_hypo)
@@ -39,8 +40,6 @@ def get_DUC_examples(prefix, hypo_only=False):
                 guid_id+=1
                 neg_hypo = parts[2].strip()
                 if len(premise) == 0 or len(neg_hypo)==0:
-                    # print('DUC premise:', premise)
-                    # print('hypothesis:', neg_hypo)
                     continue
 
                 if hypo_only:
@@ -59,22 +58,23 @@ def get_DUC_examples(prefix, hypo_only=False):
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('DUC size:', len(examples))
-    if prefix == 'train':
-        new_examples = []
-        new_pos_size = 0
-        new_neg_size = 0
-        for ex in examples:
-            if ex.label == 'not_entailment':
-                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
-                    new_examples.append(ex)
-                    new_neg_size+=1
-            else:
-                new_examples.append(ex)
-                new_pos_size+=1
-        print('>>new pos:neg: ', new_pos_size, new_neg_size)
-        return new_examples, new_pos_size
-    else:
-        return examples, pos_size
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
 
 def get_Curation_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
