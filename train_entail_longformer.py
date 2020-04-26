@@ -34,7 +34,7 @@ from transformers.data.processors.utils import InputExample
 from longformer.longformer import Longformer
 from collections import OrderedDict
 import codecs
-from load_data import load_train_data, load_test_data
+from load_data import load_train_data, load_dev_data, load_test_data
 from transformers.modeling_bert import BertPreTrainedModel
 from transformers.modeling_roberta import RobertaClassificationHead
 
@@ -95,12 +95,12 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def train(args, train_dataset, eval_dataloader, model, tokenizer):
+def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer):
     """ Train the model """
     if args.local_rank in [-1, 0]:
         tb_writer = SummaryWriter()
 
-    max_test_f1 = 0.0
+    max_dev_f1 = 0.0
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
@@ -220,14 +220,18 @@ def train(args, train_dataset, eval_dataloader, model, tokenizer):
                 model.zero_grad()
                 global_step += 1
 
-                # if global_step % 500 == 0:
-                if global_step % 5 == 0:
-                    test_f1 = evaluate(args, model, tokenizer, eval_dataloader)
-                    if test_f1 > max_test_f1:
-                        max_test_f1 = test_f1
+                if global_step % 500 == 0:
+                # if global_step % 5 == 0:
+                    dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
+                    if dev_f1 > max_dev_f1:
+                        max_dev_f1 = dev_f1
+                        test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+
+
+
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer/'
-                        output_dir = os.path.join(raw_output_dir, "f1.{}".format(max_test_f1))
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_train/'
+                        output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
                         model_to_save = (
@@ -351,9 +355,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_train_data(hypo_only=True)
+        examples = load_train_data(hypo_only=False)
+    elif filename == 'dev':
+        examples = load_dev_data(hypo_only=False)
     else:
-        examples = load_test_data(hypo_only=True)
+        examples = load_test_data(hypo_only=False)
     features = convert_examples_to_features(
         examples,
         tokenizer,
@@ -746,16 +752,21 @@ def main():
     train_filename = 'train'
     train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
-    # test_filename = '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt'
-    # test_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/val_in_entail.txt'
-    test_filename = 'test'
-    eval_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
-    # exit(0)
-    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
-    eval_sampler = SequentialSampler(eval_dataset)
-    eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-    global_step, tr_loss = train(args, train_dataset, eval_dataloader, model, tokenizer)
+    dev_filename = 'dev'
+    dev_dataset = load_and_cache_examples(args, args.task_name, dev_filename, tokenizer, evaluate=True)
+    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+    dev_sampler = SequentialSampler(dev_dataset)
+    dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
+
+
+    test_filename = 'test'
+    test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
+    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+    test_sampler = SequentialSampler(test_dataset)
+    test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
+
+    global_step, tr_loss = train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer)
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 

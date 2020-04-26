@@ -17,6 +17,8 @@ def get_DUC_examples(prefix, hypo_only=False):
     for line in readfile:
         if len(line.strip()) == 0:
             start = False
+            '''to avoid that no examples loaded in this block, but the premise was falsely kept for the next block'''
+            premise = ''
         else:
             parts = line.strip().split('\t')
             if parts[0] == 'document>>':
@@ -29,6 +31,8 @@ def get_DUC_examples(prefix, hypo_only=False):
                 if len(premise) == 0 or len(pos_hypo)==0:
                     # print('DUC premise:', premise)
                     # print('hypothesis:', pos_hypo)
+                    continue
+                if prefix !='train' and parts[1].strip() == '#neg2negIsPos#>>' or parts[1].strip()=='#negInserted2negIsPos#>>':
                     continue
 
                 if hypo_only:
@@ -79,7 +83,7 @@ def get_DUC_examples(prefix, hypo_only=False):
 def get_Curation_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/Curation/'
-    filename = path+prefix+'_in_entail.txt'
+    filename = path+prefix+'_in_entail.harsh.txt'
     print('loading Curation...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
     start = False
@@ -90,6 +94,7 @@ def get_Curation_examples(prefix, hypo_only=False):
     for line in readfile:
         if len(line.strip()) == 0:
             start = False
+            premise = ''
         else:
             parts = line.strip().split('\t')
             if parts[0] == 'document>>':
@@ -97,9 +102,13 @@ def get_Curation_examples(prefix, hypo_only=False):
                 premise = parts[1].strip()
             elif parts[0] == 'positive>>':
                 guid_id+=1
-                pos_hypo = parts[1].strip()
+                pos_hypo = parts[2].strip()
                 if len(premise) == 0 or len(pos_hypo)==0:
                     continue
+
+                if prefix !='train' and parts[1].strip() == '#neg2negIsPos#>>' or parts[1].strip()=='#negInserted2negIsPos#>>':
+                    continue
+
                 if hypo_only:
                     examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
                 else:
@@ -119,29 +128,30 @@ def get_Curation_examples(prefix, hypo_only=False):
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('Curation size:', len(examples))
-    if prefix == 'train':
-        new_examples = []
-        new_pos_size = 0
-        new_neg_size = 0
-        for ex in examples:
-            if ex.label == 'not_entailment':
-                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
-                    new_examples.append(ex)
-                    new_neg_size+=1
-            else:
-                new_examples.append(ex)
-                new_pos_size+=1
-        print('>>new pos:neg: ', new_pos_size, new_neg_size)
-        return new_examples, new_pos_size
-    else:
-        return examples, pos_size
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
 
 
 
 def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     path = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
-    filename = path+prefix+'_in_entail.txt'
+    filename = path+prefix+'_in_entail.harsh.txt'
     print('loading CNN_DailyMail...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
     start = False
@@ -149,9 +159,16 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     guid_id = -1
     pos_size = 0
     neg_size = 0
+
+    load_size = 0
     for line in readfile:
         if len(line.strip()) == 0:
             start = False
+            premise = ''
+            load_size+=1
+            '''we currently only use 30K as training set in CNN/DailyMail'''
+            if load_size == 300000 and prefix == 'train':
+                break
         else:
             parts = line.strip().split('\t')
             if parts[0] == 'document>>':
@@ -159,11 +176,13 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
                 premise = parts[1].strip()
             elif parts[0] == 'positive>>':
                 guid_id+=1
-                pos_hypo = parts[1].strip()
+                pos_hypo = parts[2].strip()
                 if len(premise) == 0 or len(pos_hypo)==0:
-                    # print('CNN premise:', premise)
-                    # print('hypothesis:', pos_hypo)
                     continue
+
+                if prefix !='train' and parts[1].strip() == '#neg2negIsPos#>>' or parts[1].strip()=='#negInserted2negIsPos#>>':
+                    continue
+
                 if hypo_only:
                     examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
                 else:
@@ -184,30 +203,27 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
                 else:
                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
                 neg_size+=1
-                # else:
-                #     rand_prob = random.uniform(0, 1)
-                #     if rand_prob > 3/4:
-                #         examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                #         neg_size+=1
+
 
     print('>>pos:neg: ', pos_size, neg_size)
     print('CNN size:', len(examples))
-    if prefix == 'train':
-        new_examples = []
-        new_pos_size = 0
-        new_neg_size = 0
-        for ex in examples:
-            if ex.label == 'not_entailment':
-                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
-                    new_examples.append(ex)
-                    new_neg_size+=1
-            else:
-                new_examples.append(ex)
-                new_pos_size+=1
-        print('>>new pos:neg: ', new_pos_size, new_neg_size)
-        return new_examples, new_pos_size
-    else:
-        return examples, pos_size
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
 
 def get_MCTest_examples(prefix, hypo_only=False):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
@@ -326,28 +342,28 @@ def load_train_data(hypo_only=False):
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)
     '''CNN'''
-    # cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
-    # '''MCTest'''
-    # mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
-    # '''Curation'''
-    # curation_examples, curation_pos_size = get_Curation_examples('train', hypo_only=hypo_only)
-    # '''ANLI'''
-    # anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
+    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('train', hypo_only=hypo_only)
+    '''MCTest'''
+    mctest_examples, mctest_pos_size = get_MCTest_examples('train', hypo_only=hypo_only)
+    '''Curation'''
+    curation_examples, curation_pos_size = get_Curation_examples('train', hypo_only=hypo_only)
+    '''ANLI'''
+    anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
 
 
     train_examples = (
-                        duc_examples
-                        # cnn_examples+
-                        # mctest_examples+
-                        # curation_examples+
-                        # anli_examples
+                        duc_examples+
+                        cnn_examples+
+                        mctest_examples+
+                        curation_examples+
+                        anli_examples
                         )
     pos_size = (
-                duc_pos_size
-                # cnn_pos_size+
-                # mctest_pos_size+
-                # curation_pos_size+
-                # anli_pos_size
+                duc_pos_size+
+                cnn_pos_size+
+                mctest_pos_size+
+                curation_pos_size+
+                anli_pos_size
                 )
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 
@@ -391,27 +407,27 @@ def load_test_data(hypo_only=False):
     '''DUC'''
     duc_examples, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
-    # cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
-    # '''MCTest'''
-    # mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
-    # '''Curation'''
-    # curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
-    # '''ANLI'''
-    # anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
+    cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
+    '''MCTest'''
+    mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
+    '''Curation'''
+    curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
+    '''ANLI'''
+    anli_examples, anli_pos_size = get_ANLI_examples('test', hypo_only=hypo_only)
 
     test_examples = (
-                        duc_examples
-                        # cnn_examples+
-                        # mctest_examples+
-                        # curation_examples+
-                        # anli_examples
+                        duc_examples+
+                        cnn_examples+
+                        mctest_examples+
+                        curation_examples+
+                        anli_examples
                         )
     pos_size = (
-                duc_pos_size
-                # cnn_pos_size+
-                # mctest_pos_size+
-                # curation_pos_size+
-                # anli_pos_size
+                duc_pos_size+
+                cnn_pos_size+
+                mctest_pos_size+
+                curation_pos_size+
+                anli_pos_size
                 )
 
     print('test size:', len(test_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(test_examples))
