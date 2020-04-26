@@ -34,7 +34,7 @@ from transformers.data.processors.utils import InputExample
 from longformer.longformer import Longformer
 from collections import OrderedDict
 import codecs
-from load_data import load_train_data, load_dev_data, load_test_data
+from load_data import load_harsh_data#load_train_data, load_dev_data, load_test_data
 from transformers.modeling_bert import BertPreTrainedModel
 from transformers.modeling_roberta import RobertaClassificationHead
 
@@ -355,11 +355,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_train_data(hypo_only=False)
+        examples = load_harsh_data('train', hypo_only=False)
     elif filename == 'dev':
-        examples = load_dev_data(hypo_only=False)
+        examples = load_harsh_data('dev', hypo_only=False)
     else:
-        examples = load_test_data(hypo_only=False)
+        examples = load_harsh_data('test', hypo_only=False)
     features = convert_examples_to_features(
         examples,
         tokenizer,
