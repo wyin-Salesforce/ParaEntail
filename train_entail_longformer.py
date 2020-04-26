@@ -38,6 +38,9 @@ from load_data import load_harsh_data#load_train_data, load_dev_data, load_test_
 from transformers.modeling_bert import BertPreTrainedModel
 from transformers.modeling_roberta import RobertaClassificationHead
 
+import logging
+logging.getLogger('transformers.tokenization_utils').setLevel(logging.ERROR)
+
 
 from transformers import (
     # MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING,
@@ -575,7 +578,7 @@ def main():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=4096,
+        default=1000,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
         "than this will be truncated, sequences shorter will be padded.",
@@ -590,10 +593,10 @@ def main():
     )
 
     parser.add_argument(
-        "--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.",
+        "--per_gpu_train_batch_size", default=16, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=16, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
