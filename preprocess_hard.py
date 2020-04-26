@@ -31,7 +31,7 @@ import os
 import pandas as pd
 from readability import Document
 from sys import argv
-from transformers import CTRLLMHeadModel, CTRLTokenizer
+# from transformers import CTRLLMHeadModel, CTRLTokenizer
 
 seed = 400
 random.seed(seed)
