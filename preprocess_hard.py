@@ -1072,18 +1072,20 @@ def load_Curation(prefix):
 #     print('over, invalid_size:', invalid_size)
 
 def split_DUC():
-    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail_original.txt', 'r', 'utf-8')
-    writedev = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.txt', 'w', 'utf-8')
-    writetest = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt', 'w', 'utf-8')
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.original.txt', 'r', 'utf-8')
+    writedev = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt', 'w', 'utf-8')
+    writetest = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt', 'w', 'utf-8')
     ex_co = 0
     writefile = writedev
     for line in readfile:
         if len(line.strip()) ==0:
-            writefile.write('\n')
-            if ex_co < 99:
+            rand_prob = random.uniform(0, 1)
+            if rand_prob < 1/3:
                 writefile = writedev
             else:
                 writefile = writetest
+
+            writefile.write('\n')
             ex_co +=1
         else:
             writefile.write(line.strip()+'\n')
@@ -1114,7 +1116,7 @@ if __name__ == "__main__":
 
     # load_CNN_DailyMail('train')
     # load_CNN_DailyMail('val')
-    load_CNN_DailyMail('test')
+    # load_CNN_DailyMail('test')
 
     # load_MCTest(['mc500.train.statements.pairs', 'mc160.train.statements.pairs'], 'train')
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
@@ -1128,7 +1130,7 @@ if __name__ == "__main__":
     # load_Curation('test')
 
 
-    # split_DUC()
+    split_DUC()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
