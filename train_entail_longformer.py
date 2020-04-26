@@ -249,7 +249,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                         torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                         torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                         logger.info("Saving optimizer and scheduler states to %s", output_dir)
-                    print('>>test_f1:', test_f1, ' max_test_f1:', max_test_f1)
+                    print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
 
 
 
