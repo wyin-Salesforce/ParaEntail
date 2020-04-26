@@ -14,7 +14,7 @@ import en_core_web_sm
 from collections import defaultdict
 from transformers import AutoModelWithLMHead, AutoTokenizer
 # from transformers import AutoModelWithLMHead, AutoTokenizer
-from transformers import pipeline
+# from transformers import pipeline
 import numpy as np
 import xmltodict
 import json_lines
