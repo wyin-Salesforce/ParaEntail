@@ -440,22 +440,23 @@ def get_ANLI_examples(prefix, hypo_only=False):
                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=hypothesis, label=label))
     print('>>pos:neg: ', pos_size, neg_size)
     print('ANLI size:', len(examples))
-    if prefix == 'train':
-        new_examples = []
-        new_pos_size = 0
-        new_neg_size = 0
-        for ex in examples:
-            if ex.label == 'not_entailment':
-                if random.uniform(0.0, 1.0) <= pos_size/neg_size:
-                    new_examples.append(ex)
-                    new_neg_size+=1
-            else:
-                new_examples.append(ex)
-                new_pos_size+=1
-        print('>>new pos:neg: ', new_pos_size, new_neg_size)
-        return new_examples, new_pos_size
-    else:
-        return examples, pos_size
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
 
 
 
