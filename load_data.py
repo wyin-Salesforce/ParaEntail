@@ -18,7 +18,7 @@ def get_DUC_examples(prefix, hypo_only=False):
         if len(line.strip()) == 0:
             start = False
             '''to avoid that no examples loaded in this block, but the premise was falsely kept for the next block'''
-            premise = ''
+            # premise = ''
         else:
             parts = line.strip().split('\t')
             if parts[0] == 'document>>':
