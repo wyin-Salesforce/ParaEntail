@@ -76,7 +76,7 @@ def get_summary_examples(path, prefix, hypo_only=False):
                 pos_size+=pos_size_block
                 neg_size+=neg_size_block
                 '''this is especially for CNN'''
-                if len(examples) >=300000:
+                if len(examples) >=600000:
                     break
 
             '''start a new block'''
