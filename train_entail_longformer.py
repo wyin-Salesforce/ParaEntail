@@ -351,9 +351,9 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_train_data(hypo_only=False)
+        examples = load_train_data(hypo_only=True)
     else:
-        examples = load_test_data(hypo_only=False)
+        examples = load_test_data(hypo_only=True)
     features = convert_examples_to_features(
         examples,
         tokenizer,
