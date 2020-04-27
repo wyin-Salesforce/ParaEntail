@@ -223,7 +223,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 model.zero_grad()
                 global_step += 1
 
-                if global_step > 5100 and global_step % 5000 == 0:
+                if global_step % 5000 == 0:
                 # if global_step % 5 == 0:
                     dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
                     if dev_f1 > max_dev_f1:
@@ -233,7 +233,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_train/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -358,11 +358,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_harsh_data('train', hypo_only=False)
+        examples = load_harsh_data('train', hypo_only=True)
     elif filename == 'dev':
-        examples = load_harsh_data('dev', hypo_only=False)
+        examples = load_harsh_data('dev', hypo_only=True)
     else:
-        examples = load_harsh_data('test', hypo_only=False)
+        examples = load_harsh_data('test', hypo_only=True)
     features = convert_examples_to_features(
         examples,
         tokenizer,
