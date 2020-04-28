@@ -24,6 +24,7 @@
 
 from load_data import load_harsh_data
 from collections import defaultdict
+from collections import OrderedDict
 examples_all = []
 examples = load_harsh_data('train', hypo_only=False)
 examples_all+=examples
@@ -52,5 +53,10 @@ for ex in examples_all:
         print('count:', count)
 
 
-print('premise_len2size:', premise_len2size)
-print('hypothesis_len2size:', hypothesis_len2size)
+sorted_pre = OrderedDict(sorted(premise_len2size.items()))
+sorted_hyp = OrderedDict(sorted(hypothesis_len2size.items()))
+
+print('sorted_pre:', sorted_pre)
+print(list(sorted_pre.values()))
+print('sorted_hyp:', sorted_hyp)
+print(list(sorted_hyp.values()))
