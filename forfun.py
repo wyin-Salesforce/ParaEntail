@@ -42,11 +42,13 @@ hypothesis_len2size = defaultdict(int)
 count = 0
 for ex in examples_all:
     premise_len = len(ex.text_a.split())
-    idd = int(premise_len/50)
+    idd = int(premise_len/100)
     premise_len2size[idd] = premise_len2size.get(idd, 0)+1
 
     hypothesis_len = len(ex.text_b.split())
     idd = int(hypothesis_len/50)
+    if idd > 4:
+        idd = 4
     hypothesis_len2size[idd] = hypothesis_len2size.get(idd, 0)+1
     count+=1
     if count % 1000 ==0:
@@ -60,3 +62,7 @@ print('sorted_pre:', sorted_pre)
 print(list(sorted_pre.values()))
 print('sorted_hyp:', sorted_hyp)
 print(list(sorted_hyp.values()))
+
+'''
+[542161, 850081, 152585, 9733, 1821, 919, 385, 378, 162, 288, 23, 9, 30, 3]
+'''
