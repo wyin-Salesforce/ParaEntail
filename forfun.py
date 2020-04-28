@@ -1,52 +1,56 @@
 
 
-from sklearn.metrics import f1_score
-import random
-
-'''random baseline'''
-# out_label_ids = [1]*241910+[0]*25693
-# preds = []
-# for i in range(267603):
-
-out_label_ids = [1]*211628+[0]*22042
-preds = []
-for i in range(233670):
-    prob = random.uniform(0, 1)
-    if prob > 0.5:
-        preds.append(0)
-    else:
-        preds.append(1)
-
-# out_label_ids = [1]*1847+[0]*909
-# preds = [1]*2756
-
-f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
-print(f1)
+# from sklearn.metrics import f1_score
+# import random
 #
-# f1 = f1_score(out_label_ids, preds, pos_label= 1, average='binary')
+# '''random baseline'''
+# # out_label_ids = [1]*241910+[0]*25693
+# # preds = []
+# # for i in range(267603):
+#
+# out_label_ids = [1]*211628+[0]*22042
+# preds = []
+# for i in range(233670):
+#     prob = random.uniform(0, 1)
+#     if prob > 0.5:
+#         preds.append(0)
+#     else:
+#         preds.append(1)
+#
+#
+#
+# f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
 # print(f1)
 
-# import torch
-# from longformer.longformer import Longformer
-# from transformers import RobertaTokenizer
-#
-# model = Longformer.from_pretrained('longformer-large-4096/')
-# tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
-# tokenizer.max_len = model.config.max_position_embeddings
-#
-# SAMPLE_TEXT = ' '.join(['Hello world! '] * 500)  # long input document
-# SAMPLE_TEXT = f'{tokenizer.cls_token}{SAMPLE_TEXT}{tokenizer.eos_token}'
-#
-# input_ids = torch.tensor(tokenizer.encode(SAMPLE_TEXT)).unsqueeze(0)  # batch of size 1
-#
-# model = model.cuda()  # doesn't work on CPU
-# input_ids = input_ids.cuda()
-#
-# # Attention mask values -- 0: no attention, 1: local attention, 2: global attention
-# attention_mask = torch.ones(input_ids.shape, dtype=torch.long, device=input_ids.device) # initialize to local attention
-# attention_mask[:, [1, 4, 21,]] =  2  # Set global attention based on the task. For example,
-#                                      # classification: the <s> token
-#                                      # QA: question tokenss
-#
-# output = model(input_ids, attention_mask=attention_mask)[0]
-# print(output)
+from load_data import load_harsh_data
+from collections import defaultdict
+examples_all = []
+examples = load_harsh_data('train', hypo_only=False)
+examples_all+=examples
+examples_dev = load_harsh_data('dev', hypo_only=False)
+examples_all+=examples_dev
+examples_test = load_harsh_data('test', hypo_only=False)
+examples_all+=examples_test
+
+print('example size:', len(examples_all))
+
+
+premise_len2size = defaultdict(int)
+hypothesis_len2size = defaultdict(int)
+
+count = 0
+for ex in examples_all:
+    premise_len = len(ex.text_a.split())
+    idd = int(premise_len/50)
+    premise_len2size[idd] = premise_len2size.get(idd, 0)+1
+
+    hypothesis_len = len(ex.text_b.split())
+    idd = int(hypothesis_len/50)
+    hypothesis_len2size[idd] = hypothesis_len2size.get(idd, 0)+1
+    count+=1
+    if count % 1000 ==0:
+        print('count:', count)
+
+
+print('premise_len2size:', premise_len2size)
+print('hypothesis_len2size:', hypothesis_len2size)
