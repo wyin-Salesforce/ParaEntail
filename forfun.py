@@ -43,6 +43,8 @@ count = 0
 for ex in examples_all:
     premise_len = len(ex.text_a.split())
     idd = int(premise_len/150)
+    if idd > 11:
+        idd = 11
     premise_len2size[idd] = premise_len2size.get(idd, 0)+1
 
     hypothesis_len = len(ex.text_b.split())
