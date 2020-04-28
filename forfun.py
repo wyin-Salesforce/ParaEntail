@@ -42,7 +42,7 @@ hypothesis_len2size = defaultdict(int)
 count = 0
 for ex in examples_all:
     premise_len = len(ex.text_a.split())
-    idd = int(premise_len/100)
+    idd = int(premise_len/150)
     premise_len2size[idd] = premise_len2size.get(idd, 0)+1
 
     hypothesis_len = len(ex.text_b.split())
@@ -65,4 +65,5 @@ print(list(sorted_hyp.values()))
 
 '''
 [542161, 850081, 152585, 9733, 1821, 919, 385, 378, 162, 288, 23, 9, 30, 3]
+[542161, 850081, 152585, 9733, 4018]
 '''
