@@ -392,11 +392,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_harsh_data('train', hypo_only=True)
+        examples = load_harsh_data('train', hypo_only=False)
     elif filename == 'dev':
-        examples = load_harsh_data('dev', hypo_only=True)
+        examples = load_harsh_data('dev', hypo_only=False)
     else:
-        examples = load_harsh_data('test', hypo_only=True)
+        examples = load_harsh_data('test', hypo_only=False)
 
 
 
