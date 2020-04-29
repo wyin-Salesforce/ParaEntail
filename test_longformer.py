@@ -772,7 +772,7 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_train/f1.dev.0.779148541443071.test0.7792291259985912'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_train/roberta-f1.dev.0.779148541443071.test0.7792291259985912'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
@@ -839,5 +839,5 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u test_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte 
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u test_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte
     '''
