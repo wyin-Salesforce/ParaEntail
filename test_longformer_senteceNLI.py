@@ -317,6 +317,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         preds = np.argmax(preds, axis=1)
         # preds = softmax(preds,axis=1)
 
+        hit=0
         row_size = preds.shape[0]
         for i in range(row_size):
             if preds[i] == out_label_ids[i]:
