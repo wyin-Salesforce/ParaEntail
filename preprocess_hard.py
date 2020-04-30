@@ -1095,7 +1095,78 @@ def split_DUC():
     writetest.close()
 
 
+def flaging_a_block(block_line_list):
+    '''
+    return 1 if this block has '#originalSummaryIsPos#>>'
+    return a neg_size to denote how many fake summaries
+    '''
+    second_line_parts = block_line_list[1].strip().split('\t')
+    if second_line_parts[1] == '#originalSummaryIsPos#>>':
+        fake_size = 0
+        for line in block_line_list[2:]:
+            line_parts = line.strip().split('\t')
+            if line_parts[1] in set(['#SwapEnt#>>', '#ReplaceWord#>>', '#ReplaceUnrelatedSent#>>']):
+                fake_size+=1
 
+        return 1, fake_size
+    else:
+        return 0, 0
+
+def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file):
+    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
+    # path = '/export/home/Dataset/para_entail_datasets/DUC/'
+    # filename = path+prefix+'_in_entail.harsh.txt'
+    print('loading ...', input_file)
+    readfile = codecs.open(input_file, 'r', 'utf-8')
+
+    examples = []
+    block_list = []
+    block_flag_list = []
+    fake_size_list = []
+
+    block_line_list = []
+    for line in readfile:
+        if line.strip().startswith('document>>'):
+            '''if a block is ready'''
+            if len(block_line_list)> 0:
+                flag, fake_size_i = flaging_a_block(block_line_list)#example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=False)
+                block_list.append(block_line_list)
+                block_flag_list.append(flag)
+                fake_size_list.append(fake_size_i)
+                '''this is especially for CNN'''
+                if len(examples) >=450000:
+                    break
+
+            '''start a new block'''
+            block_line_list=[line.strip()]
+        else:
+            if len(line.strip()) > 0: # in case some noice lines are emtpy
+                block_line_list.append(line.strip())
+
+    '''now deal with a sub list of blocks'''
+    assert len(block_list) == len(block_flag_list)
+    assert len(block_list) == len(fake_size_list)
+    assert block_flag_list[0] ==1 and fake_size_list[0] != 0
+    left = 0
+    right = 1
+    while right < len(block_flag_list):
+        while block_flag_list[right] != 1:
+            right+=1
+        if right-left == fake_size_list[left]:
+            left=right
+            right+=1
+        elif right == len(block_flag_list):
+            block_list = block_list[:left]
+            block_flag_list = block_flag_list[:left]
+            fake_size_list = fake_size_list[:left]
+        else:
+            print('error in the middle')
+            exit(0)
+    print('check over, the blocks are loaded correctly')
+
+
+
+    # return examples, pos_size
 
 
 
@@ -1130,7 +1201,10 @@ if __name__ == "__main__":
     # load_Curation('test')
 
 
-    split_DUC()
+    # split_DUC()
+
+
+    combine_entity_swapped_fakes_and_regenerate_dataset('/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt', '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
