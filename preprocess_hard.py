@@ -1096,11 +1096,14 @@ def flaging_a_block(block_line_list):
     return 1 if this block has '#originalSummaryIsPos#>>'
     return a neg_size to denote how many fake summaries
     '''
+    print('block_line_list', block_line_list)
     second_line_parts = block_line_list[1].strip().split('\t')
     if second_line_parts[1] == '#originalSummaryIsPos#>>':
         fake_size = 0
         for line in block_line_list[2:]:
+            print('line:', line)
             line_parts = line.strip().split('\t')
+            print('line:', line, 'line_parts:', line_parts)
             if line_parts[1] in set(['#SwapEnt#>>', '#ReplaceWord#>>', '#ReplaceUnrelatedSent#>>']):
                 fake_size+=1
 
