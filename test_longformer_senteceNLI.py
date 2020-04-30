@@ -313,7 +313,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
         eval_loss = eval_loss / nb_eval_steps
 
-        preds = np.argmax(preds, axis=1)
+        # preds = np.argmax(preds, axis=1)
         row_size = preds.shape[0]
 
 
