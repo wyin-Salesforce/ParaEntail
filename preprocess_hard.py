@@ -1140,7 +1140,11 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             block_line_list=[line.strip()]
         else:
             if len(line.strip()) > 0: # in case some noice lines are emtpy
-                block_line_list.append(line.strip())
+                if len(line.strip().strip('\t')) == 3:
+                    block_line_list.append(line.strip())
+                else:
+                    block_line_list[-1] = block_line_list[-1] + ' '+line.strip()
+
 
     '''now deal with a sub list of blocks'''
     assert len(block_list) == len(block_flag_list)
