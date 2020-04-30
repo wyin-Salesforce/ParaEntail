@@ -1168,6 +1168,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             block_list = block_list[:left]
             block_flag_list = block_flag_list[:left]
             fake_size_list = fake_size_list[:left]
+            break
         else:
             print('error in the middle')
             print(block_flag_list[left:right+1])
