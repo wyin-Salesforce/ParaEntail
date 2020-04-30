@@ -1,10 +1,6 @@
 
 import codecs
 import os
-import nltk
-# from nltk import pos_tag, ne_chunk
-# from nltk.tokenize import word_tokenize
-# from nltk.chunk import conlltags2tree, tree2conlltags
 import random
 import torch
 import spacy
