@@ -1153,6 +1153,9 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     assert len(block_list) == len(block_flag_list)
     assert len(block_list) == len(fake_size_list)
     assert block_flag_list[0] ==1 and fake_size_list[0] != 0
+    print('block_flag_list:', block_flag_list[:200])
+    print('fake_size_list:', fake_size_list[:200])
+    exit(0)
     left = 0
     right = 1
     while right < len(block_flag_list):
