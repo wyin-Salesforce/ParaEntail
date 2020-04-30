@@ -348,7 +348,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
             print(preds[row_i], '\t',label_in_3way[row_i])
             # if preds[row_i,0] > 0.55:
             #     pred_label = 'entailment'
-            if preds[row_i,0] < 0.5 - r:
+            if preds[row_i,0] < 0.6:
                 pred_label = 1#'not_entailment'
             else:
                 pred_label = 0#'entailment'
