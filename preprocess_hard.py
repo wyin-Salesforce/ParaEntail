@@ -1140,7 +1140,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             block_line_list=[line.strip()]
         else:
             if len(line.strip()) > 0: # in case some noice lines are emtpy
-                if len(line.strip().strip('\t')) == 3:
+                if len(line.strip().split('\t')) == 3:
                     block_line_list.append(line.strip())
                 else:
                     block_line_list[-1] = block_line_list[-1] + ' '+line.strip()
