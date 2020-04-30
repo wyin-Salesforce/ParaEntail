@@ -1167,6 +1167,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             fake_size_list = fake_size_list[:left]
         else:
             print('error in the middle')
+            print(block_flag_list[left:right+1])
+            print(fake_size_list[left:right+1])
             exit(0)
     print('check over, the blocks are loaded correctly')
 
