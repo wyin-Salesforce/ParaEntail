@@ -618,7 +618,7 @@ def main():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=500,
+        default=128,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
         "than this will be truncated, sequences shorter will be padded.",
@@ -823,5 +823,5 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u test_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u test_longformer_sentenceNLI.py --model_type roberta --model_name_or_path roberta-base --task_name rte
     '''
