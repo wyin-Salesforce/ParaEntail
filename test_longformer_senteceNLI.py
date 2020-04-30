@@ -267,7 +267,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
     return global_step, tr_loss / global_step
 
 
-def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="test set"):
+def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
     # eval_outputs_dirs = (args.output_dir, args.output_dir + "-MM") if args.task_name == "mnli" else (args.output_dir,)
@@ -314,16 +314,15 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
         eval_loss = eval_loss / nb_eval_steps
 
+        preds = np.argmax(preds, axis=1)
+        # preds = softmax(preds,axis=1)
 
-
-
-        # hit=0
-        # preds = np.argmax(preds, axis=1)
-        # row_size = preds.shape[0]
-        # for i in range(row_size):
-        #     if preds[i] == out_label_ids[i]:
-        #         hit+=1
-        # acc = hit/row_size
+        hit=0
+        row_size = preds.shape[0]
+        for i in range(row_size):
+            if preds[i] == out_label_ids[i]:
+                hit+=1
+        acc = hit/row_size
 
 
         # print('preds:', sum(preds), len(preds))
@@ -332,44 +331,41 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         # f1_neg = f1_score(list(out_label_ids), list(preds), pos_label= 1, average='binary')
         # print('>>test_f1_pos:', f1_pos)
 
-        preds = softmax(preds,axis=1)
-        row_size = preds.shape[0]
-        assert row_size == len(label_in_3way)
-        hit=0
-        hit_entail = 0
-        hit_neutral = 0
-        hit_contra = 0
-        sum_entail = 0
-        sum_neutral = 0
-        sum_contra = 0
-
-        r=0.25
-        for row_i in range(row_size):
-            print(preds[row_i], '\t',label_in_3way[row_i])
-            # if preds[row_i,0] > 0.55:
-            #     pred_label = 'entailment'
-            if preds[row_i,0] < 0.7:
-                pred_label = 1#'not_entailment'
-            else:
-                pred_label = 0#'entailment'
-            if pred_label == list(out_label_ids)[row_i]:
-                hit+=1
-
-
-            # if label_in_3way[row_i] == 'entailment':
-            #     sum_entail+=1
-            #     if pred_label == 'entailment':
-            #         hit_entail+=1
-            # if label_in_3way[row_i] == 'neutral':
-            #     sum_neutral+=1
-            #     if pred_label == 'neutral':
-            #         hit_neutral+=1
-            # if label_in_3way[row_i] == 'contradiction':
-            #     sum_contra+=1
-            #     if pred_label == 'contradiction':
-            #         hit_contra+=1
-        acc = hit/row_size
-
+    #     assert row_size == len(label_in_3way)
+    #     hit=0
+    #     hit_entail = 0
+    #     hit_neutral = 0
+    #     hit_contra = 0
+    #     sum_entail = 0
+    #     sum_neutral = 0
+    #     sum_contra = 0
+    #
+    #     r=0.25
+    #     for row_i in range(row_size):
+    #         print(preds[row_i], '\t',label_in_3way[row_i])
+    #         if preds[row_i,0] > 0.55:
+    #             pred_label = 'entailment'
+    #         elif preds[row_i,0] < 0.5 - r:
+    #             pred_label = 'contradiction'
+    #         else:
+    #             pred_label = 'neutral'
+    #         if pred_label == label_in_3way[row_i]:
+    #             hit+=1
+    #
+    #         if label_in_3way[row_i] == 'entailment':
+    #             sum_entail+=1
+    #             if pred_label == 'entailment':
+    #                 hit_entail+=1
+    #         if label_in_3way[row_i] == 'neutral':
+    #             sum_neutral+=1
+    #             if pred_label == 'neutral':
+    #                 hit_neutral+=1
+    #         if label_in_3way[row_i] == 'contradiction':
+    #             sum_contra+=1
+    #             if pred_label == 'contradiction':
+    #                 hit_contra+=1
+    #     acc = hit/row_size
+    #
     # print([hit_entail/sum_entail, hit_neutral/sum_neutral, hit_contra/sum_contra])
 
     print(acc)
@@ -402,6 +398,32 @@ def load_MNLI():
     readfile.close()
     print('loaded  MNLI dev size:', line_co)
     return examples, label_in_3way
+
+def load_RTE():
+
+def load_RTE():
+    '''
+    can read the training file, dev and test file
+    '''
+    examples=[]
+    filename = '/export/home/Dataset/glue_data/RTE/test.tsv'
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    line_co=0
+    for row in readfile:
+        if line_co>0:
+            line=row.strip().split('\t')
+            guid = "test-"+str(line_co-1)
+            text_a = line[1].strip()
+            text_b = line[2].strip()
+            label = 'entailment' if line[3].strip()=='entailment' else 'not_entailment' #["entailment", "not_entailment"]
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        line_co+=1
+        # if line_co > 20000:
+        #     break
+    readfile.close()
+    print('loaded  size:', line_co)
+    return examples
 
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     if args.local_rank not in [-1, 0] and not evaluate:
@@ -441,6 +463,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         examples, label_in_3way = load_MNLI()
     else:
         examples = load_harsh_data('test', hypo_only=False)
+        examples = load_RTE()
 
     features = convert_examples_to_features(
         examples,
@@ -469,7 +492,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         all_labels = torch.tensor([f.label for f in features], dtype=torch.float)
 
     dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
-    return dataset, label_in_3way
+    return dataset#, label_in_3way
 
 def get_DUC_examples(filename):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
@@ -842,13 +865,13 @@ def main():
     # dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
 
-    test_filename = 'dev'
-    test_dataset, label_in_3way = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
+    test_filename = 'test'
+    test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
-    accuracy = evaluate(args, model, tokenizer, test_dataloader, label_in_3way, prefix='test set')
+    accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
     print('accuracy:', accuracy)
     # global_step, tr_loss = train(args, None, None, test_dataloader, model, tokenizer)
     # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
