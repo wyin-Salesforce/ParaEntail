@@ -399,7 +399,7 @@ def load_MNLI():
     print('loaded  MNLI dev size:', line_co)
     return examples, label_in_3way
 
-def load_RTE():
+
 
 def load_RTE():
     '''
