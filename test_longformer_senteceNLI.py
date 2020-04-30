@@ -405,24 +405,25 @@ def load_RTE():
     '''
     can read the training file, dev and test file
     '''
-    examples=[]
+
     filename = '/export/home/Dataset/glue_data/RTE/test.tsv'
     readfile = codecs.open(filename, 'r', 'utf-8')
     line_co=0
+    examples=[]
     for row in readfile:
-        if line_co>0:
-            line=row.strip().split('\t')
-            guid = "test-"+str(line_co-1)
-            text_a = line[1].strip()
-            text_b = line[2].strip()
-            label = 'entailment' if line[3].strip()=='entailment' else 'not_entailment' #["entailment", "not_entailment"]
+        line=row.strip().split('\t')
+        if len(line)==3:
+            guid = "test-"+str(line_co)
+            text_a = line[1]
+            text_b = line[2]
+            '''for RTE, we currently only choose randomly two labels in the set, in prediction we then decide the predicted labels'''
+            label = 'entailment'  if line[0] == '1' else 'not_entailment'
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-        line_co+=1
-        # if line_co > 20000:
-        #     break
+            line_co+=1
+
     readfile.close()
-    print('loaded  size:', line_co)
+    print('loaded test size:', line_co)
     return examples
 
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
