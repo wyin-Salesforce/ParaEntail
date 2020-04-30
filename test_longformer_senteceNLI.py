@@ -328,14 +328,16 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
         assert row_size == len(label_in_3way)
         hit=0
+
+        r=0.15
         for row_i in range(row_size):
             print(preds[row_i], '\t',label_in_3way[row_i])
-            if preds[row_i,0] > 0.6:
+            if preds[row_i,0] > 0.5+r:
                 pred_label = 'entailment'
-            elif preds[row_i,0] > 0.4:
-                pred_label = 'neutral'
-            else:
+            elif preds[row_i,0] < 0.5 - r:
                 pred_label = 'contradiction'
+            else:
+                pred_label = 'neutral'
             if pred_label == label_in_3way[row_i]:
                 hit+=1
         acc = hit/row_size
@@ -343,6 +345,9 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
     return acc
 
+'''
+r=0.1 0.5955044751830757
+'''
 def load_MNLI():
     filename = '/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv'
     '''
