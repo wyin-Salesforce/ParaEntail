@@ -463,7 +463,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         # examples = load_harsh_data('dev', hypo_only=False)
         examples, label_in_3way = load_MNLI()
     else:
-        examples = load_harsh_data('test', hypo_only=False)
+        # examples = load_harsh_data('test', hypo_only=False)
         examples = load_RTE()
 
     features = convert_examples_to_features(
