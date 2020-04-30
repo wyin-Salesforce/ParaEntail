@@ -224,32 +224,32 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 model.zero_grad()
                 global_step += 1
 
-                if global_step % 5000 == 0:
-                # if global_step % 5 == 0:
-                    dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
+                # if global_step % 5000 == 0:
+                if global_step % 5 == 0:
+                    dev_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='dev set')
                     if dev_f1 > max_dev_f1:
                         max_dev_f1 = dev_f1
-                        test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+                    #     test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
 
 
 
-                        '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only/'
-                        output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
-                        if not os.path.exists(output_dir):
-                            os.makedirs(output_dir)
-                        model_to_save = (
-                            model.module if hasattr(model, "module") else model
-                        )  # Take care of distributed/parallel training
-                        model_to_save.save_pretrained(output_dir)
-                        tokenizer.save_pretrained(output_dir)
-
-                        torch.save(args, os.path.join(output_dir, "training_args.bin"))
-                        logger.info("Saving model checkpoint to %s", output_dir)
-
-                        torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                        torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                        logger.info("Saving optimizer and scheduler states to %s", output_dir)
+                        # '''# Save model checkpoint'''
+                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only/'
+                        # output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
+                        # if not os.path.exists(output_dir):
+                        #     os.makedirs(output_dir)
+                        # model_to_save = (
+                        #     model.module if hasattr(model, "module") else model
+                        # )  # Take care of distributed/parallel training
+                        # model_to_save.save_pretrained(output_dir)
+                        # tokenizer.save_pretrained(output_dir)
+                        #
+                        # torch.save(args, os.path.join(output_dir, "training_args.bin"))
+                        # logger.info("Saving model checkpoint to %s", output_dir)
+                        #
+                        # torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        # torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                        # logger.info("Saving optimizer and scheduler states to %s", output_dir)
                     print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
 
 
@@ -399,7 +399,29 @@ def load_MNLI():
     print('loaded  MNLI dev size:', line_co)
     return examples, label_in_3way
 
-
+def get_RTE_as_train():
+    '''
+    can read the training file, dev and test file
+    '''
+    filename = '/export/home/Dataset/glue_data/RTE/train.tsv'
+    examples=[]
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    line_co=0
+    for row in readfile:
+        if line_co>0:
+            line=row.strip().split('\t')
+            guid = "train-"+str(line_co-1)
+            text_a = line[1].strip()
+            text_b = line[2].strip()
+            label = 'entailment' if line[3].strip()=='entailment' else 'not_entailment' #["entailment", "not_entailment"]
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        line_co+=1
+        # if line_co > 20000:
+        #     break
+    readfile.close()
+    print('loaded  size:', line_co)
+    return examples
 
 def load_RTE():
     '''
@@ -458,7 +480,8 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_harsh_data('train', hypo_only=False)
+        # examples = load_harsh_data('train', hypo_only=False)
+        examples = get_RTE_as_train()
     elif filename == 'dev':
         # examples = load_harsh_data('dev', hypo_only=False)
         examples, label_in_3way = load_MNLI()
@@ -855,8 +878,8 @@ def main():
     # if args.do_train:
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
-    # train_filename = 'train'
-    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+    train_filename = 'train'
+    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
 
     # dev_filename = 'dev'
@@ -872,10 +895,10 @@ def main():
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
-    accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
-    print('accuracy:', accuracy)
-    # global_step, tr_loss = train(args, None, None, test_dataloader, model, tokenizer)
-    # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+    # accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    # print('accuracy:', accuracy)
+    global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
+    logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
 
