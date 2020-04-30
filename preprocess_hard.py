@@ -1101,9 +1101,7 @@ def flaging_a_block(block_line_list):
     if second_line_parts[1] == '#originalSummaryIsPos#>>':
         fake_size = 0
         for line in block_line_list[2:]:
-            print('line:', line)
             line_parts = line.strip().split('\t')
-            print('line:', line, 'line_parts:', line_parts)
             if line_parts[1] in set(['#SwapEnt#>>', '#ReplaceWord#>>', '#ReplaceUnrelatedSent#>>']):
                 fake_size+=1
 
@@ -1124,6 +1122,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     fake_size_list = []
 
     block_line_list = []
+    block_size=0
     for line in readfile:
         if line.strip().startswith('document>>'):
             '''if a block is ready'''
@@ -1133,7 +1132,10 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
                 block_flag_list.append(flag)
                 fake_size_list.append(fake_size_i)
                 '''this is especially for CNN'''
-                if len(examples) >=450000:
+                block_size+=1
+                if block_size % 500 ==0:
+                    print('block_size:', block_size)
+                if block_size >=100000:
                     break
 
             '''start a new block'''
@@ -1144,7 +1146,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
                     block_line_list.append(line.strip())
                 else:
                     block_line_list[-1] = block_line_list[-1] + ' '+line.strip()
-
+    print('file blocks load over, size:', block_size)
+    readfile.close()
 
     '''now deal with a sub list of blocks'''
     assert len(block_list) == len(block_flag_list)
