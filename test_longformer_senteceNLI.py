@@ -37,6 +37,7 @@ import codecs
 from load_data import load_harsh_data#load_train_data, load_dev_data, load_test_data
 from transformers.modeling_bert import BertPreTrainedModel
 from transformers.modeling_roberta import RobertaClassificationHead
+from scipy.special import softmax
 
 import logging
 logging.getLogger('transformers.tokenization_utils').setLevel(logging.ERROR)
@@ -314,11 +315,12 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         eval_loss = eval_loss / nb_eval_steps
 
         # preds = np.argmax(preds, axis=1)
+        preds = softmax(preds)
         row_size = preds.shape[0]
 
 
-        print('preds:', sum(preds), len(preds))
-        print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
+        # print('preds:', sum(preds), len(preds))
+        # print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
         # f1_pos = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
         # f1_neg = f1_score(list(out_label_ids), list(preds), pos_label= 1, average='binary')
         # print('>>test_f1_pos:', f1_pos)
