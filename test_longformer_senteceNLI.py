@@ -316,6 +316,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
         # preds = np.argmax(preds, axis=1)
         preds = softmax(preds)
+
         row_size = preds.shape[0]
 
 
@@ -328,6 +329,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         assert row_size == len(label_in_3way)
         hit=0
         for row_i in range(row_size):
+            print(preds[row_i], '\t',label_in_3way[row_i])
             if preds[row_i,0] > 0.6:
                 pred_label = 'entailment'
             elif preds[row_i,0] > 0.4:
