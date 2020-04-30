@@ -333,6 +333,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         # print('>>test_f1_pos:', f1_pos)
 
         preds = softmax(preds,axis=1)
+        row_size = preds.shape[0]
         assert row_size == len(label_in_3way)
         hit=0
         hit_entail = 0
