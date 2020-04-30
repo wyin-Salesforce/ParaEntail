@@ -329,7 +329,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
         assert row_size == len(label_in_3way)
         hit=0
 
-        r=0.15
+        r=0.2
         for row_i in range(row_size):
             print(preds[row_i], '\t',label_in_3way[row_i])
             if preds[row_i,0] > 0.5+r:
@@ -347,6 +347,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
 '''
 r=0.1 0.5955044751830757
+r=0.15 0.5970301057770545
 '''
 def load_MNLI():
     filename = '/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv'
