@@ -1161,7 +1161,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     while right < len(block_flag_list):
         while block_flag_list[right] != 1:
             right+=1
-        if right-left == fake_size_list[left]:
+        if right-left == fake_size_list[left]+1:
             left=right
             right+=1
         elif right == len(block_flag_list):
