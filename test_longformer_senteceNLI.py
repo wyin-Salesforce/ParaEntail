@@ -328,11 +328,17 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
 
         assert row_size == len(label_in_3way)
         hit=0
+        hit_entail = 0
+        hit_neutral = 0
+        hit_contra = 0
+        sum_entail = 0
+        sum_neutral = 0
+        sum_contra = 0
 
         r=0.25
         for row_i in range(row_size):
             print(preds[row_i], '\t',label_in_3way[row_i])
-            if preds[row_i,0] > 0.5+r:
+            if preds[row_i,0] > 0.5:
                 pred_label = 'entailment'
             elif preds[row_i,0] < 0.5 - r:
                 pred_label = 'contradiction'
@@ -340,8 +346,22 @@ def evaluate(args, model, tokenizer, eval_dataloader, label_in_3way, prefix="tes
                 pred_label = 'neutral'
             if pred_label == label_in_3way[row_i]:
                 hit+=1
+
+            if label_in_3way[row_i] == 'entailment':
+                sum_entail+=1
+                if pred_label == 'entailment':
+                    hit_entail+=1
+            if label_in_3way[row_i] == 'neutral':
+                sum_neutral+=1
+                if pred_label == 'neutral':
+                    hit_neutral+=1
+            if label_in_3way[row_i] == 'contradiction':
+                sum_contra+=1
+                if pred_label == 'contradiction':
+                    hit_contra+=1
         acc = hit/row_size
 
+    print([hit_entail/sum_entail, hit_neutral/sum_neutral, hit_contra/sum_contra])
 
     return acc
 
