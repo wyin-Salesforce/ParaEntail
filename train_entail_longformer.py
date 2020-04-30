@@ -233,7 +233,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only_wo_ANLI_MCTest/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -320,9 +320,9 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         print('preds:', sum(preds), len(preds))
         print('out_label_ids:', sum(out_label_ids), len(out_label_ids))
         f1_pos = f1_score(list(out_label_ids), list(preds), pos_label= 0, average='binary')
-        f1_neg = f1_score(list(out_label_ids), list(preds), pos_label= 1, average='binary')
-        print('>>test_f1_pos:', f1_pos, ' test_f1_neg:', f1_neg)
-    return (f1_pos+f1_neg)/2
+        # f1_neg = f1_score(list(out_label_ids), list(preds), pos_label= 1, average='binary')
+        print('>>test_f1_pos:', f1_pos)#, ' test_f1_neg:', f1_neg)
+    return f1_pos #(f1_pos+f1_neg)/2
 
 
 
@@ -781,5 +781,5 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.full.harsh.txt 2>&1
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.hypo.only.without.ANLI.MCTest.txt 2>&1
     '''

@@ -486,15 +486,15 @@ def load_harsh_data(prefix, hypo_only=False):
         train_examples+=summary_examples_i
         pos_size+=summary_pos_size_i
 
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
-    train_examples+=mctest_examples
-    pos_size+=mctest_pos_size
-
-    '''ANLI'''
-    anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
-    train_examples+=anli_examples
-    pos_size+=anli_pos_size
+    # '''MCTest'''
+    # mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
+    # train_examples+=mctest_examples
+    # pos_size+=mctest_pos_size
+    #
+    # '''ANLI'''
+    # anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
+    # train_examples+=anli_examples
+    # pos_size+=anli_pos_size
 
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
