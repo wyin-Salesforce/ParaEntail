@@ -1356,8 +1356,9 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             if right == len(block_flag_list):
                 break
         subsequent_block_list = block_list[left:right]
-        # print(len(subsequent_block_list))
-        # print(fake_size_list[left]+1)
+
+        print(len(subsequent_block_list))
+        print(fake_size_list[left]+1, left)
         assert len(subsequent_block_list) == fake_size_list[left]+1
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
         size_finished+=1
