@@ -1185,7 +1185,7 @@ def flaging_a_block(block_line_list):
     return a neg_size to denote how many fake summaries
     '''
     # print('block_line_list', block_line_list)
-    if len(flaging_a_block) == 1:
+    if len(block_line_list) == 1:
         return 0,0
     second_line_parts = block_line_list[1].strip().split('\t')
     if second_line_parts[1] == '#originalSummaryIsPos#>>':
