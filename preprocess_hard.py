@@ -1238,7 +1238,7 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     writefile.write('\n')
 
     writefile.write('document>>' +'\t'+'#FakeAsPremise#>>'+'\t'+fake_entity_swapped_summary+'\n')
-    writefile.write('positive>>'+'\t'+'#Fake2FakeIsNeg#>>' +'\t'+fake_entity_swapped_summary+'\n')
+    writefile.write('positive>>'+'\t'+'#Fake2FakeIsPos#>>' +'\t'+fake_entity_swapped_summary+'\n')
     writefile.write('\n')
 
 
@@ -1358,7 +1358,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
         assert len(subsequent_block_list) == fake_size_list[left]+1
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
         size_finished+=1
-        print('size_finished:', size_finished)
+        if size_finished % 500 ==0:
+            print('size_finished:', size_finished)
 
     writefile.close()
     print('reformat success, congrats!')
@@ -1399,7 +1400,41 @@ if __name__ == "__main__":
     # split_DUC()
 
 
-    combine_entity_swapped_fakes_and_regenerate_dataset('/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt', '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/dev_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/dev_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.v2.txt')
+
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
+
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
+
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
