@@ -1293,7 +1293,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             '''if a block is ready'''
             if len(block_line_list)> 0:
                 flag, fake_size_i = flaging_a_block(block_line_list)#example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=False)
-                if flag == 1:
+                if flag == 1 and len(block_flag_list) > 1:
                     prior_1_position = len(block_flag_list)-1
                     while block_flag_list[prior_1_position] !=1:
                         prior_1_position-=1
