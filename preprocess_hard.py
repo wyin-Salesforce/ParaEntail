@@ -1184,7 +1184,7 @@ def flaging_a_block(block_line_list):
     return 1 if this block has '#originalSummaryIsPos#>>'
     return a neg_size to denote how many fake summaries
     '''
-    # print('block_line_list', block_line_list)
+    print('block_line_list', block_line_list)
     second_line_parts = block_line_list[1].strip().split('\t')
     if second_line_parts[1] == '#originalSummaryIsPos#>>':
         fake_size = 0
@@ -1416,9 +1416,9 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.v2.txt')
     #
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
 
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
@@ -1432,9 +1432,9 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
     # #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
     #
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
