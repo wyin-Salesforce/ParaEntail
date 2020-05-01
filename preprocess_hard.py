@@ -576,7 +576,7 @@ def replace_N_entities_by_NER(article, summary_str):
         entity_2_label[X.text] = X.label_
         nerlabel2entitylist[X.label_] = entlist
 
-    if list(entity_2_label.keys()) < 5:
+    if len(entity_2_label.keys()) < 5:
         return False
 
     random_N_entities = random.sample(list(entity_2_label.keys()), 5)
@@ -1196,6 +1196,8 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     summary_str = first_block[1].strip().split('\t')[2].strip()
 
     fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
+    if fake_entity_swapped_summary is False:
+        return 
     fake_word_replaced_summary = first_block[-2].strip().split()[2].strip()
     fake_sentence_replaced_summary = first_block[-1].strip().split()[2].strip()
 
