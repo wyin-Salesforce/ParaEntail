@@ -25,5 +25,5 @@ import en_core_web_sm
 nlp = en_core_web_sm.load()
 summary = 'Donald John Trump is the 45th and current president of the United States.'
 doc = nlp(summary)
-for token in doc:
-    print(token.text, '>>', token.pos_)
+for ent in doc.ents:
+    print(ent.text, ent.start_char, ent.end_char, ent.label_)
