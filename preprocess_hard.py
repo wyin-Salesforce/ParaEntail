@@ -37,8 +37,10 @@ device = torch.device("cuda")
 nlp = en_core_web_sm.load()
 
 def load_CNN_DailyMail(prefix):
-    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_tokenizer = AutoTokenizer.from_pretrained("bert-large-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("bert-large-cased")
     mask_model.to(device)
 
     # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -51,7 +53,7 @@ def load_CNN_DailyMail(prefix):
     file_prefix = [prefix]#['train', 'val', 'test']
     for fil_prefix in file_prefix:
         readfil = '/export/home/Dataset/CNN-DailyMail-Summarization/split/'+fil_prefix+'_tokenized.txt'
-        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.harsh.txt'
+        writefil = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'+fil_prefix+'_in_entail.harsh.v2.txt'
         readfile = codecs.open(readfil, 'r', 'utf-8')
         writefile = codecs.open(writefil, 'w', 'utf-8')
         size = 0
@@ -68,7 +70,8 @@ def load_CNN_DailyMail(prefix):
                 if len(sum_str.split()) > 200:
                     skip_overlong_sum_size+=1
                     continue
-                writefile.write('document>>' +'\t'+doc_str+'\n')
+                # writefile.write('document>>' +'\t'+doc_str+'\n')
+                writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+doc_str+'\n')
                 writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+sum_str+'\n')
                 neg_sum_list, neg_sum_namelist, neg_sum_list_premise = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
                 prior_unrelated_doc = doc_str
@@ -78,18 +81,16 @@ def load_CNN_DailyMail(prefix):
 
                 '''
                 finish the original doc, now start
-                (neg_sum --> pos_sum) -- negative
-                (neg_sum --> neg_sum) -- positive
-                (neg_sum&unrelatedSent --> neg_sum) -- positive
+                (random_fake --> real) -- negative
+                (fake_Plus --> fake) -- positive
                 '''
+                random_fake_sum = random.choice(neg_sum_list)
+                writefile.write('document>>' +'\t'+'#RandomFakeAsPremise#>>'+'\t'+random_fake_sum+'\n')
+                writefile.write('negative>>' +'\t'+'#RandomFake2RealIsNeg#'+'>>\t'+sum_str+'\n')
+                writefile.write('\n')
                 for idd, neg_sum_i in enumerate(neg_sum_list):
-                    writefile.write('document>>' +'\t'+neg_sum_i+'\n')
-                    writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
-                    writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
-                    writefile.write('\n')
-
-                    writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
-                    writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('document>>' +'\t'+'#FakePlusAsPremise#>>'+'\t'+neg_sum_list_premise[idd]+'\n')
+                    writefile.write('positive>>'+'\t'+'#FakePlus2FakeIsPos#>>' +'\t'+neg_sum_i+'\n')
                     writefile.write('\n')
 
                 size+=1
@@ -1381,7 +1382,7 @@ if __name__ == "__main__":
     # load_DUC_train()
     # load_DUC_test()
 
-    # load_CNN_DailyMail('train')
+    load_CNN_DailyMail('train')
     # load_CNN_DailyMail('val')
     # load_CNN_DailyMail('test')
 
@@ -1394,7 +1395,7 @@ if __name__ == "__main__":
     # preprocess_curation()
     # load_Curation('train')
     # load_Curation('dev')
-    load_Curation('test')
+    # load_Curation('test')
 
 
     # split_DUC()
