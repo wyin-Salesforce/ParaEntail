@@ -1392,9 +1392,9 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    # load_Curation('train')
+    load_Curation('train')
     # load_Curation('dev')
-    load_Curation('test')
+    # load_Curation('test')
 
 
     # split_DUC()
