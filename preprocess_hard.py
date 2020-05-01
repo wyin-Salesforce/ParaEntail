@@ -613,7 +613,7 @@ def replace_N_entities_by_NER(article, summary_str):
             # print(set(nerlabel2entitylist_doc.get(ent_label)))
             # print(set([ent]))
             all_similar_entities_from_article = nerlabel2entitylist_doc.get(ent_label)
-            if len(all_similar_entities_from_article) == 0:
+            if all_similar_entities_from_article is None:
                 continue
             entities_from_article = set(all_similar_entities_from_article) - set([ent])
             if len(entities_from_article) < 1:
@@ -623,7 +623,12 @@ def replace_N_entities_by_NER(article, summary_str):
         summary_entityToken_list[ind] = new_ent
         replaced_indices.add(ind)
 
-    return ' '.join(summary_entityToken_list)
+    new_summary = ' '.join(summary_entityToken_list)
+
+    print('old summary:', summary_str)
+    print('new_summary:', new_summary)
+    exit(0)
+    return new_summary
 
 
 
