@@ -1299,13 +1299,13 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
                         prior_1_position-=1
                     if fake_size_list[prior_1_position] != len(block_flag_list)- prior_1_position-1:
                         '''the prior block sequence is invalid'''
-                        print(block_list[-20:])
+                        # print(block_list[-20:])
                         print(block_flag_list[-20:])
                         print(fake_size_list[-20:])
                         block_list = block_list[:prior_1_position]
                         block_flag_list = block_flag_list[:prior_1_position]
                         fake_size_list = fake_size_list[:prior_1_position]
-                print(block_list[-20:])
+                # print(block_list[-20:])
                 print(block_flag_list[-20:])
                 print(fake_size_list[-20:])
                 block_list.append(block_line_list)
@@ -1358,8 +1358,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             exit(0)
     print('check over, the blocks are loaded correctly, size:', len(block_flag_list))
 
-    # print(block_flag_list[:50])
-    # print(fake_size_list[:50])
+    print(block_flag_list[:50])
+    print(fake_size_list[:50])
 
     print(block_flag_list[-20:])
     print(fake_size_list[-20:])
