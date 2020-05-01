@@ -1319,6 +1319,10 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     assert len(block_list) == len(fake_size_list)
     assert block_flag_list[0] ==1 and fake_size_list[0] != 0
 
+
+    for i in range(len(block_flag_list)):
+        print(block_flag_list[i], fake_size_list[i])
+    exit(0)
     '''check everything is correct'''
     left = 0
     right = 1
@@ -1337,15 +1341,15 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             fake_size_list = fake_size_list[:left]
             break
         else:
-            block_list = block_list[:left]+block_list[right:]
-            block_flag_list = block_flag_list[:left]+block_flag_list[right:]
-            fake_size_list = fake_size_list[:left]+fake_size_list[right:]
-            right=left+1
+            # block_list = block_list[:left]+block_list[right:]
+            # block_flag_list = block_flag_list[:left]+block_flag_list[right:]
+            # fake_size_list = fake_size_list[:left]+fake_size_list[right:]
+            # right=left+1
 
-            # print('error in the middle')
-            # print(block_flag_list[left:right+1])
-            # print(fake_size_list[left:right+1])
-            # exit(0)
+            print('error in the middle')
+            print(block_flag_list[left:right+1])
+            print(fake_size_list[left:right+1])
+            exit(0)
     print('check over, the blocks are loaded correctly, size:', len(block_flag_list))
 
     # print(block_flag_list[:50])
