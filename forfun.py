@@ -21,7 +21,7 @@
 #
 # f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
 # print(f1)
-
+import en_core_web_sm
 nlp = en_core_web_sm.load()
 summary = 'Donald John Trump is the 45th and current president of the United States.'
 doc = nlp(summary)
