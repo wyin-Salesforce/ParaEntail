@@ -1393,8 +1393,8 @@ if __name__ == "__main__":
 
     # preprocess_curation()
     # load_Curation('train')
-    load_Curation('dev')
-    # load_Curation('test')
+    # load_Curation('dev')
+    load_Curation('test')
 
 
     # split_DUC()
