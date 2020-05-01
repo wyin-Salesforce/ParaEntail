@@ -558,14 +558,14 @@ def sentence_tokenize_by_entities(sentence, nlp_proprocess):
         token_list+= left_context.strip().split()
         token_list+=[ent.text]
         last_end = ent.end_char
-
-    print('token_list:', token_list)
-
+    return token_list
 
 
-def replace_N_entities_by_NER(article, summary):
 
-    summary = nlp(summary)
+def replace_N_entities_by_NER(article, summary_str):
+
+    summary = nlp(summary_str)
+    summary_entityToken_list = sentence_tokenize_by_entities(summary_str, summary)
     nerlabel2entitylist = {}
     entity_2_label = {}
     for X in summary.ents:
@@ -579,24 +579,29 @@ def replace_N_entities_by_NER(article, summary):
     if list(entity_2_label.keys()) < 5:
         return False
 
-    doc = nlp(article)
-    nerlabel2entitylist_doc = {}
-    for X in doc.ents:
-        entlist = nerlabel2entitylist_doc.get(X.label_)
-        if entlist is None:
-            entlist = []
-        entlist.append(X.text)
-        nerlabel2entitylist_doc[X.label_] = entlist
-
     random_N_entities = random.sample(list(entity_2_label.keys()), 5)
 
-    def replace_random(src, frm, to):
-        matches = list(re.finditer(frm, src))
-        replace = random.choice(matches)
-        return src[:replace.start()] + to + src[replace.end():]
-
-    new_summary = summary
+    nerlabel2entitylist_doc = {}
     for ent in random_N_entities:
+        if len(nerlabel2entitylist.get(entity_2_label.get(ent))) == 1:
+            doc = nlp(article)
+            for X in doc.ents:
+                entlist = nerlabel2entitylist_doc.get(X.label_)
+                if entlist is None:
+                    entlist = []
+                entlist.append(X.text)
+                nerlabel2entitylist_doc[X.label_] = entlist
+            break
+
+
+    replaced_indices = set()
+    for ent in random_N_entities:
+        # ind = summary_entityToken_list.index(ent)
+        indices = [i for i, x in enumerate(summary_entityToken_list) if x == ent]
+        ind = random.choice(indices)
+        while ind in replaced_indices:
+            ind = random.choice(indices)
+
         ent_label = entity_2_label.get(ent)
         entities_in_the_same_group = set(nerlabel2entitylist.get(ent_label)) - set([ent])
         if len(entities_in_the_same_group) > 0:
@@ -607,7 +612,11 @@ def replace_N_entities_by_NER(article, summary):
                 continue
             else:
                 new_ent = random.choice(list(entities_from_article))
-        new_summary = replace_random(new_summary, ent, new_ent)
+        summary_entityToken_list[ind] = new_ent
+        replaced_indices.add(ind)
+
+    return ' '.join(summary_entityToken_list)
+
 
 
 
@@ -1174,20 +1183,71 @@ def flaging_a_block(block_line_list):
     else:
         return 0, 0
 
-def get_ensembled_summary_by_entity_swap(swap_entity_summary_list):
+# def get_ensembled_summary_by_entity_swap(swap_entity_summary_list):
 
 def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     first_block = subsequent_block_list[0]
-    swap_entity_summary_list = []
-    for line in first_block[2:]:
-    # for line in block_line_list[1:]:
-        if len(line.strip())>0:
-            parts = line.strip().split('\t')
-            if len(parts) == 3:
-                label = parts[1].strip()
-                if label == '#SwapEnt#>>':
-                    swap_entity_summary_list.append(parts[2])
-    get_ensembled_summary_by_entity_swap(swap_entity_summary_list)
+    assert first_block[0].strip().startswith('document>>')
+    assert first_block[1].strip().startswith('positive>>')
+    assert first_block[-2].strip().split()[1] == '#ReplaceWord#>>'
+    assert first_block[-1].strip().split()[1] == '#ReplaceUnrelatedSent#>>'
+
+    article= first_block[0].strip().split('\t')[1].strip()
+    summary_str = first_block[1].strip().split('\t')[2].strip()
+
+    fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
+    fake_word_replaced_summary = first_block[-2].strip().split()[2].strip()
+    fake_sentence_replaced_summary = first_block[-1].strip().split()[2].strip()
+
+
+    writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+article+'\n')
+    writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+summary_str+'\n')
+    writefile.write('negative>>'+'\t'+'#EntityReplaced#>>' +'\t'+fake_entity_swapped_summary+'\n')
+    writefile.write('negative>>'+'\t'+'#WordReplaced#>>' +'\t'+fake_word_replaced_summary+'\n')
+    writefile.write('negative>>'+'\t'+'#SentReplaced#>>' +'\t'+fake_sentence_replaced_summary+'\n')
+    writefile.write('\n')
+
+    '''
+    now, each article gets one P, three N;
+    we need to random a N to get (N--> P)
+    we need (entity, entity); (wordreplace+, wordreplace), (sentreplace+, sentreplace)
+    '''
+
+    random_fake_summary = random.choice([fake_entity_swapped_summary, fake_word_replaced_summary, fake_sentence_replaced_summary])
+    writefile.write('document>>' +'\t'+'#RandomFakeAsPremise#>>'+'\t'+random_fake_summary+'\n')
+    writefile.write('negative>>'+'\t'+'#Fake2RealIsNeg#>>' +'\t'+summary_str+'\n')
+    writefile.write('\n')
+
+    writefile.write('document>>' +'\t'+'#FakeAsPremise#>>'+'\t'+fake_entity_swapped_summary+'\n')
+    writefile.write('positive>>'+'\t'+'#Fake2FakeIsNeg#>>' +'\t'+fake_entity_swapped_summary+'\n')
+    writefile.write('\n')
+
+
+
+    '''now iter the last 2 blocks'''
+
+    block = subsequent_block_list[-3]
+    assert len(block) == 2
+    assert block[1].find('#negInserted2negIsPos#>>') > -1
+    line1_parts = block[0].strip().split('\t')
+    writefile.write('document>>' +'\t'+'#Fake+AsPremise#>>'+'\t'+line1_parts[1]+'\n')
+    line2_parts = block[1].strip().split('\t')
+    assert line2_parts[2] == fake_word_replaced_summary
+    writefile.write('positive>>' +'\t'+'#Fake+2FakeIsPos#>>'+'\t'+fake_word_replaced_summary+'\n')
+    writefile.write('\n')
+
+
+    block = subsequent_block_list[-1]
+    assert len(block) == 2
+    assert block[1].find('#negInserted2negIsPos#>>') > -1
+    line1_parts = block[0].strip().split('\t')
+    writefile.write('document>>' +'\t'+'#Fake+AsPremise#>>'+'\t'+line1_parts[1]+'\n')
+    line2_parts = block[1].strip().split('\t')
+    assert line2_parts[2] == fake_sentence_replaced_summary
+    writefile.write('positive>>' +'\t'+'#Fake+2FakeIsPos#>>'+'\t'+fake_sentence_replaced_summary+'\n')
+    writefile.write('\n')
+
+
 
 
 def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file):
@@ -1196,6 +1256,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     # filename = path+prefix+'_in_entail.harsh.txt'
     print('loading ...', input_file)
     readfile = codecs.open(input_file, 'r', 'utf-8')
+    writefile = codecs.open(output_file, 'w', 'utf-8')
 
     examples = []
     block_list = []
@@ -1271,11 +1332,10 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
                 break
         subsequent_block_list = block_list[left, right]
         assert len(subsequent_block_list) == block_flag_list[left]+1
+        deal_with_subsequent_blocks(subsequent_block_list, writefile)
 
-
-
-
-    # return examples, pos_size
+    writefile.close()
+    print('reformat success, congrats!')
 
 
 
