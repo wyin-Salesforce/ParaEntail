@@ -1341,8 +1341,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             exit(0)
     print('check over, the blocks are loaded correctly, size:', len(block_flag_list))
 
-    print(block_flag_list[:50])
-    print(fake_size_list[:50])
+    # print(block_flag_list[:50])
+    # print(fake_size_list[:50])
 
     print(block_flag_list[-20:])
     print(fake_size_list[-20:])
@@ -1356,21 +1356,17 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             if right == len(block_flag_list):
                 break
 
-        print('left, right:', left, right)
         subsequent_block_list = block_list[left:right]
-
-        print(len(subsequent_block_list))
-        print(fake_size_list[left]+1, left)
         assert len(subsequent_block_list) == fake_size_list[left]+1
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
         size_finished+=1
         left = right
         right+=1
-        # if size_finished % 500 ==0:
-        print('size_finished:', size_finished)
+        if size_finished % 500 ==0:
+            print('size_finished:', size_finished)
 
     writefile.close()
-    print('reformat success, congrats!')
+    print('reformat success, congrats!, size_finished:', size_finished)
 
 
 
@@ -1436,13 +1432,13 @@ if __name__ == "__main__":
     '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
     '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
     #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
+
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
