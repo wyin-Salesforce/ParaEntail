@@ -1215,6 +1215,7 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     if fake_entity_swapped_summary is False:
         return
     fake_word_replaced_summary = first_block[-2].strip().split()[2].strip()
+    print('fake_word_replaced_summary:', fake_word_replaced_summary)
     fake_sentence_replaced_summary = first_block[-1].strip().split()[2].strip()
 
 
