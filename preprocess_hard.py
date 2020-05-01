@@ -1359,8 +1359,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
         size_finished+=1
         left = right
-        if size_finished % 500 ==0:
-            print('size_finished:', size_finished)
+        # if size_finished % 500 ==0:
+        print('size_finished:', size_finished)
 
     writefile.close()
     print('reformat success, congrats!')
