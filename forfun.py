@@ -22,8 +22,24 @@
 # f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
 # print(f1)
 import en_core_web_sm
+
+def sentence_tokenize_by_entities(sentence, nlp_proprocess):
+    '''
+    #nlp_proprocess = nlp(sentence)
+    '''
+    token_list = []
+
+    last_end = 0
+    for ent in nlp_proprocess.ents:
+        # print(ent.text, ent.start_char, ent.end_char, ent.label_)
+        left_context = sentence[last_end:ent.start_char]
+        token_list+= left_context.strip().split()
+        token_list+=[ent.text]
+        last_end = ent.end_char
+
+    print('token_list:', token_list)
+
+
 nlp = en_core_web_sm.load()
 summary = 'Donald John Trump is the 45th and current president of the United States.'
-doc = nlp(summary)
-for ent in doc.ents:
-    print(ent.text, ent.start_char, ent.end_char, ent.label_)
+sentence_tokenize_by_entities(summary, nlp(summary))

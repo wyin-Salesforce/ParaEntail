@@ -545,6 +545,23 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
 #
 #     return new_seqs
 
+def sentence_tokenize_by_entities(sentence, nlp_proprocess):
+    '''
+    #nlp_proprocess = nlp(sentence)
+    '''
+    token_list = []
+
+    last_end = 0
+    for ent in nlp_proprocess.ents:
+        # print(ent.text, ent.start_char, ent.end_char, ent.label_)
+        left_context = sentence[last_end:ent.start_char]
+        token_list+= left_context.strip().split()
+        token_list+=[ent.text]
+        last_end = ent.end_char
+
+    print('token_list:', token_list)
+
+
 
 def replace_N_entities_by_NER(article, summary):
 
@@ -590,9 +607,6 @@ def replace_N_entities_by_NER(article, summary):
                 continue
             else:
                 new_ent = random.choice(list(entities_from_article))
-
-
-
         new_summary = replace_random(new_summary, ent, new_ent)
 
 
