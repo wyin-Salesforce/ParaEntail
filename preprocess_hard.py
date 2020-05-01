@@ -607,12 +607,15 @@ def replace_N_entities_by_NER(article, summary_str):
         if len(entities_in_the_same_group) > 0:
             new_ent = random.choice(list(entities_in_the_same_group))
         else:
-            print('ent_label:', ent_label)
-            print('nerlabel2entitylist:', nerlabel2entitylist)
-            print('nerlabel2entitylist_doc:', nerlabel2entitylist_doc)
-            print(set(nerlabel2entitylist_doc.get(ent_label)))
-            print(set([ent]))
-            entities_from_article = set(nerlabel2entitylist_doc.get(ent_label)) - set([ent])
+            # print('ent_label:', ent_label)
+            # print('nerlabel2entitylist:', nerlabel2entitylist)
+            # print('nerlabel2entitylist_doc:', nerlabel2entitylist_doc)
+            # print(set(nerlabel2entitylist_doc.get(ent_label)))
+            # print(set([ent]))
+            all_similar_entities_from_article = nerlabel2entitylist_doc.get(ent_label)
+            if len(all_similar_entities_from_article) == 0:
+                continue
+            entities_from_article = set(all_similar_entities_from_article) - set([ent])
             if len(entities_from_article) < 1:
                 continue
             else:
