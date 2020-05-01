@@ -558,6 +558,7 @@ def sentence_tokenize_by_entities(sentence, nlp_proprocess):
         token_list+= left_context.strip().split()
         token_list+=[ent.text]
         last_end = ent.end_char
+    token_list+= sentence[last_end:].strip().split()
     return token_list
 
 
