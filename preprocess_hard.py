@@ -995,12 +995,14 @@ def load_Curation(prefix):
     this function load 40K curation, and gneerate the negative summaries
     '''
 
-    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/'+prefix+'_in_entail.harsh.txt', 'w', 'utf-8')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/'+prefix+'_in_entail.harsh.v2.txt', 'w', 'utf-8')
     # write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt', 'w', 'utf-8')
     # write_test = codecs.open('/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt', 'w', 'utf-8')
     readfile = codecs.open('/export/home/Dataset/Curation_summarization/curation-corpus/doc_sum.pairs.txt', 'r', 'utf-8')# size 39067
-    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_tokenizer = AutoTokenizer.from_pretrained("bert-large-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("bert-large-cased")
     mask_model.to(device)
 
     # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -1039,33 +1041,29 @@ def load_Curation(prefix):
                         continue
 
 
-
-                writefile.write('document>>' +'\t'+doc_str+'\n')
+                writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+doc_str+'\n')
                 # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
                 # writefile.write('positive>>' +'\t'+sum_str+'\n')
                 writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+sum_str+'\n')
                 # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
                 neg_sum_list, neg_sum_namelist, neg_sum_list_premise = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
                 prior_unrelated_doc = doc_str
-                # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
                 for id, neg_sum in enumerate(neg_sum_list):
                     writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
                 writefile.write('\n')
 
                 '''
                 finish the original doc, now start
-                (neg_sum --> pos_sum) -- negative
-                (neg_sum --> neg_sum) -- positive
-                (neg_sum&unrelatedSent --> neg_sum) -- positive
+                (random_fake --> real) -- negative
+                (fake_Plus --> fake) -- positive
                 '''
+                random_fake_sum = random.choice(neg_sum_list)
+                writefile.write('document>>' +'\t'+'#RandomFakeAsPremise#>>'+'\t'+random_fake_sum+'\n')
+                writefile.write('negative>>' +'\t'+'#RandomFake2RealIsNeg#'+'>>\t'+sum_str+'\n')
+                writefile.write('\n')
                 for idd, neg_sum_i in enumerate(neg_sum_list):
-                    writefile.write('document>>' +'\t'+neg_sum_i+'\n')
-                    writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
-                    writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
-                    writefile.write('\n')
-
-                    writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
-                    writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                    writefile.write('document>>' +'\t'+'#FakePlusAsPremise#>>'+'\t'+neg_sum_list_premise[idd]+'\n')
+                    writefile.write('positive>>'+'\t'+'#FakePlus2FakeIsPos#>>' +'\t'+neg_sum_i+'\n')
                     writefile.write('\n')
 
                 if size % 10 == 0:
@@ -1381,7 +1379,7 @@ if __name__ == "__main__":
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
-    load_DUC_test()
+    # load_DUC_test()
 
     # load_CNN_DailyMail('train')
     # load_CNN_DailyMail('val')
@@ -1394,7 +1392,7 @@ if __name__ == "__main__":
     # recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
-    # load_Curation('train')
+    load_Curation('train')
     # load_Curation('dev')
     # load_Curation('test')
 
