@@ -654,7 +654,7 @@ def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_toke
     # entity_cand_list = swap_entities(doc_str, sum_str)
     entity_cand_list = []
     entity_cand_list_names = []
-    fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
+    fake_entity_swapped_summary = replace_N_entities_by_NER(doc_str, sum_str)
     if fake_entity_swapped_summary is not False:
         entity_cand_list = [fake_entity_swapped_summary]
         entity_cand_list_names = ['#EntityReplacedIsNeg#']
