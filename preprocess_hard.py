@@ -546,6 +546,57 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
 #     return new_seqs
 
 
+def replace_N_entities_by_NER(article, summary):
+
+    summary = nlp(summary)
+    nerlabel2entitylist = {}
+    entity_2_label = {}
+    for X in summary.ents:
+        entlist = nerlabel2entitylist.get(X.label_)
+        if entlist is None:
+            entlist = []
+        entlist.append(X.text)
+        entity_2_label[X.text] = X.label_
+        nerlabel2entitylist[X.label_] = entlist
+
+    if list(entity_2_label.keys()) < 5:
+        return False
+
+    doc = nlp(article)
+    nerlabel2entitylist_doc = {}
+    for X in doc.ents:
+        entlist = nerlabel2entitylist_doc.get(X.label_)
+        if entlist is None:
+            entlist = []
+        entlist.append(X.text)
+        nerlabel2entitylist_doc[X.label_] = entlist
+
+    random_N_entities = random.sample(list(entity_2_label.keys()), 5)
+
+    def replace_random(src, frm, to):
+        matches = list(re.finditer(frm, src))
+        replace = random.choice(matches)
+        return src[:replace.start()] + to + src[replace.end():]
+
+    new_summary = summary
+    for ent in random_N_entities:
+        ent_label = entity_2_label.get(ent)
+        entities_in_the_same_group = set(nerlabel2entitylist.get(ent_label)) - set([ent])
+        if len(entities_in_the_same_group) > 0:
+            new_ent = random.choice(list(entities_in_the_same_group))
+        else:
+            entities_from_article = set(nerlabel2entitylist_doc.get(ent_label)) - set([ent])
+            if len(entities_from_article) < 1:
+                continue
+            else:
+                new_ent = random.choice(list(entities_from_article))
+
+
+
+        new_summary = replace_random(new_summary, ent, new_ent)
+
+
+
 def NER(input):
 
 
@@ -1109,6 +1160,22 @@ def flaging_a_block(block_line_list):
     else:
         return 0, 0
 
+def get_ensembled_summary_by_entity_swap(swap_entity_summary_list):
+
+def deal_with_subsequent_blocks(subsequent_block_list, writefile):
+    first_block = subsequent_block_list[0]
+    swap_entity_summary_list = []
+    for line in first_block[2:]:
+    # for line in block_line_list[1:]:
+        if len(line.strip())>0:
+            parts = line.strip().split('\t')
+            if len(parts) == 3:
+                label = parts[1].strip()
+                if label == '#SwapEnt#>>':
+                    swap_entity_summary_list.append(parts[2])
+    get_ensembled_summary_by_entity_swap(swap_entity_summary_list)
+
+
 def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     # path = '/export/home/Dataset/para_entail_datasets/DUC/'
@@ -1153,9 +1220,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     assert len(block_list) == len(block_flag_list)
     assert len(block_list) == len(fake_size_list)
     assert block_flag_list[0] ==1 and fake_size_list[0] != 0
-    # print('block_flag_list:', block_flag_list[:200])
-    # print('fake_size_list:', fake_size_list[:200])
-    # exit(0)
+
+    '''check everything is correct'''
     left = 0
     right = 1
     while right < len(block_flag_list):
@@ -1181,6 +1247,17 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
 
     print(block_flag_list[-20:])
     print(fake_size_list[-20:])
+    '''now, we reformat the subsequent blocks'''
+    left = 0
+    right = 1
+    while right < len(block_flag_list):
+        while block_flag_list[right] != 1:
+            right+=1
+            if right == len(block_flag_list):
+                break
+        subsequent_block_list = block_list[left, right]
+        assert len(subsequent_block_list) == block_flag_list[left]+1
+
 
 
 
