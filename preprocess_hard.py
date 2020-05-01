@@ -1412,10 +1412,10 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.v2.txt')
     #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
-    #
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
+
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.v2.txt')
@@ -1424,17 +1424,17 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.v2.txt')
 
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
-
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
-
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
+    #
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
