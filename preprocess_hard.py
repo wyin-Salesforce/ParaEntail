@@ -1201,6 +1201,8 @@ def flaging_a_block(block_line_list):
 
 def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     first_block = subsequent_block_list[0]
+    print('first_block:')
+    print(first_block)
     assert first_block[0].strip().startswith('document>>')
     assert first_block[1].strip().startswith('positive>>')
     assert first_block[-2].strip().split()[1] == '#ReplaceWord#>>'
