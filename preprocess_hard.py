@@ -607,6 +607,8 @@ def replace_N_entities_by_NER(article, summary_str):
         if len(entities_in_the_same_group) > 0:
             new_ent = random.choice(list(entities_in_the_same_group))
         else:
+            print(set(nerlabel2entitylist_doc.get(ent_label)))
+            print(set([ent]))
             entities_from_article = set(nerlabel2entitylist_doc.get(ent_label)) - set([ent])
             if len(entities_from_article) < 1:
                 continue
@@ -1197,7 +1199,7 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
 
     fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
     if fake_entity_swapped_summary is False:
-        return 
+        return
     fake_word_replaced_summary = first_block[-2].strip().split()[2].strip()
     fake_sentence_replaced_summary = first_block[-1].strip().split()[2].strip()
 
