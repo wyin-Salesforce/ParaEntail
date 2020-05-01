@@ -388,8 +388,9 @@ def insert_unrelated_sents_random_location(sum_str, doc_sents):
     random_position = random.sample(list(range(len(sum_sents))), 1)[0]
     new_sum_sents = sum_sents[:random_position]+[random_sent_from_doc]+sum_sents[random_position:]
 
+    fake_summary_plus = ' '.join(new_sum_sents)
 
-    return ' '.join(new_sum_sents)
+    return ' '.join(fake_summary_plus.strip().split())
 
 def CTRL_generate(sum_str, tokenizer, model, replace = False):
 
@@ -470,12 +471,10 @@ def CTRL_generate(sum_str, tokenizer, model, replace = False):
         # print('resulting_sents:', resulting_sents)
         # selected_sent = resulting_sents#[resulting_sents[0]]
 
-        new_seq = kept_sent+selected_sent+remaining_sents
-        # # # new_seq = know_word_list
-        # print('new_seq:', new_seq)
-        # exit(0)
+        new_seq = ' '.join(kept_sent+selected_sent+remaining_sents)
+        new_seq = ' '.join(new_seq.strip().split())
 
-        new_seqs.append(' '.join(new_seq))
+        new_seqs.append(new_seq)
     # print(new_seqs)
 
     return new_seqs
@@ -652,33 +651,25 @@ def NER(input):
 
 def generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, gpt2_tokenizer, gpt2_model):
     '''entity-level noise'''
-    entity_cand_list = swap_entities(doc_str, sum_str)
-    entity_cand_list_names = ['#SwapEnt#'] * len(entity_cand_list)
-    # swap_pronouns(doc_str, sum_str)
+    # entity_cand_list = swap_entities(doc_str, sum_str)
+    entity_cand_list = []
+    entity_cand_list_names = []
+    fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
+    if fake_entity_swapped_summary is not False:
+        entity_cand_list = [fake_entity_swapped_summary]
+        entity_cand_list_names = ['#EntityReplacedIsNeg#']
     '''word-level noise'''
-    # shuffle_word_list = shuffle_words_same_POStags(sum_str, 0.5)
-    # shuffle_word_list_names = ['#ShuffleWord#'] * len(shuffle_word_list)
-    #
-    # missing_word_list = random_remove_words(sum_str, 0.2)
-    # missing_word_list_names = ['#RemoveWord#'] * len(missing_word_list)
-
     bert_mask_list = random_replace_words(sum_str, 0.2, mask_tokenizer, mask_model)
-    bert_mask_list_names = ['#ReplaceWord#'] * len(bert_mask_list)
+    bert_mask_list_names = ['#WordReplacedIsNeg#'] * len(bert_mask_list)
 
     '''sentence-level noise'''
-
-    # insert_unrelated_sents = append_unrelated_sents(sum_str, prior_unrelated_doc)
-    # insert_unrelated_sents_names = ['#InsertUnrelatedSent#'] * len(insert_unrelated_sents)
-
-    # bert_generate_list = GPT2_generate(sum_str, gpt2_tokenizer, gpt2_model)
-    # print('ctrl generate...')
     bert_generate_list = CTRL_generate(sum_str, gpt2_tokenizer, gpt2_model, replace=True)
-    bert_generate_list_names = ['#ReplaceUnrelatedSent#'] * len(bert_generate_list)
+    bert_generate_list_names = ['#SentReplacedIsNeg#'] * len(bert_generate_list)
 
     cand_list= entity_cand_list  + bert_mask_list +bert_generate_list
     name_list = entity_cand_list_names + bert_mask_list_names + bert_generate_list_names
 
-    '''now, for all negative summaries, we forward to CTRL to get their premise by insert unrelated sent'''
+    '''now, for all fake summaries, we insert a sentence selected from the article'''
     premise_cand_list = []
 
     doc_sentences = nlp(doc_str)
@@ -701,9 +692,11 @@ def load_DUC_train():
     'd23d','d25e','d26e','d29e','d33f','d35f','d36f','d38g','d40g','d42g','d46h','d47h','d48h','d49i',
     'd51i','d52i','d55k','d58k','d60k']
 
-    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt', 'w', 'utf-8')
-    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt', 'w', 'utf-8')
+    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_tokenizer = AutoTokenizer.from_pretrained("bert-large-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("bert-large-cased")
     mask_model.to(device)
 
     # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -744,37 +737,30 @@ def load_DUC_train():
                 print('missing:', foldername, id)
                 continue
 
-            writefile.write('document>>' +'\t'+doc_str+'\n')
+            writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+doc_str+'\n')
             sum_str = ' '.join(summ.strip().split())
 
-            # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
             writefile.write('positive>>'+'\t'+'#originalSummaryIsPos#>>' +'\t'+sum_str+'\n')
             # print('load_DUC_train.prior_unrelated_doc:', prior_unrelated_doc)
             neg_sum_list, neg_sum_namelist, neg_sum_list_premise = generate_negative_summaries(prior_unrelated_doc, doc_str, sum_str, mask_tokenizer, mask_model, ctrl_tokenizer, ctrl_model)
             prior_unrelated_doc = doc_str
-            # print('load_DUC_train.prior_unrelated_doc.update:', prior_unrelated_doc)
             for id, neg_sum in enumerate(neg_sum_list):
                 writefile.write('negative>>' +'\t'+neg_sum_namelist[id]+'>>\t'+neg_sum+'\n')
             writefile.write('\n')
 
             '''
             finish the original doc, now start
-            (neg_sum --> pos_sum) -- negative
-            (neg_sum --> neg_sum) -- positive
-            (neg_sum&unrelatedSent --> neg_sum) -- positive
+            (random_fake --> real) -- negative
+            (fake_Plus --> fake) -- positive
             '''
+            random_fake_sum = random.choice(neg_sum_list)
+            writefile.write('document>>' +'\t'+'#RandomFakeAsPremise#>>'+'\t'+random_fake_sum+'\n')
+            writefile.write('negative>>' +'\t'+'#RandomFake2RealIsNeg#'+'>>\t'+sum_str+'\n')
+            writefile.write('\n')
             for idd, neg_sum_i in enumerate(neg_sum_list):
-                writefile.write('document>>' +'\t'+neg_sum_i+'\n')
-                writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
-                writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
+                writefile.write('document>>' +'\t'+'#FakePlusAsPremise#>>'+'\t'+neg_sum_list_premise[idd]+'\n')
+                writefile.write('positive>>'+'\t'+'#FakePlus2FakeIsPos#>>' +'\t'+neg_sum_i+'\n')
                 writefile.write('\n')
-
-                writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
-                writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
-                writefile.write('\n')
-
-
-
 
             size+=1
             if size % 10 == 0:
@@ -1393,7 +1379,7 @@ if __name__ == "__main__":
     # sum_str = 'to save time, we only use the first summary to generate negative ones'
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
-    # load_DUC_train()
+    load_DUC_train()
     # load_DUC_test()
 
     # load_CNN_DailyMail('train')
@@ -1414,10 +1400,10 @@ if __name__ == "__main__":
 
     # split_DUC()
 
-
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
+    '''the following finally not used, always bugs'''
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
     #
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/dev_in_entail.harsh.txt',
