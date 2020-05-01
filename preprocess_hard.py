@@ -1205,8 +1205,8 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     print(first_block)
     assert first_block[0].strip().startswith('document>>')
     assert first_block[1].strip().startswith('positive>>')
-    assert first_block[-2].strip().split()[1] == '#ReplaceWord#>>'
-    assert first_block[-1].strip().split()[1] == '#ReplaceUnrelatedSent#>>'
+    assert first_block[-2].strip().split('\t')[1] == '#ReplaceWord#>>'
+    assert first_block[-1].strip().split('\t')[1] == '#ReplaceUnrelatedSent#>>'
 
     article= first_block[0].strip().split('\t')[1].strip()
     summary_str = first_block[1].strip().split('\t')[2].strip()
@@ -1214,9 +1214,9 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     fake_entity_swapped_summary = replace_N_entities_by_NER(article, summary_str)
     if fake_entity_swapped_summary is False:
         return
-    fake_word_replaced_summary = first_block[-2].strip().split()[2].strip()
-    print('fake_word_replaced_summary:', fake_word_replaced_summary)
-    fake_sentence_replaced_summary = first_block[-1].strip().split()[2].strip()
+    fake_word_replaced_summary = first_block[-2].strip().split('\t')[2].strip()
+    # print('fake_word_replaced_summary:', fake_word_replaced_summary)
+    fake_sentence_replaced_summary = first_block[-1].strip().split('\t')[2].strip()
 
 
     writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+article+'\n')
@@ -1251,8 +1251,8 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     line1_parts = block[0].strip().split('\t')
     writefile.write('document>>' +'\t'+'#Fake+AsPremise#>>'+'\t'+line1_parts[1]+'\n')
     line2_parts = block[1].strip().split('\t')
-    print('line2_parts[2]:', line2_parts[2])
-    print('fake_word_replaced_summary:', fake_word_replaced_summary)
+    # print('line2_parts[2]:', line2_parts[2])
+    # print('fake_word_replaced_summary:', fake_word_replaced_summary)
     assert line2_parts[2] == fake_word_replaced_summary
     writefile.write('positive>>' +'\t'+'#Fake+2FakeIsPos#>>'+'\t'+fake_word_replaced_summary+'\n')
     writefile.write('\n')
