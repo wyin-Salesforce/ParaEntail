@@ -1201,8 +1201,8 @@ def flaging_a_block(block_line_list):
 
 def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     first_block = subsequent_block_list[0]
-    print('first_block:')
-    print(first_block)
+    # print('first_block:')
+    # print(first_block)
     assert first_block[0].strip().startswith('document>>')
     assert first_block[1].strip().startswith('positive>>')
     assert first_block[-2].strip().split('\t')[1] == '#ReplaceWord#>>'
@@ -1346,6 +1346,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     '''now, we reformat the subsequent blocks'''
     left = 0
     right = 1
+    size_finished = 0
     while right < len(block_flag_list):
         while block_flag_list[right] != 1:
             right+=1
@@ -1356,6 +1357,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
         # print(fake_size_list[left]+1)
         assert len(subsequent_block_list) == fake_size_list[left]+1
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
+        size_finished+=1
+        print('size_finished:', size_finished)
 
     writefile.close()
     print('reformat success, congrats!')
