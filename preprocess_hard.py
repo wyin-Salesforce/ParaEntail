@@ -778,9 +778,11 @@ def load_DUC_test():
     'd24d','d27e','d28e','d30e','d31f','d32f','d34f','d37g','d39g',
     'd41g','d43h','d44h','d45h','d50i','d53i','d54i','d56k','d57k','d59k']
 
-    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt', 'w', 'utf-8')
-    mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt', 'w', 'utf-8')
+    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
+    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
+    mask_tokenizer = AutoTokenizer.from_pretrained("bert-large-cased")
+    mask_model = AutoModelWithLMHead.from_pretrained("bert-large-cased")
     mask_model.to(device)
 
     # gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
@@ -844,7 +846,8 @@ def load_DUC_test():
                 print('missing:', foldername, id)
                 continue
 
-            writefile.write('document>>' +'\t'+doc_str+'\n')
+            # writefile.write('document>>' +'\t'+doc_str+'\n')
+            writefile.write('document>>' +'\t'+'#originalArticle#>>'+'\t'+doc_str+'\n')
             for summm in summ_list:
                 sum_str = ' '.join(summm.strip().split())
                 # writefile.write('positive' +'\t'+doc_str + '\t' + sum_str+'\n')
@@ -861,18 +864,16 @@ def load_DUC_test():
 
             '''
             finish the original doc, now start
-            (neg_sum --> pos_sum) -- negative
-            (neg_sum --> neg_sum) -- positive
-            (neg_sum&unrelatedSent --> neg_sum) -- positive
+            (random_fake --> real) -- negative
+            (fake_Plus --> fake) -- positive
             '''
+            random_fake_sum = random.choice(neg_sum_list)
+            writefile.write('document>>' +'\t'+'#RandomFakeAsPremise#>>'+'\t'+random_fake_sum+'\n')
+            writefile.write('negative>>' +'\t'+'#RandomFake2RealIsNeg#'+'>>\t'+sum_str+'\n')
+            writefile.write('\n')
             for idd, neg_sum_i in enumerate(neg_sum_list):
-                writefile.write('document>>' +'\t'+neg_sum_i+'\n')
-                writefile.write('positive>>'+'\t'+'#neg2negIsPos#>>' +'\t'+neg_sum_i+'\n')
-                writefile.write('negative>>' +'\t'+'#neg2posIsNeg#'+'>>\t'+sum_str+'\n')
-                writefile.write('\n')
-
-                writefile.write('document>>' +'\t'+neg_sum_list_premise[idd]+'\n')
-                writefile.write('positive>>'+'\t'+'#negInserted2negIsPos#>>' +'\t'+neg_sum_i+'\n')
+                writefile.write('document>>' +'\t'+'#FakePlusAsPremise#>>'+'\t'+neg_sum_list_premise[idd]+'\n')
+                writefile.write('positive>>'+'\t'+'#FakePlus2FakeIsPos#>>' +'\t'+neg_sum_i+'\n')
                 writefile.write('\n')
 
             size+=1
@@ -1379,8 +1380,8 @@ if __name__ == "__main__":
     # sum_str = 'to save time, we only use the first summary to generate negative ones'
     # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
-    load_DUC_train()
-    # load_DUC_test()
+    # load_DUC_train()
+    load_DUC_test()
 
     # load_CNN_DailyMail('train')
     # load_CNN_DailyMail('val')
