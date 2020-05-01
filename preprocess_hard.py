@@ -626,9 +626,9 @@ def replace_N_entities_by_NER(article, summary_str):
 
     new_summary = ' '.join(summary_entityToken_list)
 
-    print('old summary:', summary_str)
-    print('new_summary:', new_summary)
-    exit(0)
+    # print('old summary:', summary_str)
+    # print('new_summary:', new_summary)
+    # exit(0)
     return new_summary
 
 
