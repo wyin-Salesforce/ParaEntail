@@ -1358,6 +1358,7 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
         assert len(subsequent_block_list) == fake_size_list[left]+1
         deal_with_subsequent_blocks(subsequent_block_list, writefile)
         size_finished+=1
+        left = right
         if size_finished % 500 ==0:
             print('size_finished:', size_finished)
 
@@ -1420,13 +1421,13 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.v2.txt')
     #
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.v2.txt')
-
     # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
+    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.v2.txt')
+
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
     #
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
