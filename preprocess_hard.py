@@ -1248,6 +1248,8 @@ def deal_with_subsequent_blocks(subsequent_block_list, writefile):
     line1_parts = block[0].strip().split('\t')
     writefile.write('document>>' +'\t'+'#Fake+AsPremise#>>'+'\t'+line1_parts[1]+'\n')
     line2_parts = block[1].strip().split('\t')
+    print('line2_parts[2]:', line2_parts[2])
+    print('fake_word_replaced_summary:', fake_word_replaced_summary)
     assert line2_parts[2] == fake_word_replaced_summary
     writefile.write('positive>>' +'\t'+'#Fake+2FakeIsPos#>>'+'\t'+fake_word_replaced_summary+'\n')
     writefile.write('\n')
