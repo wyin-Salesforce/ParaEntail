@@ -1341,8 +1341,8 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
             exit(0)
     print('check over, the blocks are loaded correctly, size:', len(block_flag_list))
 
-    print(block_flag_list[:20])
-    print(fake_size_list[:20])
+    print(block_flag_list[:50])
+    print(fake_size_list[:50])
 
     print(block_flag_list[-20:])
     print(fake_size_list[-20:])
