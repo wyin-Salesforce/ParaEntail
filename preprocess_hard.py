@@ -1320,9 +1320,9 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
     assert block_flag_list[0] ==1 and fake_size_list[0] != 0
 
 
-    for i in range(len(block_flag_list)):
-        print(block_flag_list[i], fake_size_list[i])
-    exit(0)
+    # for i in range(len(block_flag_list)):
+    #     print(block_flag_list[i], fake_size_list[i])
+    # exit(0)
     '''check everything is correct'''
     left = 0
     right = 1
@@ -1427,9 +1427,9 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.v2.txt')
     #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
+    combine_entity_swapped_fakes_and_regenerate_dataset(
+    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
+    '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
 
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
@@ -1443,9 +1443,9 @@ if __name__ == "__main__":
     # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
     # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
     # #
-    combine_entity_swapped_fakes_and_regenerate_dataset(
-    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
-    '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
+    # combine_entity_swapped_fakes_and_regenerate_dataset(
+    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
+    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
     #
     # combine_entity_swapped_fakes_and_regenerate_dataset(
     # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
