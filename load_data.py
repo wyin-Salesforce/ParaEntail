@@ -9,11 +9,12 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
     premise = ''
 
     if not block_line_list[0].startswith('document>>'):
-        return []
+        return [], 0, 0
     first_line_parts = block_line_list[0].strip().split('\t')
-    premise = first_line_parts[1].strip()
+    # premise = first_line_parts[1].strip()
+    premise = first_line_parts[2].strip()
     if len(premise) == 0:
-        return []
+        return [], 0, 0
 
     pos_hypo_list = []
     neg_hypo_list = []
@@ -53,7 +54,7 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
 def get_summary_examples(path, prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     # path = '/export/home/Dataset/para_entail_datasets/DUC/'
-    filename = path+prefix+'_in_entail.harsh.txt'
+    filename = path+prefix+'_in_entail.harsh.v2.txt'
     print('loading ...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
 
@@ -64,7 +65,7 @@ def get_summary_examples(path, prefix, hypo_only=False):
     if prefix == 'train':
         filter_label_set = set([])
     else:
-        filter_label_set = set(['#neg2negIsPos#>>', '#negInserted2negIsPos#>>'])
+        filter_label_set = set(['#FakePlus2FakeIsPos#>>'])
 
     block_line_list = []
     for line in readfile:

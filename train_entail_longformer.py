@@ -779,7 +779,7 @@ if __name__ == "__main__":
     '''
     /opt/conda/lib/python3.6/site-packages/transformers/modeling_bert.py
 
-    
+
     ERROR: longformer 0.1 has requirement torch==1.2.0, but you'll have torch 1.5.0 which is incompatible.
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
