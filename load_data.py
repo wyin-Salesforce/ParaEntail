@@ -9,17 +9,11 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
     premise = ''
 
     if not block_line_list[0].startswith('document>>'):
-        print('block_line_list')
-        print(block_line_list)
-        exit(0)
         return [], 0, 0
     first_line_parts = block_line_list[0].strip().split('\t')
     # premise = first_line_parts[1].strip()
     premise = first_line_parts[2].strip()
     if len(premise) == 0:
-        print('block_line_list')
-        print(block_line_list)
-        exit(0)
         return [], 0, 0
 
     pos_hypo_list = []
@@ -54,11 +48,7 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
         else:
             examples.append(InputExample(guid='ex', text_a=premise, text_b=neg_hypo, label='not_entailment'))
 
-    print('examples size:', len(examples), ' len(pos_hypo_list):', len(pos_hypo_list), 'len(neg_hypo_list:', len(neg_hypo_list))
-    if len(examples) == 3:
-        print('block_line_list')
-        print(block_line_list)
-        exit(0)
+
     return examples, len(pos_hypo_list), len(neg_hypo_list)
 
 def get_summary_examples(path, prefix, hypo_only=False):
@@ -489,7 +479,7 @@ def load_harsh_data(prefix, hypo_only=False):
     pos_size=0
 
     summary_path_list = [
-                # '/export/home/Dataset/para_entail_datasets/DUC/',
+                '/export/home/Dataset/para_entail_datasets/DUC/',
                 '/export/home/Dataset/para_entail_datasets/Curation/',
                 '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
