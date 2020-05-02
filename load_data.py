@@ -489,7 +489,7 @@ def load_harsh_data(prefix, hypo_only=False):
     pos_size=0
 
     summary_path_list = [
-                '/export/home/Dataset/para_entail_datasets/DUC/',
+                # '/export/home/Dataset/para_entail_datasets/DUC/',
                 '/export/home/Dataset/para_entail_datasets/Curation/',
                 '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
