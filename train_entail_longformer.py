@@ -749,16 +749,12 @@ def main():
     logger.info("Training/evaluation parameters %s", args)
 
     # Training
-    # if args.do_train:
-    # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
-    # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
-    # train_filename = 'train'
-    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+    train_filename = 'train'
+    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
 
     dev_filename = 'dev'
     dev_dataset = load_and_cache_examples(args, args.task_name, dev_filename, tokenizer, evaluate=True)
-    exit(0)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     dev_sampler = SequentialSampler(dev_dataset)
     dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
