@@ -55,6 +55,10 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
             examples.append(InputExample(guid='ex', text_a=premise, text_b=neg_hypo, label='not_entailment'))
 
     print('examples size:', len(examples), ' len(pos_hypo_list):', len(pos_hypo_list), 'len(neg_hypo_list:', len(neg_hypo_list))
+    if len(examples) !=4:
+        print('block_line_list')
+        print(block_line_list)
+        exit(0)
     return examples, len(pos_hypo_list), len(neg_hypo_list)
 
 def get_summary_examples(path, prefix, hypo_only=False):
