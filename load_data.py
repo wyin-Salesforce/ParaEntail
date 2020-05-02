@@ -9,11 +9,17 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
     premise = ''
 
     if not block_line_list[0].startswith('document>>'):
+        print('block_line_list')
+        print(block_line_list)
+        exit(0)
         return [], 0, 0
     first_line_parts = block_line_list[0].strip().split('\t')
     # premise = first_line_parts[1].strip()
     premise = first_line_parts[2].strip()
     if len(premise) == 0:
+        print('block_line_list')
+        print(block_line_list)
+        exit(0)
         return [], 0, 0
 
     pos_hypo_list = []
