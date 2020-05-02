@@ -1375,10 +1375,6 @@ def combine_entity_swapped_fakes_and_regenerate_dataset(input_file, output_file)
 
 
 if __name__ == "__main__":
-    # mask_tokenizer = AutoTokenizer.from_pretrained("distilbert-base-cased")
-    # mask_model = AutoModelWithLMHead.from_pretrained("distilbert-base-cased")
-    # sum_str = 'to save time, we only use the first summary to generate negative ones'
-    # print(random_add_words(sum_str, 0.2, mask_tokenizer, mask_model))
 
     # load_DUC_train()
     # load_DUC_test()
