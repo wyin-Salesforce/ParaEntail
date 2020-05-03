@@ -480,8 +480,8 @@ def load_harsh_data(prefix, hypo_only=False):
 
     summary_path_list = [
                 '/export/home/Dataset/para_entail_datasets/DUC/',
-                '/export/home/Dataset/para_entail_datasets/Curation/',
-                '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
+                # '/export/home/Dataset/para_entail_datasets/Curation/',
+                # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=False)
@@ -501,12 +501,12 @@ def load_harsh_data(prefix, hypo_only=False):
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 
-    pos_size = 0
-    for ex in train_examples:
-        if ex.label == 'entailment':
-            pos_size +=1
-    print('confirm pos_size:', pos_size)
-    exit(0)
+    # pos_size = 0
+    # for ex in train_examples:
+    #     if ex.label == 'entailment':
+    #         pos_size +=1
+    # print('confirm pos_size:', pos_size)
+    # exit(0)
 
     return train_examples
 
