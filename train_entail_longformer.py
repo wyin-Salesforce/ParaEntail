@@ -223,8 +223,8 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 model.zero_grad()
                 global_step += 1
 
-                # if global_step % 5000 == 0:
-                if global_step % 5 == 0:
+                if global_step % 5000 == 0:
+                # if global_step % 5 == 0:
                     dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
                     if dev_f1 > max_dev_f1:
                         max_dev_f1 = dev_f1
