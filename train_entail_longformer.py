@@ -770,7 +770,6 @@ def main():
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
-
 if __name__ == "__main__":
     main()
     '''
