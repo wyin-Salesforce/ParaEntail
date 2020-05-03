@@ -501,12 +501,13 @@ def load_harsh_data(prefix, hypo_only=False):
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 
-    # pos_size = 0
-    # for ex in train_examples:
-    #     if ex.label == 'entailment':
-    #         pos_size +=1
-    # print('confirm pos_size:', pos_size)
-    # exit(0)
+    pos_size = 0
+    for ex in train_examples:
+        if ex.label == 'entailment':
+            pos_size +=1
+        print(ex.text_b)
+    print('confirm pos_size:', pos_size)
+
 
     return train_examples
 

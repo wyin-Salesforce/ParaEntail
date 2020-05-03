@@ -212,7 +212,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 # last step in epoch but step is always smaller than gradient_accumulation_steps
                 len(epoch_iterator) <= args.gradient_accumulation_steps
                 and (step + 1) == len(epoch_iterator)
-            ):
+                ):
                 if args.fp16:
                     torch.nn.utils.clip_grad_norm_(amp.master_params(optimizer), args.max_grad_norm)
                 else:
