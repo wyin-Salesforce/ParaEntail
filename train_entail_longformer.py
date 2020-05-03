@@ -233,7 +233,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_hypo_only/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -358,11 +358,11 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # )
     # examples = get_DUC_examples(filename)
     if filename == 'train':
-        examples = load_harsh_data('train', hypo_only=True)
+        examples = load_harsh_data('train', hypo_only=False)
     elif filename == 'dev':
-        examples = load_harsh_data('dev', hypo_only=True)
+        examples = load_harsh_data('dev', hypo_only=False)
     else:
-        examples = load_harsh_data('test', hypo_only=True)
+        examples = load_harsh_data('test', hypo_only=False)
     features = convert_examples_to_features(
         examples,
         tokenizer,
@@ -578,7 +578,7 @@ def main():
     )
     parser.add_argument(
         "--max_seq_length",
-        default=500,
+        default=1000,
         type=int,
         help="The maximum total input sequence length after tokenization. Sequences longer "
         "than this will be truncated, sequences shorter will be padded.",
@@ -593,10 +593,10 @@ def main():
     )
 
     parser.add_argument(
-        "--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.",
+        "--per_gpu_train_batch_size", default=2, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=2, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
