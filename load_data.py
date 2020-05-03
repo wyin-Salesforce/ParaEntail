@@ -75,7 +75,7 @@ def get_summary_examples(path, prefix, hypo_only=False):
         if line.strip().startswith('document>>'):
             '''if a block is ready'''
             if len(block_line_list)> 0:
-                example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=False)
+                example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=hypo_only)
                 examples+=example_from_block
                 pos_size+=pos_size_block
                 neg_size+=neg_size_block
