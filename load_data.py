@@ -487,7 +487,7 @@ def load_harsh_data(prefix, hypo_only=False):
                 # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
     for path in summary_path_list:
-        summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=False)
+        summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
         train_examples+=summary_examples_i
         pos_size+=summary_pos_size_i
 
