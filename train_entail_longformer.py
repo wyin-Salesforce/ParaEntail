@@ -233,7 +233,8 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
+                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)
@@ -716,7 +717,8 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    longformer_path = './roberta-longformer-base-4096/'
+    # longformer_path = './roberta-longformer-base-4096/'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.7744434570601774.test0.7967301170335809'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
