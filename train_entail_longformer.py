@@ -233,8 +233,8 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
+                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)

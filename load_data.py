@@ -500,23 +500,23 @@ def load_harsh_data(prefix, hypo_only=False):
 
     summary_path_list = [
                 '/export/home/Dataset/para_entail_datasets/DUC/',
-                # '/export/home/Dataset/para_entail_datasets/Curation/',
-                # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
+                '/export/home/Dataset/para_entail_datasets/Curation/',
+                '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
         train_examples+=summary_examples_i
         pos_size+=summary_pos_size_i
 
-    # '''MCTest'''
-    # mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
-    # train_examples+=mctest_examples
-    # pos_size+=mctest_pos_size
-    #
-    # '''ANLI'''
-    # anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
-    # train_examples+=anli_examples
-    # pos_size+=anli_pos_size
+    '''MCTest'''
+    mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
+    train_examples+=mctest_examples
+    pos_size+=mctest_pos_size
+
+    '''ANLI'''
+    anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
+    train_examples+=anli_examples
+    pos_size+=anli_pos_size
 
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
