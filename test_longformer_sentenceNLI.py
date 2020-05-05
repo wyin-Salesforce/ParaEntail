@@ -225,7 +225,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 global_step += 1
 
                 # if global_step % 5000 == 0:
-                if global_step % 5 == 0:
+                if global_step % len(train_dataloader) == 0:
                     dev_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='dev set')
                     if dev_f1 > max_dev_f1:
                         max_dev_f1 = dev_f1
@@ -719,10 +719,10 @@ def main():
     )
 
     parser.add_argument(
-        "--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.",
+        "--per_gpu_train_batch_size", default=16, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=32, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
@@ -735,7 +735,7 @@ def main():
     parser.add_argument("--adam_epsilon", default=1e-8, type=float, help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float, help="Max gradient norm.")
     parser.add_argument(
-        "--num_train_epochs", default=5.0, type=float, help="Total number of training epochs to perform.",
+        "--num_train_epochs", default=100.0, type=float, help="Total number of training epochs to perform.",
     )
     parser.add_argument(
         "--max_steps",
