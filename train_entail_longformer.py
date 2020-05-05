@@ -775,6 +775,8 @@ def main():
 if __name__ == "__main__":
     main()
     '''
+    cp tokenization_utils.py /opt/conda/lib/python3.6/site-packages/transformers/
+    
     /opt/conda/lib/python3.6/site-packages/transformers/modeling_bert.py
 
 
