@@ -449,12 +449,12 @@ def load_RTE():
     return examples
 
 
-def load_scitail(prefix='test'):
+def load_scitail(prefix):
     '''
     can read the training file, dev and test file
     '''
     examples=[]
-    readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_test.tsv', 'r', 'utf-8')
+    readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_'+prefix+'.tsv', 'r', 'utf-8')
     line_co=0
     for row in readfile:
 
@@ -505,14 +505,15 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # examples = get_DUC_examples(filename)
     if filename == 'train':
         # examples = load_harsh_data('train', hypo_only=False)
-        examples = get_RTE_as_train()
+        # examples = get_RTE_as_train()
+        examples =  load_scitail('train')
     elif filename == 'dev':
         # examples = load_harsh_data('dev', hypo_only=False)
         examples, label_in_3way = load_MNLI()
     else:
         # examples = load_harsh_data('test', hypo_only=False)
         # examples = load_RTE()
-        examples = load_scitail()
+        examples = load_scitail('test')
 
     features = convert_examples_to_features(
         examples,
@@ -747,7 +748,7 @@ def main():
         "--per_gpu_train_batch_size", default=16, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=32, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=64, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
@@ -904,8 +905,8 @@ def main():
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
 
-    # train_filename = 'train'
-    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+    train_filename = 'train'
+    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
 
     # dev_filename = 'dev'
@@ -921,10 +922,10 @@ def main():
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
-    accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
-    print('accuracy:', accuracy)
-    # global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
-    # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+    # accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    # print('accuracy:', accuracy)
+    global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
+    logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
 
