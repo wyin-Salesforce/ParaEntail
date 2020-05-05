@@ -448,6 +448,30 @@ def load_RTE():
     print('loaded test size:', line_co)
     return examples
 
+
+    def load_scitail(prefix='test'):
+        '''
+        can read the training file, dev and test file
+        '''
+        examples=[]
+        readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_test.tsv', 'r', 'utf-8')
+        line_co=0
+        for row in readfile:
+
+            line=row.strip().split('\t')
+            if len(line) == 3:
+                guid = prefix+'-'+str(line_co-1)
+                text_a = line[0].strip()
+                text_b = line[1].strip()
+                # label = line[3].strip() #["entailment", "not_entailment"]
+                label = 'entailment'  if line[2] == 'entails' else 'not_entailment'
+                examples.append(
+                    InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+            line_co+=1
+        readfile.close()
+        print('loaded  size:', line_co-1)
+        return examples
+
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     if args.local_rank not in [-1, 0] and not evaluate:
         torch.distributed.barrier()  # Make sure only the first process in distributed training process the dataset, and the others will use the cache
@@ -487,7 +511,8 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         examples, label_in_3way = load_MNLI()
     else:
         # examples = load_harsh_data('test', hypo_only=False)
-        examples = load_RTE()
+        # examples = load_RTE()
+        examples = load_scitail()
 
     features = convert_examples_to_features(
         examples,
@@ -890,7 +915,7 @@ def main():
     # dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
 
-    test_filename = 'dev'
+    test_filename = 'test'
     test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     test_sampler = SequentialSampler(test_dataset)
