@@ -878,8 +878,9 @@ def main():
     # if args.do_train:
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
-    train_filename = 'train'
-    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+
+    # train_filename = 'train'
+    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
 
     # dev_filename = 'dev'
@@ -895,10 +896,10 @@ def main():
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
-    # accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
-    # print('accuracy:', accuracy)
-    global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
-    logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+    accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    print('accuracy:', accuracy)
+    # global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
+    # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
 
