@@ -772,7 +772,6 @@ def main():
     global_step, tr_loss = train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer)
     logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
-
 if __name__ == "__main__":
     main()
     '''
