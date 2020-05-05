@@ -449,28 +449,28 @@ def load_RTE():
     return examples
 
 
-    def load_scitail(prefix='test'):
-        '''
-        can read the training file, dev and test file
-        '''
-        examples=[]
-        readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_test.tsv', 'r', 'utf-8')
-        line_co=0
-        for row in readfile:
+def load_scitail(prefix='test'):
+    '''
+    can read the training file, dev and test file
+    '''
+    examples=[]
+    readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_test.tsv', 'r', 'utf-8')
+    line_co=0
+    for row in readfile:
 
-            line=row.strip().split('\t')
-            if len(line) == 3:
-                guid = prefix+'-'+str(line_co-1)
-                text_a = line[0].strip()
-                text_b = line[1].strip()
-                # label = line[3].strip() #["entailment", "not_entailment"]
-                label = 'entailment'  if line[2] == 'entails' else 'not_entailment'
-                examples.append(
-                    InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-            line_co+=1
-        readfile.close()
-        print('loaded  size:', line_co-1)
-        return examples
+        line=row.strip().split('\t')
+        if len(line) == 3:
+            guid = prefix+'-'+str(line_co-1)
+            text_a = line[0].strip()
+            text_b = line[1].strip()
+            # label = line[3].strip() #["entailment", "not_entailment"]
+            label = 'entailment'  if line[2] == 'entails' else 'not_entailment'
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+        line_co+=1
+    readfile.close()
+    print('loaded  size:', line_co-1)
+    return examples
 
 def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     if args.local_rank not in [-1, 0] and not evaluate:
