@@ -512,8 +512,8 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         examples, label_in_3way = load_MNLI()
     else:
         # examples = load_harsh_data('test', hypo_only=False)
-        # examples = load_RTE()
-        examples = load_scitail('test')
+        examples = load_RTE()
+        # examples = load_scitail('test')
 
     features = convert_examples_to_features(
         examples,
@@ -868,7 +868,8 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/roberta-f1.dev.0.8424518743667679.test0.8566405941376313'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
@@ -905,8 +906,8 @@ def main():
     # train_filename = '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.txt'
     # train_filename = '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.txt'
 
-    train_filename = 'train'
-    train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
+    # train_filename = 'train'
+    # train_dataset = load_and_cache_examples(args, args.task_name, train_filename, tokenizer, evaluate=False)
 
 
     # dev_filename = 'dev'
@@ -922,10 +923,11 @@ def main():
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
-    # accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
-    # print('accuracy:', accuracy)
-    global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
-    logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
+    accuracy = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+    print('accuracy:', accuracy)
+
+    # global_step, tr_loss = train(args, train_dataset, None, test_dataloader, model, tokenizer)
+    # logger.info(" global_step = %s, average loss = %s", global_step, tr_loss)
 
 
 
