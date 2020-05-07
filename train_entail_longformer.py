@@ -223,7 +223,8 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 model.zero_grad()
                 global_step += 1
 
-                if global_step % 10083 == 0:
+                # if global_step % 10083 == 0:
+                if global_step % len(epoch_iterator) == 0:
                 # if global_step % 5 == 0:
                     dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
                     if dev_f1 > max_dev_f1:
@@ -233,7 +234,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
 
 
                         '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_'+str(args.max_seq_length)+'/'
                         # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
                         output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
                         if not os.path.exists(output_dir):
@@ -717,9 +718,9 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    # longformer_path = './roberta-longformer-base-4096/'
+    longformer_path = './roberta-longformer-base-4096/'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.7744434570601774.test0.7967301170335809'
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
@@ -784,7 +785,7 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.full.pair.largestTrain.txt 2>&1
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte --max_seq_length 500 --per_gpu_train_batch_size 12 --per_gpu_eval_batch_size 36 > log.longformer.train.on.full.pair.len500.txt 2>&1
     '''
 
     '''
