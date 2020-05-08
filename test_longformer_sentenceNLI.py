@@ -512,8 +512,8 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         examples, label_in_3way = load_MNLI()
     else:
         # examples = load_harsh_data('test', hypo_only=False)
-        examples = load_RTE()
-        # examples = load_scitail('test')
+        # examples = load_RTE()
+        examples = load_scitail('test')
 
     features = convert_examples_to_features(
         examples,
@@ -917,7 +917,7 @@ def main():
     # dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
 
-    test_filename = 'dev'
+    test_filename = 'test'
     test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     test_sampler = SequentialSampler(test_dataset)
