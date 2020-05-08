@@ -34,7 +34,7 @@ from transformers.data.processors.utils import InputExample
 from longformer.longformer import Longformer
 from collections import OrderedDict
 import codecs
-from load_data import load_harsh_data#load_train_data, load_dev_data, load_test_data
+from load_data import load_harsh_data, get_DUC_examples, get_CNN_DailyMail_examples, get_Curation_examples
 from transformers.modeling_bert import BertPreTrainedModel
 from transformers.modeling_roberta import RobertaClassificationHead
 
@@ -226,32 +226,33 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 # if global_step % 10083 == 0:
                 if global_step % len(epoch_iterator) == 0:
                 # if global_step % 5 == 0:
-                    dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
-                    if dev_f1 > max_dev_f1:
-                        max_dev_f1 = dev_f1
-                        test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+                    # dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
+                    # if dev_f1 > max_dev_f1:
+                    #     max_dev_f1 = dev_f1
+                    #     test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
 
 
 
-                        '''# Save model checkpoint'''
-                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_'+str(args.max_seq_length)+'/'
-                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
-                        output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
-                        if not os.path.exists(output_dir):
-                            os.makedirs(output_dir)
-                        model_to_save = (
-                            model.module if hasattr(model, "module") else model
-                        )  # Take care of distributed/parallel training
-                        model_to_save.save_pretrained(output_dir)
-                        tokenizer.save_pretrained(output_dir)
+                    '''# Save model checkpoint'''
+                    # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_'+str(args.max_seq_length)+'/'
+                    raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/'
+                    # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
+                    output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = 100.0, test = 100.0))
+                    if not os.path.exists(output_dir):
+                        os.makedirs(output_dir)
+                    model_to_save = (
+                        model.module if hasattr(model, "module") else model
+                    )  # Take care of distributed/parallel training
+                    model_to_save.save_pretrained(output_dir)
+                    tokenizer.save_pretrained(output_dir)
 
-                        torch.save(args, os.path.join(output_dir, "training_args.bin"))
-                        logger.info("Saving model checkpoint to %s", output_dir)
+                    torch.save(args, os.path.join(output_dir, "training_args.bin"))
+                    logger.info("Saving model checkpoint to %s", output_dir)
 
-                        torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                        torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                        logger.info("Saving optimizer and scheduler states to %s", output_dir)
-                    print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
+                    torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                    torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                    logger.info("Saving optimizer and scheduler states to %s", output_dir)
+                    # print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
 
 
 
@@ -361,6 +362,15 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # examples = get_DUC_examples(filename)
     if filename == 'train':
         examples = load_harsh_data('train', hypo_only=False)
+
+        duc_examples, _ = get_DUC_examples('train', hypo_only=False)
+        examples+=duc_examples
+        cnn_examples, _ = get_CNN_DailyMail_examples('train', hypo_only=False)
+        examples+=cnn_examples
+        curation_examples, _ = get_Curation_examples('train', hypo_only=False)
+        examples+=curation_examples
+
+
     elif filename == 'dev':
         examples = load_harsh_data('dev', hypo_only=False)
     else:
