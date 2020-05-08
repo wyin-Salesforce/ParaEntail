@@ -34,6 +34,7 @@ random.seed(seed)
 np.random.seed(seed)
 device = torch.device("cuda")
 
+
 nlp = en_core_web_sm.load()
 
 def load_CNN_DailyMail(prefix):
