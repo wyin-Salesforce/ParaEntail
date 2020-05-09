@@ -291,8 +291,8 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
             start = False
             premise = ''
             load_size+=1
-            '''we currently only use 30K as training set in CNN/DailyMail'''
-            if load_size == 300000 and prefix == 'train':
+            '''we currently only use 60K as training set in CNN/DailyMail'''
+            if load_size == 600000 and prefix == 'train':
                 break
         else:
             parts = line.strip().split('\t')
