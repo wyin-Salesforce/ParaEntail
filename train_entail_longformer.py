@@ -369,7 +369,7 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
         examples+=cnn_examples
         curation_examples, _ = get_Curation_examples('train', hypo_only=False)
         examples+=curation_examples
-
+        print('new training size:', len(examples))
 
     elif filename == 'dev':
         examples = load_harsh_data('dev', hypo_only=False)
