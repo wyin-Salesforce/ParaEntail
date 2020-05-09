@@ -744,11 +744,17 @@ def main():
         "--do_lower_case", action="store_true", help="Set this flag if you are using an uncased model.",
     )
 
+    # parser.add_argument(
+    #     "--per_gpu_train_batch_size", default=48, type=int, help="Batch size per GPU/CPU for training.",
+    # )
+    # parser.add_argument(
+    #     "--per_gpu_eval_batch_size", default=64, type=int, help="Batch size per GPU/CPU for evaluation.",
+    # )
     parser.add_argument(
-        "--per_gpu_train_batch_size", default=48, type=int, help="Batch size per GPU/CPU for training.",
+        "--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=64, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
@@ -869,7 +875,8 @@ def main():
 
     args.model_type = args.model_type.lower()
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/roberta-f1.dev.0.8424518743667679.test0.8566405941376313'
+    # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/roberta-f1.dev.0.8424518743667679.test0.8566405941376313'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/roberta-epoch1'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
