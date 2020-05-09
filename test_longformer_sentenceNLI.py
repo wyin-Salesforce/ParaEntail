@@ -751,10 +751,10 @@ def main():
     #     "--per_gpu_eval_batch_size", default=64, type=int, help="Batch size per GPU/CPU for evaluation.",
     # )
     parser.add_argument(
-        "--per_gpu_train_batch_size", default=8, type=int, help="Batch size per GPU/CPU for training.",
+        "--per_gpu_train_batch_size", default=10, type=int, help="Batch size per GPU/CPU for training.",
     )
     parser.add_argument(
-        "--per_gpu_eval_batch_size", default=8, type=int, help="Batch size per GPU/CPU for evaluation.",
+        "--per_gpu_eval_batch_size", default=10, type=int, help="Batch size per GPU/CPU for evaluation.",
     )
     parser.add_argument(
         "--gradient_accumulation_steps",
@@ -924,7 +924,7 @@ def main():
     # dev_dataloader = DataLoader(dev_dataset, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
 
-    test_filename = 'test'
+    test_filename = 'dev'
     test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
     args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     test_sampler = SequentialSampler(test_dataset)
