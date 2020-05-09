@@ -90,119 +90,120 @@ def get_summary_examples(path, prefix, hypo_only=False):
     print('DUC size:', len(examples))
     return examples, pos_size
 
-def get_DUC_examples(prefix, hypo_only=False):
-    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
-    path = '/export/home/Dataset/para_entail_datasets/DUC/'
-    filename = path+prefix+'_in_entail.harsh.txt'
-    print('loading DUC...', filename)
-    readfile = codecs.open(filename, 'r', 'utf-8')
-
-    examples = []
-    pos_size = 0
-    neg_size = 0
-
-    if prefix == 'train':
-        filter_label_set = set([])
-    else:
-        filter_label_set = set(['#neg2negIsPos#>>', '#negInserted2negIsPos#>>'])
-
-    block_line_list = []
-    for line in readfile:
-        if line.strip().startswith('document>>'):
-            '''if a block is ready'''
-            if len(block_line_list)> 0:
-                example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=hypo_only)
-                examples+=example_from_block
-                pos_size+=pos_size_block
-                neg_size+=neg_size_block
-
-            else:
-                block_line_list.append(line.strip())
-        else:
-            if len(line.strip()) > 0: # in case some noice lines are emtpy
-                block_line_list.append(line.strip())
-
-    print('>>pos:neg: ', pos_size, neg_size)
-    print('DUC size:', len(examples))
-    return examples, pos_size
-
-
 # def get_DUC_examples(prefix, hypo_only=False):
 #     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
 #     path = '/export/home/Dataset/para_entail_datasets/DUC/'
 #     filename = path+prefix+'_in_entail.harsh.txt'
 #     print('loading DUC...', filename)
 #     readfile = codecs.open(filename, 'r', 'utf-8')
-#     start = False
+#
 #     examples = []
-#     guid_id = -1
 #     pos_size = 0
 #     neg_size = 0
+#
+#     if prefix == 'train':
+#         filter_label_set = set([])
+#     else:
+#         filter_label_set = set(['#neg2negIsPos#>>', '#negInserted2negIsPos#>>'])
+#
+#     block_line_list = []
 #     for line in readfile:
-#         if len(line.strip()) == 0:
-#             start = False
-#             '''to avoid that no examples loaded in this block, but the premise was falsely kept for the next block'''
-#             premise = ''
+#         if line.strip().startswith('document>>'):
+#             '''if a block is ready'''
+#             if len(block_line_list)> 0:
+#                 example_from_block, pos_size_block, neg_size_block = deal_with_block(block_line_list, filter_label_set, hypo_only=hypo_only)
+#                 examples+=example_from_block
+#                 pos_size+=pos_size_block
+#                 neg_size+=neg_size_block
+#
+#             else:
+#                 block_line_list.append(line.strip())
 #         else:
-#             parts = line.strip().split('\t')
-#             if parts[0] == 'document>>':
-#                 start = True
-#                 premise = parts[1].strip()
-#             elif parts[0] == 'positive>>':
-#                 guid_id+=1
-#                 # pos_hypo = parts[1].strip()
-#                 pos_hypo = parts[2].strip() # harsh version
-#                 if len(premise) == 0 or len(pos_hypo)==0:
-#                     # print('DUC premise:', premise)
-#                     # print('hypothesis:', pos_hypo)
-#                     continue
-#                 if prefix !='train' and parts[1].strip() == '#neg2negIsPos#>>' or parts[1].strip()=='#negInserted2negIsPos#>>':
-#                     continue
-#
-#                 if hypo_only:
-#                     examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
-#                 else:
-#                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
-#                 pos_size+=1
-#             elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
-#                 guid_id+=1
-#                 neg_hypo = parts[2].strip()
-#                 if len(premise) == 0 or len(neg_hypo)==0:
-#                     continue
-#
-#                 if hypo_only:
-#                     examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=None, label='not_entailment'))
-#                 else:
-#                     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-#                 neg_size+=1
-#                 # if filename.find('train_in_entail') > -1:
-#                 #     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-#                 #     neg_size+=1
-#                 # else:
-#                 #     rand_prob = random.uniform(0, 1)
-#                 #     if rand_prob > 3/4:
-#                 #         examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-#                 #         neg_size+=1
+#             if len(line.strip()) > 0: # in case some noice lines are emtpy
+#                 block_line_list.append(line.strip())
 #
 #     print('>>pos:neg: ', pos_size, neg_size)
 #     print('DUC size:', len(examples))
-#     # if prefix == 'train':
-#     #     new_examples = []
-#     #     new_pos_size = 0
-#     #     new_neg_size = 0
-#     #     for ex in examples:
-#     #         if ex.label == 'not_entailment':
-#     #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
-#     #                 new_examples.append(ex)
-#     #                 new_neg_size+=1
-#     #         else:
-#     #             new_examples.append(ex)
-#     #             new_pos_size+=1
-#     #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
-#     #     return new_examples, new_pos_size
-#     # else:
-#     #     return examples, pos_size
 #     return examples, pos_size
+
+
+
+def get_DUC_examples(prefix, hypo_only=False):
+    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
+    path = '/export/home/Dataset/para_entail_datasets/DUC/'
+    filename = path+prefix+'_in_entail.harsh.txt'
+    print('loading DUC...', filename)
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    start = False
+    examples = []
+    guid_id = -1
+    pos_size = 0
+    neg_size = 0
+    for line in readfile:
+        if len(line.strip()) == 0:
+            start = False
+            '''to avoid that no examples loaded in this block, but the premise was falsely kept for the next block'''
+            premise = ''
+        else:
+            parts = line.strip().split('\t')
+            if parts[0] == 'document>>':
+                start = True
+                premise = parts[1].strip()
+            elif parts[0] == 'positive>>':
+                guid_id+=1
+                # pos_hypo = parts[1].strip()
+                pos_hypo = parts[2].strip() # harsh version
+                if len(premise) == 0 or len(pos_hypo)==0:
+                    # print('DUC premise:', premise)
+                    # print('hypothesis:', pos_hypo)
+                    continue
+                if prefix !='train' and parts[1].strip() == '#neg2negIsPos#>>' or parts[1].strip()=='#negInserted2negIsPos#>>':
+                    continue
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=pos_hypo, text_b=None, label='entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
+                pos_size+=1
+            elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
+                guid_id+=1
+                neg_hypo = parts[2].strip()
+                if len(premise) == 0 or len(neg_hypo)==0:
+                    continue
+
+                if hypo_only:
+                    examples.append(InputExample(guid=str(guid_id), text_a=neg_hypo, text_b=None, label='not_entailment'))
+                else:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                neg_size+=1
+                # if filename.find('train_in_entail') > -1:
+                #     examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                #     neg_size+=1
+                # else:
+                #     rand_prob = random.uniform(0, 1)
+                #     if rand_prob > 3/4:
+                #         examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                #         neg_size+=1
+
+    print('>>pos:neg: ', pos_size, neg_size)
+    print('DUC size:', len(examples))
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
 
 def get_Curation_examples(prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
