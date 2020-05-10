@@ -876,7 +876,7 @@ def main():
     args.model_type = args.model_type.lower()
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/roberta-f1.dev.0.8424518743667679.test0.8566405941376313'
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/roberta-epoch2'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/roberta-epoch3'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
