@@ -18,7 +18,7 @@ import json
 import csv
 import pandas as pd
 from fastprogress.fastprogress import progress_bar
-import aiohttp
+# import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 import csv
