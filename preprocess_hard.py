@@ -1085,7 +1085,13 @@ def preprocess_SQUAD_NLI():
         readfile = codecs.open(path+fil, 'r', 'utf-8')
         data = json.load(readfile)
         for p in data['data']:
-            print(p)
+            for paragraph in p['paragraphs']: # list
+                for qas in paragraph['qas']: # list
+                    question = qas['question']
+                    idd = qas['id']
+                    print('question:', question)
+                    print('idd:', idd)
+
             exit(0)
 
 # def load_Curation():
