@@ -1080,20 +1080,27 @@ def load_Curation(prefix):
 def preprocess_SQUAD_NLI():
     path = '/export/home/Dataset/SQUAD_2_NLI/'
     question_id2doc = {}
+    question_id2answerable = {}
     files = ['train-v2.0.json', 'dev-v2.0.json']
     for fil in files:
         readfile = codecs.open(path+fil, 'r', 'utf-8')
         data = json.load(readfile)
         for p in data['data']:
             for paragraph in p['paragraphs']: # list
+                doc = paragraph['context']
                 for qas in paragraph['qas']: # list
                     question = qas['question']
                     idd = qas['id']
                     unswerable = qas['is_impossible']
-                    print('question:', question)
-                    print('idd:', idd)
                     print('unswerable:', unswerable)
-                doc = paragraph['context']
+                    assert unswerable == False
+                    question_id2doc[idd] = doc
+                    question_id2answerable[idd] = True if unswerable=='False' else False
+
+                    # print('question:', question)
+                    # print('idd:', idd)
+                    # print('unswerable:', unswerable)
+
                 print('doc:', doc)
 
                 exit(0)
