@@ -1089,10 +1089,14 @@ def preprocess_SQUAD_NLI():
                 for qas in paragraph['qas']: # list
                     question = qas['question']
                     idd = qas['id']
+                    unswerable = qas['is_impossible']
                     print('question:', question)
                     print('idd:', idd)
+                    print('unswerable:', unswerable)
+                doc = paragraph['context']
+                print('doc:', doc)
 
-            exit(0)
+                exit(0)
 
 # def load_Curation():
 #     '''
