@@ -786,7 +786,7 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte --max_seq_length 500 --per_gpu_train_batch_size 12 --per_gpu_eval_batch_size 36 > log.longformer.train.on.full.pair.len500.txt 2>&1
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.full.pair.standard0511.txt 2>&1
     '''
 
     '''
