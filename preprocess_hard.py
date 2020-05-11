@@ -1101,9 +1101,9 @@ def preprocess_SQUAD_NLI():
                     # print('idd:', idd)
                     # print('unswerable:', unswerable)
 
-                print('doc:', doc)
-
-                exit(0)
+                # print('doc:', doc)
+                #
+                # exit(0)
 
 # def load_Curation():
 #     '''
