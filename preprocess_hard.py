@@ -1077,6 +1077,17 @@ def load_Curation(prefix):
     print('over, invalid_size:', invalid_size)
 
 
+def preprocess_SQUAD_NLI():
+    path = '/export/home/Dataset/SQUAD_2_NLI/'
+    question_id2doc = {}
+    files = ['train-v2.0.json', 'dev-v2.0.json']
+    for fil in files:
+        readfile = codecs.open(path+fil, 'r', 'utf-8')
+        data = json.load(json_file)
+        for p in data['data']:
+            print(p)
+            exit(0)
+
 # def load_Curation():
 #     '''
 #     this function load 40K curation, and gneerate the negative summaries
@@ -1213,44 +1224,14 @@ if __name__ == "__main__":
     # load_Curation('test')
 
 
-    split_DUC()
+    # split_DUC()
 
-    '''the following finally not used, always bugs'''
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/train_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/dev_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/dev_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/test_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/Curation/train_in_entail.harsh.v2.txt')
+    '''preprocess QA into NLI'''
+    preprocess_SQUAD_NLI()
 
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/Curation/dev_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/Curation/test_in_entail.harsh.v2.txt')
 
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.harsh.v2.txt')
-    # #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/dev_in_entail.harsh.v2.txt')
-    #
-    # combine_entity_swapped_fakes_and_regenerate_dataset(
-    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.txt',
-    # '/export/home/Dataset/para_entail_datasets/DUC/test_in_entail.harsh.v2.txt')
+
+
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
