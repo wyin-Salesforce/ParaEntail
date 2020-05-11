@@ -226,33 +226,33 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 # if global_step % 10083 == 0:
                 if global_step % len(epoch_iterator) == 0:
                 # if global_step % 5 == 0:
-                    # dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
-                    # if dev_f1 > max_dev_f1:
-                    #     max_dev_f1 = dev_f1
-                    #     test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
+                    dev_f1 = evaluate(args, model, tokenizer, dev_dataloader, prefix='dev set')
+                    if dev_f1 > max_dev_f1:
+                        max_dev_f1 = dev_f1
+                        test_f1 = evaluate(args, model, tokenizer, test_dataloader, prefix='test set')
 
 
 
-                    '''# Save model checkpoint'''
-                    # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_'+str(args.max_seq_length)+'/'
-                    raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/'
-                    # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
-                    output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = 100.0, test = 100.0))
-                    if not os.path.exists(output_dir):
-                        os.makedirs(output_dir)
-                    model_to_save = (
-                        model.module if hasattr(model, "module") else model
-                    )  # Take care of distributed/parallel training
-                    model_to_save.save_pretrained(output_dir)
-                    tokenizer.save_pretrained(output_dir)
+                        '''# Save model checkpoint'''
+                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_'+str(args.max_seq_length)+'/'
+                        raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/'
+                        # raw_output_dir = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_tmp/'
+                        output_dir = os.path.join(raw_output_dir, "f1.dev.{dev}.test{test}".format(dev = max_dev_f1, test = test_f1))
+                        if not os.path.exists(output_dir):
+                            os.makedirs(output_dir)
+                        model_to_save = (
+                            model.module if hasattr(model, "module") else model
+                        )  # Take care of distributed/parallel training
+                        model_to_save.save_pretrained(output_dir)
+                        tokenizer.save_pretrained(output_dir)
 
-                    torch.save(args, os.path.join(output_dir, "training_args.bin"))
-                    logger.info("Saving model checkpoint to %s", output_dir)
+                        torch.save(args, os.path.join(output_dir, "training_args.bin"))
+                        logger.info("Saving model checkpoint to %s", output_dir)
 
-                    torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                    torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                    logger.info("Saving optimizer and scheduler states to %s", output_dir)
-                    # print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
+                        torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                        logger.info("Saving optimizer and scheduler states to %s", output_dir)
+                    print('>>dev_f1:', dev_f1, ' max_dev_f1:', max_dev_f1)
 
 
 
@@ -362,15 +362,6 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     # examples = get_DUC_examples(filename)
     if filename == 'train':
         examples = load_harsh_data('train', hypo_only=False)
-
-        duc_examples, _ = get_DUC_examples('train', hypo_only=False)
-        examples+=duc_examples
-        cnn_examples, _ = get_CNN_DailyMail_examples('train', hypo_only=False)
-        examples+=cnn_examples
-        curation_examples, _ = get_Curation_examples('train', hypo_only=False)
-        examples+=curation_examples
-        print('new training size:', len(examples))
-
     elif filename == 'dev':
         examples = load_harsh_data('dev', hypo_only=False)
     else:
@@ -404,6 +395,43 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
     return dataset
 
+def get_DUC_examples(filename):
+    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
+    print('loading...', filename)
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    start = False
+    examples = []
+    guid_id = -1
+    pos_size = 0
+    neg_size = 0
+    for line in readfile:
+        if len(line.strip()) == 0:
+            start = False
+        else:
+            parts = line.strip().split('\t')
+            if parts[0] == 'document>>':
+                start = True
+                premise = parts[1].strip()
+            elif parts[0] == 'positive>>':
+                guid_id+=1
+                pos_hypo = parts[1].strip()
+                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
+                pos_size+=1
+            elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
+                guid_id+=1
+                neg_hypo = parts[2].strip()
+
+                if filename.find('train_in_entail') > -1:
+                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                    neg_size+=1
+                else:
+                    rand_prob = random.uniform(0, 1)
+                    if rand_prob > 3/4:
+                        examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
+                        neg_size+=1
+
+    print('>>pos:neg: ', pos_size, neg_size)
+    return examples
 
 
 class LongformerForSequenceClassification(BertPreTrainedModel):
@@ -691,9 +719,9 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    longformer_path = './roberta-longformer-base-4096/'
+    # longformer_path = './roberta-longformer-base-4096/'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.7744434570601774.test0.7967301170335809'
-    # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
