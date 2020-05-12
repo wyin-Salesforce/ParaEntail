@@ -1108,13 +1108,14 @@ def preprocess_SQUAD_NLI():
     for line in readfile:
         if line_co>0:
             parts  = line.strip().split('\t')
+            print('len(parts):', len(parts))
             if len(parts) ==5:
                 if parts[0] == 'SQuAD':
                     iddd = parts[1]
                     claim = parts[4]
                     train_id2hypo[iddd] = claim
         line_co+=1
-    print('load train over, size:', line_co)
+    print('load train over, size:', len(train_id2hypo))
     readfile.close()
 
     readfile = codecs.open(path+'dev.tsv', 'r', 'utf-8')
@@ -1135,6 +1136,7 @@ def preprocess_SQUAD_NLI():
     write_train = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.txt', 'w', 'utf-8')
     for idd, hypo in train_id2hypo.items():
         premise = question_id2doc.get(idd)
+        print('premise:', premise)
         if premise is None:
             print('None premise')
             exit(0)
