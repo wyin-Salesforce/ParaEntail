@@ -1140,6 +1140,7 @@ def preprocess_SQUAD_NLI():
             exit(0)
         else:
             label = question_id2answerable.get(idd)
+            print('label:', label, 'premise:', premise, 'hypo:', hypo)
             if label is True:
                 write_train.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
             else:
