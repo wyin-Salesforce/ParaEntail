@@ -1092,22 +1092,46 @@ def preprocess_SQUAD_NLI():
                     question = qas['question']
                     idd = qas['id']
                     unswerable = qas['is_impossible']
-                    if unswerable is not False:
-                        print('unswerable:', unswerable)
-                    if unswerable is True:
-                        print(qas['answers'])
-                        exit(0)
+                    # if unswerable is not False:
+                    #     print('unswerable:', unswerable)
+                    # if unswerable is True:
+                    #     print(qas['answers'])
+                    #     exit(0)
                     assert unswerable == False or unswerable == True
                     question_id2doc[idd] = doc
                     question_id2answerable[idd] = True if unswerable=='False' else False
+        readfile.close()
 
-                    # print('question:', question)
-                    # print('idd:', idd)
-                    # print('unswerable:', unswerable)
+    readfile = codecs.open(path+'train.tsv', 'r', 'utf-8')
+    train_id2hypo = {}
+    line_co = 0
+    for line in readfile:
+        if line_co>0:
+            parts  = line.strip().split('\t')
+            if len(parts) ==5:
+                if parts[0] = 'SQuAD':
+                    iddd = parts[1]
+                    claim = parts[4]
+                    train_id2hypo[iddd] = claim
+        line_co+=1
+    print('load train over, size:', line_co)
+    readfile.close()
 
-                # print('doc:', doc)
-                #
-                # exit(0)
+    readfile = codecs.open(path+'dev.tsv', 'r', 'utf-8')
+    dev_id2hypo = {}
+    line_co = 0
+    for line in readfile:
+        if line_co>0:
+            parts  = line.strip().split('\t')
+            if len(parts) ==5:
+                if parts[0] = 'SQuAD':
+                    iddd = parts[1]
+                    claim = parts[4]
+                    dev_id2hypo[iddd] = claim
+        line_co+=1
+    print('load dev over, size:', line_co)
+    readfile.close()
+
 
 # def load_Curation():
 #     '''
