@@ -1094,6 +1094,9 @@ def preprocess_SQUAD_NLI():
                     unswerable = qas['is_impossible']
                     if unswerable is not False:
                         print('unswerable:', unswerable)
+                    if unswerable is True:
+                        print(qas['answers'])
+                        exit(0)
                     assert unswerable == False or unswerable == True
                     question_id2doc[idd] = doc
                     question_id2answerable[idd] = True if unswerable=='False' else False
