@@ -1132,6 +1132,38 @@ def preprocess_SQUAD_NLI():
     print('load dev over, size:', line_co)
     readfile.close()
 
+    write_train = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.txt', 'w', 'utf-8')
+    for idd, hypo in train_id2hypo.items():
+        premise = question_id2doc.get(idd)
+        if premise is None:
+            print('None premise')
+            exit(0)
+        else:
+            label = question_id2answerable.get(idd)
+            if label is True:
+                write_train.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+            else:
+                write_train.write('not_entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+    write_train.close()
+    print('train.txt write over')
+
+    write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/dev.txt', 'w', 'utf-8')
+    for idd, hypo in dev_id2hypo.items():
+        premise = question_id2doc.get(idd)
+        if premise is None:
+            print('None premise')
+            exit(0)
+        else:
+            label = question_id2answerable.get(idd)
+            if label is True:
+                write_dev.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+            else:
+                write_dev.write('not_entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+    write_dev.close()
+    print('dev.txt write over')
+
+
+
 
 # def load_Curation():
 #     '''
