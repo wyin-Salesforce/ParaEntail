@@ -1099,6 +1099,9 @@ def preprocess_SQUAD_NLI():
                     question_id2answerable[idd] = True if unswerable == False else False
         readfile.close()
 
+    print('question_id2answerable:', question_id2answerable)
+    exit(0)
+
     readfile = codecs.open(path+'train.tsv', 'r', 'utf-8')
     train_id2hypo = {}
     line_co = 0
