@@ -194,7 +194,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                     batch[2] if args.model_type in ["bert", "xlnet", "albert"] else None
                 )  # XLM, DistilBERT, RoBERTa, and XLM-RoBERTa don't use segment_ids
             outputs = model(**inputs)
-            loss = outputs[0]  
+            loss = outputs[0]
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
