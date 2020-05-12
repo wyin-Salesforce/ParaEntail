@@ -1136,10 +1136,11 @@ def preprocess_SQUAD_NLI():
     write_train = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.txt', 'w', 'utf-8')
     for idd, hypo in train_id2hypo.items():
         premise = question_id2doc.get(idd)
-        print('premise:', premise)
+        # print('premise:', premise)
         if premise is None:
-            print('None premise')
-            exit(0)
+            # print('None premise')
+            # exit(0)
+            continue
         else:
             label = question_id2answerable.get(idd)
             # print('label:', label, 'premise:', premise, 'hypo:', hypo)
@@ -1154,8 +1155,9 @@ def preprocess_SQUAD_NLI():
     for idd, hypo in dev_id2hypo.items():
         premise = question_id2doc.get(idd)
         if premise is None:
-            print('None premise')
-            exit(0)
+            # print('None premise')
+            # exit(0)
+            continue
         else:
             label = question_id2answerable.get(idd)
             if label is True:
