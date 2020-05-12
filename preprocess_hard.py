@@ -1174,6 +1174,25 @@ def preprocess_SQUAD_NLI():
     write_dev.close()
     print('dev.txt write over, pos_size:', pos_size, ' neg_size:', neg_size)
 
+def split_SQUAD():
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.txt', 'r', 'utf-8')
+    write_train = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.final.txt', 'w', 'utf-8')
+    write_test = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/test.final.txt', 'w', 'utf-8')
+
+    line_co = 0
+    for line in readfile:
+        if line_co < 50000:
+            write_train.write(line.strip()+'\n')
+        else:
+            write_test.write(line.strip()+'\n')
+
+    print('split over')
+    readfile.close()
+    write_train.close()
+    write_test.close()
+
+
+
 
 
 
@@ -1316,7 +1335,8 @@ if __name__ == "__main__":
     # split_DUC()
 
     '''preprocess QA into NLI'''
-    preprocess_SQUAD_NLI()
+    # preprocess_SQUAD_NLI()
+    split_SQUAD()
 
 
 
