@@ -1134,6 +1134,8 @@ def preprocess_SQUAD_NLI():
     readfile.close()
 
     write_train = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/train.txt', 'w', 'utf-8')
+    pos_size = 0
+    neg_size = 0
     for idd, hypo in train_id2hypo.items():
         premise = question_id2doc.get(idd)
         # print('premise:', premise)
@@ -1146,12 +1148,16 @@ def preprocess_SQUAD_NLI():
             # print('label:', label, 'premise:', premise, 'hypo:', hypo)
             if label is True:
                 write_train.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+                pos_size+=1
             else:
                 write_train.write('not_entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+                neg_size+=1
     write_train.close()
-    print('train.txt write over')
+    print('train.txt write over, pos_size:', pos_size, ' neg_size:', neg_size)
 
     write_dev = codecs.open('/export/home/Dataset/para_entail_datasets/SQUAD/dev.txt', 'w', 'utf-8')
+    pos_size = 0
+    neg_size = 0
     for idd, hypo in dev_id2hypo.items():
         premise = question_id2doc.get(idd)
         if premise is None:
@@ -1162,10 +1168,12 @@ def preprocess_SQUAD_NLI():
             label = question_id2answerable.get(idd)
             if label is True:
                 write_dev.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+                pos_size+=1
             else:
                 write_dev.write('not_entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
+                neg_size+=1
     write_dev.close()
-    print('dev.txt write over')
+    print('dev.txt write over, pos_size:', pos_size, ' neg_size:', neg_size)
 
 
 
