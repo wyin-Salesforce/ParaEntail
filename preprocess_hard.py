@@ -1092,6 +1092,8 @@ def preprocess_SQUAD_NLI():
                     question = qas['question']
                     idd = qas['id']
                     unswerable = qas['is_impossible']
+                    if unswerable is True:
+                        print('unswerable:', unswerable)
                     assert unswerable == False or unswerable == True
                     question_id2doc[idd] = doc
                     question_id2answerable[idd] = True if unswerable == False else False
