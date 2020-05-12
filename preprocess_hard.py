@@ -1109,7 +1109,7 @@ def preprocess_SQUAD_NLI():
         if line_co>0:
             parts  = line.strip().split('\t')
             if len(parts) ==5:
-                if parts[0] = 'SQuAD':
+                if parts[0] == 'SQuAD':
                     iddd = parts[1]
                     claim = parts[4]
                     train_id2hypo[iddd] = claim
@@ -1124,7 +1124,7 @@ def preprocess_SQUAD_NLI():
         if line_co>0:
             parts  = line.strip().split('\t')
             if len(parts) ==5:
-                if parts[0] = 'SQuAD':
+                if parts[0] == 'SQuAD':
                     iddd = parts[1]
                     claim = parts[4]
                     dev_id2hypo[iddd] = claim
