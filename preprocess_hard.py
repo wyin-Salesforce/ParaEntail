@@ -1108,8 +1108,8 @@ def preprocess_SQUAD_NLI():
     for line in readfile:
         if line_co>0:
             parts  = line.strip().split('\t')
-            print('len(parts):', len(parts))
-            if len(parts) ==5:
+            # print('len(parts):', len(parts))
+            if len(parts) == 6:
                 if parts[0] == 'SQuAD':
                     iddd = parts[1]
                     claim = parts[4]
@@ -1124,7 +1124,7 @@ def preprocess_SQUAD_NLI():
     for line in readfile:
         if line_co>0:
             parts  = line.strip().split('\t')
-            if len(parts) ==5:
+            if len(parts) == 6:
                 if parts[0] == 'SQuAD':
                     iddd = parts[1]
                     claim = parts[4]
@@ -1142,7 +1142,7 @@ def preprocess_SQUAD_NLI():
             exit(0)
         else:
             label = question_id2answerable.get(idd)
-            print('label:', label, 'premise:', premise, 'hypo:', hypo)
+            # print('label:', label, 'premise:', premise, 'hypo:', hypo)
             if label is True:
                 write_train.write('entailment'+'\t'+premise.strip()+'\t'+hypo.strip()+'\n')
             else:
