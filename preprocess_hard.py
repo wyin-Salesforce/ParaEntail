@@ -1185,6 +1185,7 @@ def split_SQUAD():
             write_train.write(line.strip()+'\n')
         else:
             write_test.write(line.strip()+'\n')
+        line_co+=1
 
     print('split over')
     readfile.close()
