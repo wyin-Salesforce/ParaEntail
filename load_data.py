@@ -350,6 +350,55 @@ def get_CNN_DailyMail_examples(prefix, hypo_only=False):
     #     return examples, pos_size
     return examples, pos_size
 
+
+def get_SQUAD_examples(prefix, hypo_only=False):
+    path = '/export/home/Dataset/para_entail_datasets/SQUAD/'
+    filename = path+prefix+'.txt'
+    print('loading SQUAD...', filename)
+    readfile = codecs.open(filename, 'r', 'utf-8')
+    guid_id = 0
+    pos_size = 0
+    neg_size = 0
+    examples = []
+    for line in readfile:
+        guid_id+=1
+        parts = line.strip().split('\t')
+        if len(parts) ==3:
+            premise = parts[1]
+            hypothesis = parts[2]
+            label = 'entailment' if parts[0] == 'entailment' else 'not_entailment'
+            if len(premise) == 0 or len(hypothesis)==0:
+                continue
+
+            if label == 'entailment':
+                pos_size+=1
+            else:
+                neg_size+=1
+            if hypo_only:
+                examples.append(InputExample(guid=prefix+str(guid_id), text_a=hypothesis, text_b=None, label=label))
+            else:
+                examples.append(InputExample(guid=prefix+str(guid_id), text_a=premise, text_b=hypothesis, label=label))
+    print('SQUAD size:', len(examples))
+    # if prefix == 'train':
+    #     new_examples = []
+    #     new_pos_size = 0
+    #     new_neg_size = 0
+    #     for ex in examples:
+    #         if ex.label == 'not_entailment':
+    #             if random.uniform(0.0, 1.0) <= pos_size/neg_size:
+    #                 new_examples.append(ex)
+    #                 new_neg_size+=1
+    #         else:
+    #             new_examples.append(ex)
+    #             new_pos_size+=1
+    #     print('>>new pos:neg: ', new_pos_size, new_neg_size)
+    #     return new_examples, new_pos_size
+    # else:
+    #     return examples, pos_size
+    return examples, pos_size
+
+
+
 def get_MCTest_examples(prefix, hypo_only=False):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
     filename = path+prefix+'_in_entail.txt'
@@ -514,6 +563,12 @@ def load_harsh_data(prefix, hypo_only=False):
     # mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
     # train_examples+=mctest_examples
     # pos_size+=mctest_pos_size
+
+    '''SQUAD'''
+    squada_examples, squada_pos_size = get_SQUAD_examples(prefix, hypo_only=hypo_only)
+    train_examples+=squada_examples
+    pos_size+=squada_pos_size
+
 
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
