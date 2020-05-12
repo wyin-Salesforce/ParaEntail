@@ -1081,7 +1081,7 @@ def preprocess_SQUAD_NLI():
     path = '/export/home/Dataset/SQUAD_2_NLI/'
     question_id2doc = {}
     question_id2answerable = {}
-    files = ['SQUADun-train-v2.0.json', 'SQUADun-dev-v2.0.json', 'SQUAD-train-v2.0.json', 'SQUAD-dev-v2.0.json']
+    files = ['SQUADun-train-v2.0.json', 'SQUADun-dev-v2.0.json']#, 'SQUAD-train-v2.0.json', 'SQUAD-dev-v2.0.json']
     for fil in files:
         readfile = codecs.open(path+fil, 'r', 'utf-8')
         data = json.load(readfile)
@@ -1099,7 +1099,7 @@ def preprocess_SQUAD_NLI():
                     #     exit(0)
                     assert unswerable == False or unswerable == True
                     question_id2doc[idd] = doc
-                    question_id2answerable[idd] = True if unswerable=='False' else False
+                    question_id2answerable[idd] = True if unswerable == False else False
         readfile.close()
 
     readfile = codecs.open(path+'train.tsv', 'r', 'utf-8')
