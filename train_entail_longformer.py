@@ -395,44 +395,6 @@ def load_and_cache_examples(args, task, filename, tokenizer, evaluate=False):
     dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
     return dataset
 
-def get_DUC_examples(filename):
-    #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
-    print('loading...', filename)
-    readfile = codecs.open(filename, 'r', 'utf-8')
-    start = False
-    examples = []
-    guid_id = -1
-    pos_size = 0
-    neg_size = 0
-    for line in readfile:
-        if len(line.strip()) == 0:
-            start = False
-        else:
-            parts = line.strip().split('\t')
-            if parts[0] == 'document>>':
-                start = True
-                premise = parts[1].strip()
-            elif parts[0] == 'positive>>':
-                guid_id+=1
-                pos_hypo = parts[1].strip()
-                examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=pos_hypo, label='entailment'))
-                pos_size+=1
-            elif parts[0] == 'negative>>' and parts[1] != '#ShuffleWord#>>' and parts[1] != '#RemoveWord#>>':
-                guid_id+=1
-                neg_hypo = parts[2].strip()
-
-                if filename.find('train_in_entail') > -1:
-                    examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                    neg_size+=1
-                else:
-                    rand_prob = random.uniform(0, 1)
-                    if rand_prob > 3/4:
-                        examples.append(InputExample(guid=str(guid_id), text_a=premise, text_b=neg_hypo, label='not_entailment'))
-                        neg_size+=1
-
-    print('>>pos:neg: ', pos_size, neg_size)
-    return examples
-
 
 class LongformerForSequenceClassification(BertPreTrainedModel):
     config_class = RobertaConfig
@@ -721,7 +683,7 @@ def main():
     args.model_type = args.model_type.lower()
     # longformer_path = './roberta-longformer-base-4096/'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.7744434570601774.test0.7967301170335809'
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8241124568676038.test0.8472747995278219'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
     config = AutoConfig.from_pretrained(
         longformer_path,
@@ -786,7 +748,7 @@ if __name__ == "__main__":
     ERROR: longformer 0.1 has requirement transformers==2.0.0, but you'll have transformers 2.8.0 which is incompatible.
     '''
     '''
-    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.full.pair.standard0511.txt 2>&1
+    CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -u train_entail_longformer.py --model_type roberta --model_name_or_path roberta-base --task_name rte > log.longformer.train.on.full.pair.standard0512.txt 2>&1
     '''
 
     '''
