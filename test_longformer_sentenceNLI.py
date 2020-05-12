@@ -874,7 +874,7 @@ def main():
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
     args.model_type = args.model_type.lower()
-    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8159667990539514.test0.8330959072883378'
+    longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair/roberta_f1.dev.0.8241124568676038.test0.8472747995278219'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_largestTrain/roberta-f1.dev.0.8436753079610222.test0.8580708661417322'
     # longformer_path = '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/longformer_full_pair_rawPlusFine/roberta-epoch5'
     '''config file and model should load from longformer-large-4096; tokenizer from roberta-large'''
