@@ -278,8 +278,8 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
 
 
         # multi-gpu eval
-        if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
-            model = torch.nn.DataParallel(model)
+        # if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
+        #     model = torch.nn.DataParallel(model)
 
         # Eval!
         logger.info("***** Running evaluation {} *****".format(prefix))
