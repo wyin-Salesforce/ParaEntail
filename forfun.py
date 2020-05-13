@@ -8,9 +8,9 @@ import random
 # preds = []
 # for i in range(267603):
 
-out_label_ids = [1]*87618+[0]*23807
+out_label_ids = [1]*78804+[0]*28866
 preds = []
-for i in range(111425):
+for i in range(107670):
     prob = random.uniform(0, 1)
     if prob > 0.5:
         preds.append(0)
