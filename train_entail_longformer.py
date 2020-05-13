@@ -752,18 +752,8 @@ if __name__ == "__main__":
     '''
 
     '''
-    what we change the libarary
-    /opt/conda/lib/python3.6/site-packages/transformers/tokenization_utils.py
-    def prepare_for_model()
+    to install (only need install json-lines to run the "test_longformer_sentenceNLI.py")
+    pip install json-lines
 
-    if pair and n_added_tokens + (len_pair_ids if truncate_first_sequence else len_ids) >= max_length:
-        #if n_added_tokens + len_ids >=max_length:
-        #    ids = ids[:max_length - n_added_tokens*2]
-        if n_added_tokens + len_pair_ids >= max_length:
-            pair_ids = pair_ids[:max_length - n_added_tokens*2]
-            len_pair_ids = len(pair_ids)
-    #    logger.warning(
-    #        "You supplied a pair of sequence in which the sequence that will not be truncated is longer than the maximum specified length."
-    #        "This pair of sequences will not be truncated.")
-    #else:
+
     '''
