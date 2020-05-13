@@ -95,8 +95,8 @@ def set_seed(args):
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
-    # if args.n_gpu > 0:
-    #     torch.cuda.manual_seed_all(args.seed)
+    if args.n_gpu > 0:
+        torch.cuda.manual_seed_all(args.seed)
 
 
 def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer):
@@ -188,7 +188,7 @@ def train(args, train_dataset, dev_dataloader, test_dataloader, model, tokenizer
                 continue
 
             model.train()
-            # batch = tuple(t.to(args.device) for t in batch)
+            batch = tuple(t.to(args.device) for t in batch)
             inputs = {"input_ids": batch[0], "attention_mask": batch[1], "labels": batch[3]}
             if args.model_type != "distilbert":
                 inputs["token_type_ids"] = (
@@ -278,8 +278,8 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
 
 
         # multi-gpu eval
-        # if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
-        #     model = torch.nn.DataParallel(model)
+        if args.n_gpu > 1 and not isinstance(model, torch.nn.DataParallel):
+            model = torch.nn.DataParallel(model)
 
         # Eval!
         logger.info("***** Running evaluation {} *****".format(prefix))
@@ -292,7 +292,7 @@ def evaluate(args, model, tokenizer, eval_dataloader, prefix="test set"):
         # for batch in tqdm(eval_dataloader, desc="Evaluating"):
         for batch in eval_dataloader:
             model.eval()
-            # batch = tuple(t.to(args.device) for t in batch)
+            batch = tuple(t.to(args.device) for t in batch)
 
             with torch.no_grad():
                 inputs = {"input_ids": batch[0], "attention_mask": batch[1], "labels": batch[3]}
@@ -832,15 +832,15 @@ def main():
         ptvsd.wait_for_attach()
 
     # Setup CUDA, GPU & distributed training
-    # if args.local_rank == -1 or args.no_cuda:
-    #     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
-    #     args.n_gpu = 0 if args.no_cuda else torch.cuda.device_count()
-    # else:  # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
-    #     torch.cuda.set_device(args.local_rank)
-    #     device = torch.device("cuda", args.local_rank)
-    #     torch.distributed.init_process_group(backend="nccl")
-    #     args.n_gpu = 1
-    # args.device = device
+    if args.local_rank == -1 or args.no_cuda:
+        device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+        args.n_gpu = 0 if args.no_cuda else torch.cuda.device_count()
+    else:  # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
+        torch.cuda.set_device(args.local_rank)
+        device = torch.device("cuda", args.local_rank)
+        torch.distributed.init_process_group(backend="nccl")
+        args.n_gpu = 1
+    args.device = device
 
     # Setup logging
     logging.basicConfig(
@@ -848,14 +848,14 @@ def main():
         datefmt="%m/%d/%Y %H:%M:%S",
         level=logging.INFO if args.local_rank in [-1, 0] else logging.WARN,
     )
-    # logger.warning(
-    #     "Process rank: %s, device: %s, n_gpu: %s, distributed training: %s, 16-bits training: %s",
-    #     args.local_rank,
-    #     device,
-    #     args.n_gpu,
-    #     bool(args.local_rank != -1),
-    #     args.fp16,
-    # )
+    logger.warning(
+        "Process rank: %s, device: %s, n_gpu: %s, distributed training: %s, 16-bits training: %s",
+        args.local_rank,
+        device,
+        args.n_gpu,
+        bool(args.local_rank != -1),
+        args.fp16,
+    )
 
     # Set seed
     set_seed(args)
@@ -904,7 +904,7 @@ def main():
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
-    # model.to(args.device)
+    model.to(args.device)
 
     logger.info("Training/evaluation parameters %s", args)
 
@@ -926,7 +926,7 @@ def main():
 
     test_filename = 'test'
     test_dataset = load_and_cache_examples(args, args.task_name, test_filename, tokenizer, evaluate=True)
-    args.eval_batch_size = 80#args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+    args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
     test_sampler = SequentialSampler(test_dataset)
     test_dataloader = DataLoader(test_dataset, sampler=test_sampler, batch_size=args.eval_batch_size)
 
