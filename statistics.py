@@ -29,26 +29,22 @@ def count_length_ANLI():
     print('overal_size:', overal_size)
     main_size = int(overal_size*0.95)
     print('main_size:', main_size)
-    premise2times_sorted = dict(sorted(premise2times.items(), key=operator.itemgetter(1),reverse=True))
-    print('premise2times_sorted:', premise2times_sorted)
-    value_sum = 0
-    max_premise = 0
-    min_premise = 10000000
-    i=0
 
-    remain_premise_dict = {}
-    for length, times in premise2times_sorted.items():
-        if i == 0:
-            max_premise = length
-        i+=1
-        value_sum+=times
-        if value_sum > main_size:
-            min_premise = length
-            break
-        else:
-            remain_premise_dict[length] = times
-    remain_premise_dict = dict(sorted(remain_premise_dict.items(), key=operator.itemgetter(0),reverse=True))
-    print('remain_premise_dict:', remain_premise_dict)
+
+    for origin_dict in [premise2times, hypothesis2times]:
+        premise2times_sorted = dict(sorted(origin_dict.items(), key=operator.itemgetter(1),reverse=True))
+        # print('premise2times_sorted:', premise2times_sorted)
+        value_sum = 0
+        remain_premise_dict = {}
+        for length, times in premise2times_sorted.items():
+            value_sum+=times
+            if value_sum > main_size:
+                min_premise = length
+                break
+            else:
+                remain_premise_dict[length] = times
+        remain_premise_dict = dict(sorted(remain_premise_dict.items(), key=operator.itemgetter(0),reverse=True))
+        print('remain_premise_dict:', remain_premise_dict)
 
 
 
