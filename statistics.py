@@ -26,9 +26,11 @@ def count_length_ANLI():
                     hypothesis2times[hypothesis]+=1
                     overal_size+=1
 
+    print('overal_size:', overal_size)
     main_size = int(overal_size*0.9)
+    print('main_size:', main_size)
     premise2times_sorted = dict(sorted(premise2times.items(), key=operator.itemgetter(1),reverse=True))
-
+    print('premise2times_sorted:', premise2times_sorted)
     value_sum = 0
     max_premise = 0
     min_premise = 10000000
@@ -39,6 +41,7 @@ def count_length_ANLI():
         value_sum+=value
         if value_sum > main_size:
             min_premise = value
+            break
 
     print(max_premise, min_premise)
 
