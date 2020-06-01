@@ -2,8 +2,57 @@
 import json_lines
 from collections import defaultdict
 import operator
-from preprocess_hard import load_per_docs_file, load_DUC_doc
+# from preprocess_hard import load_per_docs_file, load_DUC_doc
+import codecs
 import os
+
+def load_DUC_doc(fil):
+    readfile = codecs.open(fil, 'r', 'utf-8')
+
+    doc_start = False
+    doc = ''
+    for line in readfile:
+        if line.strip().find('<TEXT>') > -1:
+            doc_start = True
+            doc+=' '+line.strip().replace('<TEXT>', ' ')
+            continue
+        if line.strip().find('</TEXT>')>-1:
+            doc+=' '+line.strip().replace('</TEXT>', ' ')
+            doc_start = False
+            break
+        if doc_start:
+            doc+=' '+line.strip()
+
+    refined_doc = doc.replace('<P>', '').replace('</P>', '')
+    readfile.close()
+    return ' '.join(refined_doc.strip().split())
+
+def load_per_docs_file(fil):
+    print('fil:', fil)
+    readfile = codecs.open(fil, 'r', 'utf-8')
+    id2sum={}
+    summary_start = False
+    for line in readfile:
+        if line.strip().startswith('<SUM'):
+            doc_id = ''
+            summary = ''
+        if line.strip().startswith('DOCREF'):
+            linestrip=line.strip()
+            equi_pos = linestrip.find('=')
+            doc_id = linestrip[equi_pos+2:-1]
+        if line.strip().startswith('SUMMARIZER'):
+            summary_start = True
+            continue
+        if line.strip().find('</SUM>') >-1:
+            summary +=' '+line.strip().replace('</SUM>', ' ')
+            # print('sum:', summary)
+            summary_start = False
+            id2sum[doc_id] = summary.strip()
+        if summary_start:
+            summary +=' '+line.strip()
+    # print('size:', len(id2sum))
+    return id2sum
+
 
 def count_length_ANLI():
     folders = ['R1', 'R2', 'R3']
