@@ -35,12 +35,12 @@ def count_length_ANLI():
     max_premise = 0
     min_premise = 10000000
     i=0
-    for key, value in premise2times_sorted.items():
+    for length, times in premise2times_sorted.items():
         if i == 0:
-            max_premise = value
-        value_sum+=value
+            max_premise = length
+        value_sum+=length
         if value_sum > main_size:
-            min_premise = value
+            min_premise = length
             break
 
     print(max_premise, min_premise)
