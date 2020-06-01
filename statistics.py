@@ -55,7 +55,7 @@ def count_length_SQUAD():
     overal_size = 0
 
     for prefix in ['train', 'dev', 'test']:
-        filename = path++prefix+'.txt'
+        filename = path+prefix+'.txt'
         print('loading ANLI...', filename)
         with open(filename, 'r') as readfile:
             for line in readfile:
