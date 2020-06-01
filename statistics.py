@@ -53,20 +53,23 @@ def count_length_SQUAD():
     premise2times =  defaultdict(int)
     hypothesis2times =  defaultdict(int)
     overal_size = 0
-
+    unvalid = 0
     for prefix in ['train', 'dev', 'test']:
         filename = path+prefix+'.txt'
         print('loading ANLI...', filename)
         with open(filename, 'r') as readfile:
             for line in readfile:
                 parts = line.strip().split('\t')
-                premise = len(parts[1].split())
-                hypothesis = len(parts[2].split())
-                premise2times[premise]+=1
-                hypothesis2times[hypothesis]+=1
-                overal_size+=1
+                if len(parts) ==3
+                    premise = len(parts[1].split())
+                    hypothesis = len(parts[2].split())
+                    premise2times[premise]+=1
+                    hypothesis2times[hypothesis]+=1
+                    overal_size+=1
+                else:
+                    unvalid +=1
 
-    print('overal_size:', overal_size)
+    print('overal_size:', overal_size, 'unvalid:', unvalid)
     main_size = int(overal_size*0.95)
     print('main_size:', main_size)
 
