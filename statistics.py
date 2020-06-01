@@ -46,12 +46,48 @@ def count_length_ANLI():
         remain_premise_dict = dict(sorted(remain_premise_dict.items(), key=operator.itemgetter(0),reverse=True))
         print('remain_premise_dict:', remain_premise_dict)
 
+def count_length_SQUAD():
+
+    neg_size = 0
+    path = '/export/home/Dataset/para_entail_datasets/SQUAD/'
+    premise2times =  defaultdict(int)
+    hypothesis2times =  defaultdict(int)
+    overal_size = 0
+
+    for prefix in ['train', 'dev', 'test']:
+        filename = path++prefix+'.txt'
+        print('loading ANLI...', filename)
+        with open(filename, 'r') as readfile:
+            for line in readfile:
+                parts = line.strip().split('\t')
+                premise = len(parts[1].split())
+                hypothesis = len(parts[2].split())
+                premise2times[premise]+=1
+                hypothesis2times[hypothesis]+=1
+                overal_size+=1
+
+    print('overal_size:', overal_size)
+    main_size = int(overal_size*0.95)
+    print('main_size:', main_size)
 
 
+    for origin_dict in [premise2times, hypothesis2times]:
+        premise2times_sorted = dict(sorted(origin_dict.items(), key=operator.itemgetter(1),reverse=True))
+        # print('premise2times_sorted:', premise2times_sorted)
+        value_sum = 0
+        remain_premise_dict = {}
+        for length, times in premise2times_sorted.items():
+            value_sum+=times
+            if value_sum > main_size:
+                min_premise = length
+                break
+            else:
+                remain_premise_dict[length] = times
+        remain_premise_dict = dict(sorted(remain_premise_dict.items(), key=operator.itemgetter(0),reverse=True))
+        print('remain_premise_dict:', remain_premise_dict)
 
-
-    # print(premise_min, premise_max, hypothesis_min, hypothesis_max)
 
 
 if __name__ == "__main__":
-    count_length_ANLI()
+    # count_length_ANLI()
+    count_length_SQUAD()
