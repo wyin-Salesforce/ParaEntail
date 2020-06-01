@@ -60,7 +60,7 @@ def count_length_SQUAD():
         with open(filename, 'r') as readfile:
             for line in readfile:
                 parts = line.strip().split('\t')
-                if len(parts) ==3
+                if len(parts) ==3:
                     premise = len(parts[1].split())
                     hypothesis = len(parts[2].split())
                     premise2times[premise]+=1
