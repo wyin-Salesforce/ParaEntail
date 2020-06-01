@@ -13,7 +13,7 @@ def count_length_ANLI():
     hypothesis_min = 1000
     hypothesis_max = 0
     for folder in folders:
-        for prefix in ['train', 'dev', 'test']
+        for prefix in ['train', 'dev', 'test']:
             filename = path+folder+'/'+prefix+'.jsonl'
             print('loading ANLI...', filename)
             with open(filename, 'r') as f:
