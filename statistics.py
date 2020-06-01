@@ -27,7 +27,7 @@ def count_length_ANLI():
                     overal_size+=1
 
     print('overal_size:', overal_size)
-    main_size = int(overal_size*0.9)
+    main_size = int(overal_size*0.95)
     print('main_size:', main_size)
     premise2times_sorted = dict(sorted(premise2times.items(), key=operator.itemgetter(1),reverse=True))
     print('premise2times_sorted:', premise2times_sorted)
