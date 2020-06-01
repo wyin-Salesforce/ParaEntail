@@ -35,6 +35,8 @@ def count_length_ANLI():
     max_premise = 0
     min_premise = 10000000
     i=0
+
+    remain_premise_dict = {}
     for length, times in premise2times_sorted.items():
         if i == 0:
             max_premise = length
@@ -43,8 +45,10 @@ def count_length_ANLI():
         if value_sum > main_size:
             min_premise = length
             break
-
-    print(max_premise, min_premise)
+        else:
+            remain_premise_dict[length] = times
+    remain_premise_dict = dict(sorted(remain_premise_dict.items(), key=operator.itemgetter(0),reverse=True))
+    print('remain_premise_dict:', remain_premise_dict)
 
 
 
