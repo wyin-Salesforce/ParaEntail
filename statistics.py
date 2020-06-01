@@ -38,7 +38,8 @@ def count_length_ANLI():
     for length, times in premise2times_sorted.items():
         if i == 0:
             max_premise = length
-        value_sum+=length
+        i+=1
+        value_sum+=times
         if value_sum > main_size:
             min_premise = length
             break
