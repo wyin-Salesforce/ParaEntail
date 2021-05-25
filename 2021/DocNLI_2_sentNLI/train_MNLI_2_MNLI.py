@@ -477,10 +477,25 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    train_examples, dev_examples = processor.get_MNLI_train_and_dev('/export/home/Dataset/glue_data/MNLI/train.tsv', '/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv')
-    label_list = ["entailment", "neutral", "contradiction"]
+    threeway_train_examples, threeway_dev_examples = processor.get_MNLI_train_and_dev('/export/home/Dataset/glue_data/MNLI/train.tsv', '/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv')
+    '''preprocessing: binary classification, randomly sample 20k for testing data'''
+    train_examples = []
+    for ex in threeway_train_examples:
+        if ex.label == 'neutral' or ex.label == 'contradiction':
+            ex.label = 'neutral'
+        train_examples.append(ex)
+    dev_examples = []
+    for ex in threeway_dev_examples:
+        if ex.label == 'neutral' or ex.label == 'contradiction':
+            ex.label = 'neutral'
+        dev_examples.append(ex)
+    random.shuffle(train_examples)
+    test_examples = train_examples[:20000]
+    train_examples = train_examples[20000:]
+
+    label_list = ["entailment", "neutral"]#, "contradiction"]
     num_labels = len(label_list)
-    print('num_labels:', num_labels, 'training size:', len(train_examples), 'dev size:', len(dev_examples))
+    print('num_labels:', num_labels, 'training size:', len(train_examples), 'dev size:', len(dev_examples), ' test size:', len(test_examples))
 
     num_train_optimization_steps = None
     num_train_optimization_steps = int(
@@ -539,6 +554,29 @@ def main():
         dev_sampler = SequentialSampler(dev_data)
         dev_dataloader = DataLoader(dev_data, sampler=dev_sampler, batch_size=args.eval_batch_size)
 
+
+        '''load test set'''
+        test_features = convert_examples_to_features(
+            test_examples, label_list, args.max_seq_length, tokenizer, output_mode,
+            cls_token_at_end=False,#bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
+            cls_token=tokenizer.cls_token,
+            cls_token_segment_id=0,#2 if args.model_type in ['xlnet'] else 0,
+            sep_token=tokenizer.sep_token,
+            sep_token_extra=True,#bool(args.model_type in ['roberta']),           # roberta uses an extra separator b/w pairs of sentences, cf. github.com/pytorch/fairseq/commit/1684e166e3da03f5b600dbb7855cb98ddfcd0805
+            pad_on_left=False,#bool(args.model_type in ['xlnet']),                 # pad on the left for xlnet
+            pad_token=tokenizer.convert_tokens_to_ids([tokenizer.pad_token])[0],
+            pad_token_segment_id=0)#4 if args.model_type in ['xlnet'] else 0,)
+
+        test_all_input_ids = torch.tensor([f.input_ids for f in test_features], dtype=torch.long)
+        test_all_input_mask = torch.tensor([f.input_mask for f in test_features], dtype=torch.long)
+        test_all_segment_ids = torch.tensor([f.segment_ids for f in test_features], dtype=torch.long)
+        test_all_label_ids = torch.tensor([f.label_id for f in test_features], dtype=torch.long)
+
+        test_data = TensorDataset(test_all_input_ids, test_all_input_mask, test_all_segment_ids, test_all_label_ids)
+        test_sampler = SequentialSampler(test_data)
+        test_dataloader = DataLoader(test_data, sampler=test_sampler, batch_size=args.eval_batch_size)
+
+
         logger.info("***** Running training *****")
         logger.info("  Num examples = %d", len(train_examples))
         logger.info("  Batch size = %d", args.train_batch_size)
@@ -589,55 +627,84 @@ def main():
             start evaluate on dev set after this epoch
             '''
             model.eval()
-            logger.info("***** Running dev *****")
-            logger.info("  Num examples = %d", len(dev_examples))
 
-            eval_loss = 0
-            nb_eval_steps = 0
-            preds = []
-            gold_label_ids = []
-            # print('Evaluating...')
-            for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
-                input_ids = input_ids.to(device)
-                input_mask = input_mask.to(device)
-                segment_ids = segment_ids.to(device)
-                label_ids = label_ids.to(device)
-                gold_label_ids+=list(label_ids.detach().cpu().numpy())
+            # eval_loss = 0
+            # nb_eval_steps = 0
+            # preds = []
+            # gold_label_ids = []
+            # # print('Evaluating...')
+            # for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
+            #     input_ids = input_ids.to(device)
+            #     input_mask = input_mask.to(device)
+            #     segment_ids = segment_ids.to(device)
+            #     label_ids = label_ids.to(device)
+            #     gold_label_ids+=list(label_ids.detach().cpu().numpy())
+            #
+            #     with torch.no_grad():
+            #         logits = model(input_ids, input_mask)
+            #     if len(preds) == 0:
+            #         preds.append(logits.detach().cpu().numpy())
+            #     else:
+            #         preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+            #
+            # preds = preds[0]
+            #
+            # pred_probs = softmax(preds,axis=1)
+            # pred_label_ids = list(np.argmax(pred_probs, axis=1))
+            #
+            # gold_label_ids = gold_label_ids
+            # assert len(pred_label_ids) == len(gold_label_ids)
+            # hit_co = 0
+            # for k in range(len(pred_label_ids)):
+            #     if pred_label_ids[k] == gold_label_ids[k]:
+            #         hit_co +=1
+            # test_acc = hit_co/len(gold_label_ids)
 
-                with torch.no_grad():
-                    logits = model(input_ids, input_mask)
-                if len(preds) == 0:
-                    preds.append(logits.detach().cpu().numpy())
-                else:
-                    preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+            dev_acc = evaluation(dev_dataloader, device, model)
 
-            preds = preds[0]
-
-            pred_probs = softmax(preds,axis=1)
-            pred_label_ids = list(np.argmax(pred_probs, axis=1))
-
-            gold_label_ids = gold_label_ids
-            assert len(pred_label_ids) == len(gold_label_ids)
-            hit_co = 0
-            for k in range(len(pred_label_ids)):
-                if pred_label_ids[k] == gold_label_ids[k]:
-                    hit_co +=1
-            test_acc = hit_co/len(gold_label_ids)
-
-
-            if test_acc > max_dev_acc:
-                max_dev_acc = test_acc
-                print('\ndev acc:', test_acc, ' max_dev_acc:', max_dev_acc, '\n')
-                '''store the model, because we can test after a max_dev acc reached'''
-                # model_to_save = (
-                #     model.module if hasattr(model, "module") else model
-                # )  # Take care of distributed/parallel training
-                # store_transformers_models(model_to_save, tokenizer, '/export/home/Dataset/BERT_pretrained_mine/MNLI_pretrained', '_acc_'+str(max_dev_acc)+'.pt')
+            if dev_acc > max_dev_acc:
+                max_dev_acc = dev_acc
+                print('\ndev acc:', dev_acc, ' max_dev_acc:', max_dev_acc, '\n')
+                '''evaluate on the test set with the best dev model'''
+                final_test_performance = evaluation(test_dataloader, device, model)
 
             else:
-                print('\ndev acc:', test_acc, ' max_dev_acc:', max_dev_acc, '\n')
+                print('\ndev acc:', dev_acc, ' max_dev_acc:', max_dev_acc, '\n')
+        print('final_test_performance:', final_test_performance)
 
+def evaluation(dev_dataloader, device, model):
+    eval_loss = 0
+    nb_eval_steps = 0
+    preds = []
+    gold_label_ids = []
+    # print('Evaluating...')
+    for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
+        input_ids = input_ids.to(device)
+        input_mask = input_mask.to(device)
+        segment_ids = segment_ids.to(device)
+        label_ids = label_ids.to(device)
+        gold_label_ids+=list(label_ids.detach().cpu().numpy())
 
+        with torch.no_grad():
+            logits = model(input_ids, input_mask)
+        if len(preds) == 0:
+            preds.append(logits.detach().cpu().numpy())
+        else:
+            preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+
+    preds = preds[0]
+
+    pred_probs = softmax(preds,axis=1)
+    pred_label_ids = list(np.argmax(pred_probs, axis=1))
+
+    gold_label_ids = gold_label_ids
+    assert len(pred_label_ids) == len(gold_label_ids)
+    hit_co = 0
+    for k in range(len(pred_label_ids)):
+        if pred_label_ids[k] == gold_label_ids[k]:
+            hit_co +=1
+    test_acc = hit_co/len(gold_label_ids)
+    return test_acc
 
 
 if __name__ == "__main__":
