@@ -487,7 +487,7 @@ def main():
         if ex.label == 'neutral' or ex.label == 'contradiction':
             ex.label = 'neutral'
         train_examples.append(ex)
-    train_examples = train_examples[:1000]
+    train_examples = train_examples[:10000]
     dev_examples = []
     for ex in threeway_dev_examples:
         if ex.label == 'neutral' or ex.label == 'contradiction':
@@ -671,6 +671,7 @@ def main():
                 print('\ndev acc:', dev_acc, ' max_dev_acc:', max_dev_acc, '\n')
                 '''evaluate on the test set with the best dev model'''
                 final_test_performance = evaluation(test_dataloader, device, model)
+                print('\ntest acc:', final_test_performance,  '\n')
 
             else:
                 print('\ndev acc:', dev_acc, ' max_dev_acc:', max_dev_acc, '\n')
