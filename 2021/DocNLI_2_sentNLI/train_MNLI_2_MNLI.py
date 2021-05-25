@@ -487,6 +487,7 @@ def main():
         if ex.label == 'neutral' or ex.label == 'contradiction':
             ex.label = 'neutral'
         train_examples.append(ex)
+    train_examples = train_examples[:1000]
     dev_examples = []
     for ex in threeway_dev_examples:
         if ex.label == 'neutral' or ex.label == 'contradiction':

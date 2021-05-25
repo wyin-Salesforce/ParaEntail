@@ -12,4 +12,4 @@ CUDA_VISIBLE_DEVICES=0 python -u train_MNLI_2_MNLI.py \
     --eval_batch_size 64 \
     --learning_rate $LEARNINGRATE \
     --max_seq_length 128 \
-    --seed 42 > log.mnli.2.mnli.seed.42.txt 2>&1 &
+    --seed 42 > log.binary.mnli.2.mnli.seed.42.txt 2>&1 &
