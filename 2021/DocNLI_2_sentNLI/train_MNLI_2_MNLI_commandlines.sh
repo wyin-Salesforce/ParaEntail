@@ -1,5 +1,5 @@
 export BATCHSIZE=32 #32 is also ok
-export EPOCHSIZE=5
+export EPOCHSIZE=10
 export LEARNINGRATE=1e-6
 
 
