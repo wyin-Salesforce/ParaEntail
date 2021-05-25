@@ -157,12 +157,12 @@ class DataProcessor(object):
 class RteProcessor(DataProcessor):
     """Processor for the RTE data set (GLUE version)."""
 
-    def get_MNLI_train_and_dev(self, train_filename, dev_filename):
+    def get_MNLI_train_and_dev(self, train_filename, dev_filename_list):
         '''
         classes: ["entailment", "neutral", "contradiction"]
         '''
         examples_per_file = []
-        for filename in [train_filename, dev_filename]:
+        for filename in [train_filename]+dev_filename_list:
             examples=[]
             readfile = codecs.open(filename, 'r', 'utf-8')
             line_co=0
@@ -180,7 +180,10 @@ class RteProcessor(DataProcessor):
             readfile.close()
             print('loaded  MNLI size:', len(examples))
             examples_per_file.append(examples)
-        return examples_per_file[0], examples_per_file[1] #train, dev
+        dev_examples = []
+        for listt in examples_per_file[1:]:
+            dev_examples+=listt
+        return examples_per_file[0], dev_examples #train, dev
 
     def get_labels(self):
         'here we keep the three-way in MNLI training '
@@ -477,7 +480,7 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    threeway_train_examples, threeway_dev_examples = processor.get_MNLI_train_and_dev('/export/home/Dataset/glue_data/MNLI/train.tsv', '/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv')
+    threeway_train_examples, threeway_dev_examples = processor.get_MNLI_train_and_dev('/export/home/Dataset/glue_data/MNLI/train.tsv', ['/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv', '/export/home/Dataset/glue_data/MNLI/dev_matched.tsv'])
     '''preprocessing: binary classification, randomly sample 20k for testing data'''
     train_examples = []
     for ex in threeway_train_examples:
@@ -489,9 +492,9 @@ def main():
         if ex.label == 'neutral' or ex.label == 'contradiction':
             ex.label = 'neutral'
         dev_examples.append(ex)
-    random.shuffle(train_examples)
-    test_examples = train_examples[:20000]
-    train_examples = train_examples[20000:]
+    random.shuffle(dev_examples)
+    test_examples = dev_examples[:13000]
+    dev_examples = dev_examples[13000:]
 
     label_list = ["entailment", "neutral"]#, "contradiction"]
     num_labels = len(label_list)
