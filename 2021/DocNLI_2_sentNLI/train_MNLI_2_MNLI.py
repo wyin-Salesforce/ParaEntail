@@ -38,9 +38,9 @@ from scipy.special import softmax
 # from scipy.stats import pearsonr, spearmanr
 # from sklearn.metrics import matthews_corrcoef, f1_score
 
-from transformers.tokenization_roberta import RobertaTokenizer
+from transformers.models.roberta.tokenization_roberta import RobertaTokenizer
 from transformers.optimization import AdamW
-from transformers.modeling_roberta import RobertaModel#RobertaForSequenceClassification
+from transformers.models.roberta.modeling_roberta import RobertaModel#RobertaForSequenceClassification
 
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -645,7 +645,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=6 python -u pretrain.on.MNLI.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
+CUDA_VISIBLE_DEVICES=6 python -u train_MNLI_2_MNLI.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
 
 
 '''
