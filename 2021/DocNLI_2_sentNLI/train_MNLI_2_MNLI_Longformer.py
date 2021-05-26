@@ -486,7 +486,7 @@ def main():
         if ex.label == 'neutral' or ex.label == 'contradiction':
             ex.label = 'neutral'
         train_examples.append(ex)
-    train_examples = train_examples[:100]
+    # train_examples = train_examples[:100]
     dev_examples = []
     for ex in threeway_dev_examples:
         if ex.label == 'neutral' or ex.label == 'contradiction':
@@ -716,7 +716,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=6 python -u train_MNLI_2_MNLI_Longformer.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
+CUDA_VISIBLE_DEVICES=6 python -u train_MNLI_2_MNLI_Longformer.py --task_name rte --do_train --do_lower_case --num_train_epochs 5 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
 
 
 '''
