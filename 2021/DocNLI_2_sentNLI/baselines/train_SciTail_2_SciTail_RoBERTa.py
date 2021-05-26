@@ -157,33 +157,28 @@ class DataProcessor(object):
 class RteProcessor(DataProcessor):
     """Processor for the RTE data set (GLUE version)."""
 
-    def get_MNLI_train_and_dev(self, train_filename, dev_filename_list):
+    def load_scitail(self, prefix):
         '''
-        classes: ["entailment", "neutral", "contradiction"]
+        can read the training file, dev and test file
         '''
-        examples_per_file = []
-        for filename in [train_filename]+dev_filename_list:
-            examples=[]
-            readfile = codecs.open(filename, 'r', 'utf-8')
-            line_co=0
-            for row in readfile:
-                if line_co>0:
-                    line=row.strip().split('\t')
-                    guid = "train-"+str(line_co-1)
-                    # text_a = 'MNLI. '+line[8].strip()
-                    text_a = line[8].strip()
-                    text_b = line[9].strip()
-                    label = line[-1].strip() #["entailment", "neutral", "contradiction"]
-                    examples.append(
-                        InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-                line_co+=1
-            readfile.close()
-            print('loaded  MNLI size:', len(examples))
-            examples_per_file.append(examples)
-        dev_examples = []
-        for listt in examples_per_file[1:]:
-            dev_examples+=listt
-        return examples_per_file[0], dev_examples #train, dev
+        examples=[]
+        readfile = codecs.open('/export/home/Dataset/SciTailV1/tsv_format/scitail_1.0_'+prefix+'.tsv', 'r', 'utf-8')
+        line_co=0
+        for row in readfile:
+
+            line=row.strip().split('\t')
+            if len(line) == 3:
+                guid = prefix+'-'+str(line_co-1)
+                text_a = line[0].strip()
+                text_b = line[1].strip()
+                # label = line[3].strip() #["entailment", "not_entailment"]
+                label = 'entailment'  if line[2] == 'entails' else 'not_entailment'
+                examples.append(
+                    InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+            line_co+=1
+        readfile.close()
+        print('loaded  size:', line_co-1)
+        return examples
 
     def get_labels(self):
         'here we keep the three-way in MNLI training '
@@ -480,24 +475,12 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    threeway_train_examples, threeway_dev_examples = processor.get_MNLI_train_and_dev('/export/home/Dataset/glue_data/MNLI/train.tsv', ['/export/home/Dataset/glue_data/MNLI/dev_mismatched.tsv', '/export/home/Dataset/glue_data/MNLI/dev_matched.tsv'])
-    '''preprocessing: binary classification, randomly sample 20k for testing data'''
-    train_examples = []
-    for ex in threeway_train_examples:
-        if ex.label == 'neutral' or ex.label == 'contradiction':
-            ex.label = 'neutral'
-        train_examples.append(ex)
-    # train_examples = train_examples[:10000]
-    dev_examples = []
-    for ex in threeway_dev_examples:
-        if ex.label == 'neutral' or ex.label == 'contradiction':
-            ex.label = 'neutral'
-        dev_examples.append(ex)
-    random.shuffle(dev_examples)
-    test_examples = dev_examples[:13000]
-    dev_examples = dev_examples[13000:]
+    train_examples = processor.load_scitail('train'])
+    dev_examples = processor.load_scitail('dev'])
+    test_examples = processor.load_scitail('test'])
 
-    label_list = ["entailment", "neutral"]#, "contradiction"]
+
+    label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
     print('num_labels:', num_labels, 'training size:', len(train_examples), 'dev size:', len(dev_examples), ' test size:', len(test_examples))
 
@@ -632,38 +615,6 @@ def main():
             '''
             model.eval()
 
-            # eval_loss = 0
-            # nb_eval_steps = 0
-            # preds = []
-            # gold_label_ids = []
-            # # print('Evaluating...')
-            # for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
-            #     input_ids = input_ids.to(device)
-            #     input_mask = input_mask.to(device)
-            #     segment_ids = segment_ids.to(device)
-            #     label_ids = label_ids.to(device)
-            #     gold_label_ids+=list(label_ids.detach().cpu().numpy())
-            #
-            #     with torch.no_grad():
-            #         logits = model(input_ids, input_mask)
-            #     if len(preds) == 0:
-            #         preds.append(logits.detach().cpu().numpy())
-            #     else:
-            #         preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
-            #
-            # preds = preds[0]
-            #
-            # pred_probs = softmax(preds,axis=1)
-            # pred_label_ids = list(np.argmax(pred_probs, axis=1))
-            #
-            # gold_label_ids = gold_label_ids
-            # assert len(pred_label_ids) == len(gold_label_ids)
-            # hit_co = 0
-            # for k in range(len(pred_label_ids)):
-            #     if pred_label_ids[k] == gold_label_ids[k]:
-            #         hit_co +=1
-            # test_acc = hit_co/len(gold_label_ids)
-
             dev_acc = evaluation(dev_dataloader, device, model)
 
             if dev_acc > max_dev_acc:
@@ -717,7 +668,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=6 python -u train_MNLI_2_MNLI.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
+CUDA_VISIBLE_DEVICES=4 python -u train_SciTail_2_SciTail_RoBERTa.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
 
 
 '''
