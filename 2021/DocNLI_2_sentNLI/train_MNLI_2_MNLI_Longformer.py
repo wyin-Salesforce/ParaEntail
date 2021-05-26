@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # from pytorch_transformers.modeling_bert import BertPreTrainedModel, BertModel
 # import torch.nn as nn
 
-bert_hidden_dim = 4096
+bert_hidden_dim = 768
 pretrain_model_dir = 'allenai/longformer-base-4096' #'roberta-large' , 'roberta-large-mnli', 'bert-large-uncased'
 
 def store_transformers_models(model, tokenizer, output_dir, flag_str):
@@ -77,9 +77,7 @@ class RobertaForSequenceClassification(nn.Module):
 
     def forward(self, input_ids, input_mask):
         outputs_single = self.roberta_single(input_ids, input_mask, None)
-        print('outputs_single:', outputs_single)
         hidden_states_single = outputs_single[1]#torch.tanh(self.hidden_layer_2(torch.tanh(self.hidden_layer_1(outputs_single[1])))) #(batch, hidden)
-        print('hidden_states_single.size():', hidden_states_single.size())
         score_single = self.single_hidden2tag(hidden_states_single) #(batch, tag_set)
         return score_single
 
