@@ -40,7 +40,7 @@ from scipy.special import softmax
 
 from transformers.models.bert.tokenization_bert import BertTokenizer
 from transformers.optimization import AdamW
-from transformers.models.bert.modeling_bert import BertModel#RobertaForSequenceClassification
+from transformers.models.bert.modeling_bert import BertModel
 
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
@@ -73,7 +73,7 @@ class BertForSequenceClassification(nn.Module):
         self.tagset_size = tagset_size
 
         self.BertModel_single= BertModel.from_pretrained(pretrain_model_dir)
-        self.single_hidden2tag = RobertaClassificationHead(bert_hidden_dim, tagset_size)
+        self.single_hidden2tag = BertClassificationHead(bert_hidden_dim, tagset_size)
 
     def forward(self, input_ids, input_mask):
         outputs_single = self.BertModel_single(input_ids, input_mask, None)
@@ -84,11 +84,11 @@ class BertForSequenceClassification(nn.Module):
 
 
 
-class RobertaClassificationHead(nn.Module):
+class BertClassificationHead(nn.Module):
     """wenpeng overwrite it so to accept matrix as input"""
 
     def __init__(self, bert_hidden_dim, num_labels):
-        super(RobertaClassificationHead, self).__init__()
+        super(BertClassificationHead, self).__init__()
         self.dense = nn.Linear(bert_hidden_dim, bert_hidden_dim)
         self.dropout = nn.Dropout(0.1)
         self.out_proj = nn.Linear(bert_hidden_dim, num_labels)
@@ -487,7 +487,7 @@ def main():
         if ex.label == 'neutral' or ex.label == 'contradiction':
             ex.label = 'neutral'
         train_examples.append(ex)
-    train_examples = train_examples[:100]
+    # train_examples = train_examples[:100]
     dev_examples = []
     for ex in threeway_dev_examples:
         if ex.label == 'neutral' or ex.label == 'contradiction':
