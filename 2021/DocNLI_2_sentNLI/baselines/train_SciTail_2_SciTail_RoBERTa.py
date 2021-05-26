@@ -475,9 +475,9 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    train_examples = processor.load_scitail('train'])
-    dev_examples = processor.load_scitail('dev'])
-    test_examples = processor.load_scitail('test'])
+    train_examples = processor.load_scitail('train')
+    dev_examples = processor.load_scitail('dev')
+    test_examples = processor.load_scitail('test')
 
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
