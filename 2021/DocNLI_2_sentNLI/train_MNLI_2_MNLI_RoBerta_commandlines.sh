@@ -3,7 +3,7 @@ export EPOCHSIZE=10
 export LEARNINGRATE=1e-6
 
 
-CUDA_VISIBLE_DEVICES=0 python -u train_MNLI_2_MNLI.py \
+CUDA_VISIBLE_DEVICES=0 python -u train_MNLI_2_MNLI_RoBerta.py \
     --task_name rte \
     --do_train \
     --do_lower_case \
@@ -14,7 +14,7 @@ CUDA_VISIBLE_DEVICES=0 python -u train_MNLI_2_MNLI.py \
     --max_seq_length 128 \
     --seed 42 > log.binary.mnli.2.mnli.seed.42.txt 2>&1 &
 
-CUDA_VISIBLE_DEVICES=1 python -u train_MNLI_2_MNLI.py \
+CUDA_VISIBLE_DEVICES=1 python -u train_MNLI_2_MNLI_RoBerta.py \
     --task_name rte \
     --do_train \
     --do_lower_case \
@@ -25,7 +25,7 @@ CUDA_VISIBLE_DEVICES=1 python -u train_MNLI_2_MNLI.py \
     --max_seq_length 128 \
     --seed 16 > log.binary.mnli.2.mnli.seed.16.txt 2>&1 &
 
-CUDA_VISIBLE_DEVICES=2 python -u train_MNLI_2_MNLI.py \
+CUDA_VISIBLE_DEVICES=2 python -u train_MNLI_2_MNLI_RoBerta.py \
     --task_name rte \
     --do_train \
     --do_lower_case \
