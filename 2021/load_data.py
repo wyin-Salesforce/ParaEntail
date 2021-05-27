@@ -533,8 +533,6 @@ def get_ANLI_examples(prefix, hypo_only=False):
 
 
 def load_harsh_data(prefix, need_data_list, hypo_only=False):
-    print('need_data_list:', need_data_list)
-    print('hypo_only:', hypo_only)
 
     # '''DUC'''
     # duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)

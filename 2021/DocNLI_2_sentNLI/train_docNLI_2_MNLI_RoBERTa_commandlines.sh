@@ -1,7 +1,7 @@
 export BATCHSIZE=4 #32 is also ok
 export EPOCHSIZE=5
 export LEARNINGRATE=1e-6
-export MAXLEN=1024
+export MAXLEN=512
 
 
 CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_MNLI_RoBERTa.py \
