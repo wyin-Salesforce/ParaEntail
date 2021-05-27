@@ -549,9 +549,9 @@ def load_harsh_data(prefix, hypo_only=False):
     pos_size=0
 
     summary_path_list = [
-                '/export/home/Dataset/para_entail_datasets/DUC/',
+                # '/export/home/Dataset/para_entail_datasets/DUC/',
                 '/export/home/Dataset/para_entail_datasets/Curation/',
-                '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
+                # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
