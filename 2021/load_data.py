@@ -532,7 +532,7 @@ def get_ANLI_examples(prefix, hypo_only=False):
 
 
 
-def load_harsh_data(prefix, need_data_list=None, hypo_only=False):
+def load_harsh_data(prefix, need_data_list, hypo_only=False):
     print('need_data_list:', need_data_list)
     print('hypo_only:', hypo_only)
 
@@ -577,7 +577,7 @@ def load_harsh_data(prefix, need_data_list=None, hypo_only=False):
     pos_size+=anli_pos_size
 
     data_label_list = ['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
-    assert len(data_label_list) = len(train_examples_list)
+    assert len(data_label_list) == len(train_examples_list)
     train_examples = []
     for data_label in need_data_list:
         train_examples+=train_examples_list[data_label_list.index(data_label)]
