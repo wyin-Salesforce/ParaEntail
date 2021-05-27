@@ -40,7 +40,11 @@ from transformers.models.roberta.tokenization_roberta import RobertaTokenizer
 from transformers.optimization import AdamW
 from transformers.models.roberta.modeling_roberta import RobertaModel#RobertaForSequenceClassification
 
-from ../load_data import load_harsh_data
+
+p = os.path.abspath('../..')
+if p not in sys.path:
+    sys.path.append(p)
+from load_data import load_harsh_data
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
