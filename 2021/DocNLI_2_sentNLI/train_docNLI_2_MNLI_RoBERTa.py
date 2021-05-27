@@ -507,6 +507,7 @@ def main():
     dev_examples = dev_examples[13000:]
 
     #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
+    print('args.data_label:', args.data_label)
     train_examples = load_harsh_data('train', [args.data_label],  hypo_only=False)
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
