@@ -41,7 +41,7 @@ from transformers.optimization import AdamW
 from transformers.models.roberta.modeling_roberta import RobertaModel#RobertaForSequenceClassification
 
 
-p = os.path.abspath('../..')
+p = os.path.abspath('../')
 if p not in sys.path:
     sys.path.append(p)
 from load_data import load_harsh_data
