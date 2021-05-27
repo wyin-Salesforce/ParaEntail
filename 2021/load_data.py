@@ -532,7 +532,7 @@ def get_ANLI_examples(prefix, hypo_only=False):
 
 
 
-def load_harsh_data(prefix, hypo_only=False):
+def load_harsh_data(prefix, need_data_list, hypo_only=False):
 
     # '''DUC'''
     # duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)
@@ -545,17 +545,17 @@ def load_harsh_data(prefix, hypo_only=False):
     # '''ANLI'''
     # anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
     # prefix = 'train'
-    train_examples = []
+    train_examples_list = []
     pos_size=0
 
     summary_path_list = [
-                # '/export/home/Dataset/para_entail_datasets/DUC/',
+                '/export/home/Dataset/para_entail_datasets/DUC/',
                 '/export/home/Dataset/para_entail_datasets/Curation/',
-                # '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
+                '/export/home/Dataset/para_entail_datasets/CNN_DailyMail/'
                 ]
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
-        train_examples+=summary_examples_i
+        train_examples_list.append(summary_examples_i)
         pos_size+=summary_pos_size_i
 
     # '''MCTest'''
@@ -563,17 +563,22 @@ def load_harsh_data(prefix, hypo_only=False):
     # train_examples+=mctest_examples
     # pos_size+=mctest_pos_size
 
-    # '''SQUAD'''
-    # squada_examples, squada_pos_size = get_SQUAD_examples(prefix, hypo_only=hypo_only)
-    # train_examples+=squada_examples
-    # pos_size+=squada_pos_size
-    #
-    #
-    # '''ANLI'''
-    # anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
-    # train_examples+=anli_examples
-    # pos_size+=anli_pos_size
+    '''SQUAD'''
+    squada_examples, squada_pos_size = get_SQUAD_examples(prefix, hypo_only=hypo_only)
+    train_examples_list.append(squada_examples)
+    pos_size+=squada_pos_size
 
+
+    '''ANLI'''
+    anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
+    train_examples_list.append(anli_examples)
+    pos_size+=anli_pos_size
+
+    data_label_list = ['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
+    assert len(data_label_list) = len(train_examples_list)
+    train_examples = []
+    for data_label in need_data_list:
+        train_examples+=train_examples_list[data_label_list.index(data_label)]
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 

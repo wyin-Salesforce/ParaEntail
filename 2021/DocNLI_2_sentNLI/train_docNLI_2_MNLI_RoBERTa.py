@@ -371,6 +371,12 @@ def main():
                         default="",
                         type=str,
                         help="Where do you want to store the pre-trained models downloaded from s3")
+
+    parser.add_argument("--data_label",
+                        default="",
+                        type=str,
+                        help="Where do you want to store the pre-trained models downloaded from s3")
+
     parser.add_argument("--max_seq_length",
                         default=128,
                         type=int,
@@ -500,7 +506,8 @@ def main():
     test_examples = dev_examples[:13000]
     dev_examples = dev_examples[13000:]
 
-    train_examples = load_harsh_data('train', hypo_only=False)
+    #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
+    train_examples = load_harsh_data('train', [args.data_label],  hypo_only=False)
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
@@ -690,7 +697,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_MNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 128 --seed 42
+CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_MNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 1024 --seed 42
 
 
 '''
