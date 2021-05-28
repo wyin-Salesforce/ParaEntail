@@ -615,8 +615,9 @@ def recover_FEVER_dev_test_labels():
         id = line.get('cid')
         gold_label = id2label.get(id)
         if gold_label is None:
-            print(line)
-            exit(0)
+            # print(line)
+            # exit(0)
+            continue
         line['label'] = gold_label
         writefile.write(json.dumps(line)+'\n')
     readfile.close()
@@ -759,7 +760,7 @@ def recover_FEVER_dev_test_labels():
 #     readfile.close()
 #     writedev.close()
 #     writetest.close()
-# 
+#
 #
 
 # def generate_adversarial_for_summary_data(folder):
