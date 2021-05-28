@@ -489,9 +489,11 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    dev_examples, _ = get_FEVER_examples('dev', hypo_only=False)
+    dev_and_test_examples, _ = get_FEVER_examples('dev', hypo_only=False)
     # print('dev_examples size:', len(dev_examples))
-    test_examples, _ = get_FEVER_examples('test', hypo_only=False)
+    random.shuffle(dev_and_test_examples)
+    dev_examples = dev_and_test_examples[:-10000]
+    test_examples = dev_and_test_examples[-10000:]
     # print('test_examples size:', len(test_examples))
 
     #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
