@@ -489,13 +489,13 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    dev_examples = get_FEVER_examples('dev', hypo_only=False)
-    print('dev_examples size:', len(dev_examples))
-    test_examples = get_FEVER_examples('test', hypo_only=False)
-    print('test_examples size:', len(test_examples))
+    dev_examples, _ = get_FEVER_examples('dev', hypo_only=False)
+    # print('dev_examples size:', len(dev_examples))
+    test_examples, _ = get_FEVER_examples('test', hypo_only=False)
+    # print('test_examples size:', len(test_examples))
 
     #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
-    print('args.data_label:', args.data_label)
+    # print('args.data_label:', args.data_label)
     train_examples = load_harsh_data('train', args.data_label.split(),  hypo_only=False)
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
@@ -686,7 +686,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_FEVER_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 512 --seed 42
+CUDA_VISIBLE_DEVICES=6 python -u train_docNLI_2_FEVER_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 512 --seed 42
 
 
 '''
