@@ -456,7 +456,7 @@ def get_FEVER_examples(prefix, hypo_only=False):
     examples = []
     path = '/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/'
     filename = path+prefix+'_fitems.jsonl'
-    if prefix == 'test':
+    if prefix == 'test' or prefix == 'dev':
         filename = path+'dev_fitems.label.recovered.jsonl'
     print('loading FEVER...', filename)
     guid_id = 0
