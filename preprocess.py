@@ -599,6 +599,10 @@ def load_MCTest(filenames, prefix):
         # print(doc['devset']['pair'][0])
 
 def recover_FEVER_dev_test_labels():
+    '''
+    the nli version of fever does not have label for dev and test; we need to search the gold label
+    from the paper version of fever we used before
+    '''
     files = ['paper_dev.jsonl', 'paper_test.jsonl']
     id2label = {}
     for fil in files:
@@ -608,8 +612,8 @@ def recover_FEVER_dev_test_labels():
             label = line.get('label')
             id2label[str(id)] =  label
         readfile.close()
-    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.jsonl', 'r', 'utf-8')
-    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/dev_fitems.label.recovered.jsonl', 'w', 'utf-8')
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/test_fitems.jsonl', 'r', 'utf-8')
+    writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/test_fitems.label.recovered.jsonl', 'w', 'utf-8')
 
     for line in json_lines.reader(readfile):
         id = line.get('cid')
@@ -844,13 +848,13 @@ if __name__ == "__main__":
     # load_MCTest(['mc500.dev.statements.pairs', 'mc160.dev.statements.pairs'], 'dev')
     # load_MCTest(['mc500.test.statements.pairs', 'mc160.test.statements.pairs'], 'test')
 
-    # recover_FEVER_dev_test_labels()
+    recover_FEVER_dev_test_labels()
 
     # preprocess_curation()
     # load_Curation()
 
 
-    split_DUC()
+    # split_DUC()
     '''
     CUDA_VISIBLE_DEVICES=0
     '''
