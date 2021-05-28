@@ -76,8 +76,8 @@ def get_summary_examples(path, prefix, hypo_only=False):
                 pos_size+=pos_size_block
                 neg_size+=neg_size_block
                 '''this is especially for CNN'''
-                if len(examples) >=160000:
-                    break
+                # if len(examples) >=160000:
+                #     break
 
             '''start a new block'''
             block_line_list=[line.strip()]
@@ -546,7 +546,8 @@ def load_harsh_data(prefix, need_data_list, hypo_only=False):
     # anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
     # prefix = 'train'
     train_examples_list = []
-    pos_size=0
+    pos_size_list = []
+
 
     summary_path_list = [
                 '/export/home/Dataset/para_entail_datasets/DUC/',
@@ -556,7 +557,7 @@ def load_harsh_data(prefix, need_data_list, hypo_only=False):
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
         train_examples_list.append(summary_examples_i)
-        pos_size+=summary_pos_size_i
+        pos_size_list.append(summary_pos_size_i)
 
     # '''MCTest'''
     # mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
@@ -566,19 +567,21 @@ def load_harsh_data(prefix, need_data_list, hypo_only=False):
     '''SQUAD'''
     squada_examples, squada_pos_size = get_SQUAD_examples(prefix, hypo_only=hypo_only)
     train_examples_list.append(squada_examples)
-    pos_size+=squada_pos_size
+    pos_size_list.append(squada_pos_size)
 
 
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
     train_examples_list.append(anli_examples)
-    pos_size+=anli_pos_size
+    pos_size_list.append(anli_pos_size)
 
     data_label_list = ['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
     assert len(data_label_list) == len(train_examples_list)
     train_examples = []
+    pos_size = 0
     for data_label in need_data_list:
         train_examples+=train_examples_list[data_label_list.index(data_label)]
+        pos_size+=pos_size_list[data_label_list.index(data_label)]
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 

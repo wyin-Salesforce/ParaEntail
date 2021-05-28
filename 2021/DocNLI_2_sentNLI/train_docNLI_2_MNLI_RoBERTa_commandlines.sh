@@ -64,19 +64,32 @@ export MAXLEN=512
 #     --data_label 'ANLI' \
 #     --seed 42 > log.ANLI.docNLI.2.mnli.seed.42.txt 2>&1 &
 
-CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_MNLI_RoBERTa.py \
-    --task_name rte \
-    --do_train \
-    --do_lower_case \
-    --num_train_epochs $EPOCHSIZE \
-    --train_batch_size $BATCHSIZE \
-    --eval_batch_size 64 \
-    --learning_rate $LEARNINGRATE \
-    --max_seq_length $MAXLEN \
-    --data_label 'ANLI CNNDailyMail' \
-    --seed 42 > log.ANLI.and.CNNDailyMail.docNLI.2.mnli.seed.42.txt 2>&1 &
+#data combination
+# CUDA_VISIBLE_DEVICES=0 python -u train_docNLI_2_MNLI_RoBERTa.py \
+#     --task_name rte \
+#     --do_train \
+#     --do_lower_case \
+#     --num_train_epochs $EPOCHSIZE \
+#     --train_batch_size $BATCHSIZE \
+#     --eval_batch_size 64 \
+#     --learning_rate $LEARNINGRATE \
+#     --max_seq_length $MAXLEN \
+#     --data_label 'ANLI CNNDailyMail' \
+#     --seed 42 > log.ANLI.and.CNNDailyMail.docNLI.2.mnli.seed.42.txt 2>&1 &
+#
+# CUDA_VISIBLE_DEVICES=3 python -u train_docNLI_2_MNLI_RoBERTa.py \
+#     --task_name rte \
+#     --do_train \
+#     --do_lower_case \
+#     --num_train_epochs $EPOCHSIZE \
+#     --train_batch_size $BATCHSIZE \
+#     --eval_batch_size 64 \
+#     --learning_rate $LEARNINGRATE \
+#     --max_seq_length $MAXLEN \
+#     --data_label 'ANLI CNNDailyMail DUC' \
+#     --seed 42 > log.ANLI.and.CNNDailyMail.and.DUC.docNLI.2.mnli.seed.42.txt 2>&1 &
 
-CUDA_VISIBLE_DEVICES=3 python -u train_docNLI_2_MNLI_RoBERTa.py \
+CUDA_VISIBLE_DEVICES=5 python -u train_docNLI_2_MNLI_RoBERTa.py \
     --task_name rte \
     --do_train \
     --do_lower_case \
@@ -85,5 +98,5 @@ CUDA_VISIBLE_DEVICES=3 python -u train_docNLI_2_MNLI_RoBERTa.py \
     --eval_batch_size 64 \
     --learning_rate $LEARNINGRATE \
     --max_seq_length $MAXLEN \
-    --data_label 'ANLI CNNDailyMail DUC' \
-    --seed 42 > log.ANLI.and.CNNDailyMail.and.DUC.docNLI.2.mnli.seed.42.txt 2>&1 &
+    --data_label 'CNNDailyMail' \
+    --seed 42 > log.CNNDailyMail.full.docNLI.2.mnli.seed.42.txt 2>&1 &
