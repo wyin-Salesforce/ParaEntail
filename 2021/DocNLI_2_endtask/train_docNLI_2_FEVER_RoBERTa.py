@@ -490,7 +490,9 @@ def main():
     output_mode = output_modes[task_name]
 
     dev_examples = get_FEVER_examples('dev', hypo_only=False)
+    print('dev_examples size:', len(dev_examples))
     test_examples = get_FEVER_examples('test', hypo_only=False)
+    print('test_examples size:', len(test_examples))
 
     #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
     print('args.data_label:', args.data_label)

@@ -470,10 +470,6 @@ def get_FEVER_examples(prefix, hypo_only=False):
             if label == 'entailment':
                 pos_size+=1
             if len(premise) == 0 or len(hypothesis)==0:
-                # print('FEVER premise:', premise)
-                # print('hypothesis:', hypothesis)
-                # print(line)
-                # exit(0)
                 continue
 
             if hypo_only:
