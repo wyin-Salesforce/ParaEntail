@@ -590,7 +590,7 @@ def main():
             model_to_save = (
                 model.module if hasattr(model, "module") else model
             )  # Take care of distributed/parallel training
-            store_transformers_models(model_to_save, tokenizer, '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021',  '_'.join(args.data_label.split())+'_epoch_'+str(epoch_i)+'.pt')
+            store_transformers_models(model_to_save, tokenizer, '/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021',  '160k_'+'_'.join(args.data_label.split())+'_epoch_'+str(epoch_i)+'.pt')
 
 
 
