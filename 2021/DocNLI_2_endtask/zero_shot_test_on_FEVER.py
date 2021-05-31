@@ -513,7 +513,7 @@ def main():
     model = RobertaForSequenceClassification(num_labels)
     tokenizer = RobertaTokenizer.from_pretrained(pretrain_model_dir, do_lower_case=args.do_lower_case)
     model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_0.pt'))
-    model.to(device)
+    # model.to(device)
 
     # param_optimizer = list(model.named_parameters())
     # no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -585,10 +585,10 @@ def evaluation(dev_dataloader, device, model):
     gold_label_ids = []
     # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
-        input_ids = input_ids.to(device)
-        input_mask = input_mask.to(device)
-        segment_ids = segment_ids.to(device)
-        label_ids = label_ids.to(device)
+        # input_ids = input_ids.to(device)
+        # input_mask = input_mask.to(device)
+        # segment_ids = segment_ids.to(device)
+        # label_ids = label_ids.to(device)
         gold_label_ids+=list(label_ids.detach().cpu().numpy())
 
         with torch.no_grad():
@@ -618,7 +618,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=6 python -u train_docNLI_2_FEVER_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 64 --learning_rate 1e-6 --max_seq_length 512 --seed 42
+CUDA_VISIBLE_DEVICES=7 python -u zero_shot_test_on_FEVER.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 4 --learning_rate 1e-6 --max_seq_length 512 --seed 42
 
 
 '''
