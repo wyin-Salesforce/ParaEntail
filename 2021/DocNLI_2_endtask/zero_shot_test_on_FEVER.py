@@ -515,15 +515,6 @@ def main():
     model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_0.pt', map_location=device))
     # model.to(device)
 
-    # param_optimizer = list(model.named_parameters())
-    # no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-    # optimizer_grouped_parameters = [
-    #     {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.01},
-    #     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-    #     ]
-    #
-    # optimizer = AdamW(optimizer_grouped_parameters,
-    #                          lr=args.learning_rate)
 
 
     '''load dev set'''
@@ -579,12 +570,14 @@ def main():
     print('final_test_performance:', final_test_performance)
 
 def evaluation(dev_dataloader, device, model):
-    eval_loss = 0
+
     nb_eval_steps = 0
     preds = []
     gold_label_ids = []
     # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
+        nb_eval_steps+=1
+        print('nb_eval_steps:', nb_eval_steps)
         input_ids = input_ids.to(device)
         input_mask = input_mask.to(device)
         segment_ids = segment_ids.to(device)
