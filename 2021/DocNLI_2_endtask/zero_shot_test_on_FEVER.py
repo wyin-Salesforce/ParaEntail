@@ -513,7 +513,7 @@ def main():
     model = RobertaForSequenceClassification(num_labels)
     tokenizer = RobertaTokenizer.from_pretrained(pretrain_model_dir, do_lower_case=args.do_lower_case)
     model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_0.pt', map_location=device))
-    # model.to(device)
+    model.to(device)
 
 
 
@@ -570,26 +570,24 @@ def main():
     print('final_test_performance:', final_test_performance)
 
 def evaluation(dev_dataloader, device, model):
-
+    eval_loss = 0
     nb_eval_steps = 0
     preds = []
     gold_label_ids = []
     # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
-        nb_eval_steps+=1
-        print('eval_steps:', nb_eval_steps, '/', len(dev_dataloader))
-        # input_ids = input_ids.to(device)
-        # input_mask = input_mask.to(device)
-        # segment_ids = segment_ids.to(device)
-        # label_ids = label_ids.to(device)
-        gold_label_ids+=list(label_ids.numpy())
+        input_ids = input_ids.to(device)
+        input_mask = input_mask.to(device)
+        segment_ids = segment_ids.to(device)
+        label_ids = label_ids.to(device)
+        gold_label_ids+=list(label_ids.detach().cpu().numpy())
 
         with torch.no_grad():
             logits = model(input_ids, input_mask)
         if len(preds) == 0:
-            preds.append(logits.numpy())
+            preds.append(logits.detach().cpu().numpy())
         else:
-            preds[0] = np.append(preds[0], logits.numpy(), axis=0)
+            preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
 
     preds = preds[0]
 
