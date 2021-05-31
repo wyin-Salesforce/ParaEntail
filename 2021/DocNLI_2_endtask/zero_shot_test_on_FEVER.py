@@ -577,7 +577,7 @@ def evaluation(dev_dataloader, device, model):
     # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
         nb_eval_steps+=1
-        print('eval_steps:', nb_eval_steps, len(test_features)//args.eval_batch_size)
+        print('eval_steps:', nb_eval_steps, '/', len(dev_dataloader))
         # input_ids = input_ids.to(device)
         # input_mask = input_mask.to(device)
         # segment_ids = segment_ids.to(device)
