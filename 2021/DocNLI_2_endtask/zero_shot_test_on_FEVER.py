@@ -577,19 +577,19 @@ def evaluation(dev_dataloader, device, model):
     # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
         nb_eval_steps+=1
-        print('nb_eval_steps:', nb_eval_steps)
-        input_ids = input_ids.to(device)
-        input_mask = input_mask.to(device)
-        segment_ids = segment_ids.to(device)
-        label_ids = label_ids.to(device)
-        gold_label_ids+=list(label_ids.detach().cpu().numpy())
+        print('eval_steps:', nb_eval_steps, len(test_features)//args.eval_batch_size)
+        # input_ids = input_ids.to(device)
+        # input_mask = input_mask.to(device)
+        # segment_ids = segment_ids.to(device)
+        # label_ids = label_ids.to(device)
+        gold_label_ids+=list(label_ids.numpy())
 
         with torch.no_grad():
             logits = model(input_ids, input_mask)
         if len(preds) == 0:
-            preds.append(logits.detach().cpu().numpy())
+            preds.append(logits.numpy())
         else:
-            preds[0] = np.append(preds[0], logits.detach().cpu().numpy(), axis=0)
+            preds[0] = np.append(preds[0], logits.numpy(), axis=0)
 
     preds = preds[0]
 
