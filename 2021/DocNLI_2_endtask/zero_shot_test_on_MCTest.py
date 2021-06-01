@@ -513,8 +513,8 @@ def main():
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_1.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_2.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_3.pt', map_location=device))
-    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_1.pt', map_location=device))
+    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_0.pt', map_location=device))
+    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_1.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_2.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_1.pt', map_location=device))
 
