@@ -1,6 +1,6 @@
 
 import codecs
-import import xmltodict
+import xmltodict
 def load_MCTest(filenames, prefix):
     path = '/export/home/Dataset/para_entail_datasets/MCTest/'
     writefile = codecs.open(path+prefix+'_in_entail.txt', 'w', 'utf-8')
