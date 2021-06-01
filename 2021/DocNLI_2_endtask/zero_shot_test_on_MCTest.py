@@ -597,12 +597,13 @@ def evaluation(dev_dataloader, device, model):
     '''accuracy for multi-choice QA'''
     prob_of_entail = np.array(prob_of_entail).reshape(len(prob_of_entail)//4, 4)
     gold_label_ids = np.array(gold_label_ids).reshape(len(gold_label_ids)//4, 4)
-
+    print('gold_label_ids:', gold_label_ids)
     question_size = gold_label_ids.shape[0]
     hit=0
     for i in range(question_size):
         score_sublist = list(prob_of_entail[i])
         gold_labellist = list(gold_label_ids[i])
+        assert sum(gold_labellist) == 1
         if sum(gold_labellist) == 3 and max(score_sublist) == score_sublist[gold_labellist.index(0)]:
             hit+=1
     acc = hit/question_size
