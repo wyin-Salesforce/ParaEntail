@@ -6,5 +6,6 @@ readfile = codecs.open('/export/home/Dataset/para_entail_datasets/test.json', 'r
 data = json.load(readfile)
 print('len of data:', len(data))
 for dic in data:
-    print(dic)
+    print(dic.get('premise'))
+    print(dic.get('label'))
     exit(0)
