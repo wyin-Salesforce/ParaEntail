@@ -587,7 +587,7 @@ def evaluation(dev_dataloader, device, model):
 
     gold_label_ids = gold_label_ids
     assert len(pred_label_ids) == len(gold_label_ids)
-    f1 = f1_score(gold_label_ids, pred_label_ids, pos_label= 1, average='binary')
+    f1 = f1_score(gold_label_ids, pred_label_ids, pos_label= 0, average='binary')
     return f1
 
 
