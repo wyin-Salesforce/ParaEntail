@@ -17,7 +17,7 @@ for id, ex in enumerate(examples):
         dictt= {'premise':ex.text_a, 'hypothesis':ex.text_b, 'label':ex.label}
         json.dump(dictt, writefile)
         if id < len(examples)-1:
-            writefile.write('\n')
+            writefile.write(',\n')
         else:
             writefile.write(']')
 
