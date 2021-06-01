@@ -492,6 +492,7 @@ def main():
 
     # train_examples = load_DocNLI('train', hypo_only=True)
     test_examples = load_DocNLI('dev', hypo_only=False)
+    test_examples = test_examples[:1000]
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
@@ -587,6 +588,8 @@ def evaluation(dev_dataloader, device, model):
 
     gold_label_ids = gold_label_ids
     assert len(pred_label_ids) == len(gold_label_ids)
+    print('gold_label_ids:', gold_label_ids)
+    print('pred_label_ids:', pred_label_ids)
     f1 = f1_score(gold_label_ids, pred_label_ids, pos_label= 0, average='binary')
     return f1
 
