@@ -649,6 +649,22 @@ def load_test_data(hypo_only=False):
     print('test size:', len(test_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(test_examples))
     return test_examples
 
+
+def load_DocNLI(prefix, hypo_only=False):
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/'+prefix+'.json', 'r', 'utf-8')
+
+    data = json.load(readfile)
+    examples = []
+    for dic in data:
+        premise = dic.get('premise')
+        hypothesis = dic.get('hypothesis')
+        label  = dic.get('label')
+        if hypo_only:
+            examples.append(InputExample(guid='ex', text_a=hypothesis, text_b=None, label=label))
+        else:
+            examples.append(InputExample(guid='ex', text_a=premise, text_b=hypothesis, label=label))
+    return examples
+
 if __name__ == "__main__":
     # load_train_data()
     load_test_data()
