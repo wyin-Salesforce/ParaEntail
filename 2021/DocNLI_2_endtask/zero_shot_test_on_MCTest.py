@@ -527,7 +527,7 @@ def main():
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_0.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_1.pt', map_location=device))
 
-    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_epoch_4.pt', map_location=device))
+    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_epoch_3.pt', map_location=device))
     model.to(device)
 
 
@@ -603,6 +603,7 @@ def evaluation(dev_dataloader, device, model):
     for i in range(question_size):
         score_sublist = list(prob_of_entail[i])
         gold_labellist = list(gold_label_ids[i])
+        print(score_sublist, gold_labellist)
         assert sum(gold_labellist) == 1
         if sum(gold_labellist) == 1 and max(score_sublist) == score_sublist[gold_labellist.index(1)]:
             hit+=1
