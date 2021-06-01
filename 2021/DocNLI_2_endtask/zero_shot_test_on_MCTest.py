@@ -603,10 +603,10 @@ def evaluation(dev_dataloader, device, model):
     for i in range(question_size):
         score_sublist = list(prob_of_entail[i])
         gold_labellist = list(gold_label_ids[i])
-        print(score_sublist, gold_labellist)
         assert sum(gold_labellist) == 1
         if sum(gold_labellist) == 1 and max(score_sublist) == score_sublist[gold_labellist.index(1)]:
             hit+=1
+        print(score_sublist, gold_labellist, hit)
     acc = hit/question_size
     '''NDCG4'''
     ndcg = ndcg_score(gold_label_ids, prob_of_entail)
