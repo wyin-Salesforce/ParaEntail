@@ -2,7 +2,7 @@ import codecs
 import json
 from sklearn.metrics import f1_score
 import random
-random.seed(16)
+random.seed(32)
 
 
 readfile = codecs.open('/export/home/Dataset/para_entail_datasets/test.json', 'r', 'utf-8')
