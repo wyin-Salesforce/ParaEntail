@@ -527,7 +527,7 @@ def main():
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_0.pt', map_location=device))
     # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_1.pt', map_location=device))
 
-    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_epoch_3.pt', map_location=device))
+    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_epoch_4.pt', map_location=device))
     model.to(device)
 
 
@@ -597,7 +597,7 @@ def evaluation(dev_dataloader, device, model):
     '''accuracy for multi-choice QA'''
     prob_of_entail = np.array(prob_of_entail).reshape(len(prob_of_entail)//4, 4)
     gold_label_ids = np.array(gold_label_ids).reshape(len(gold_label_ids)//4, 4)
-    print('gold_label_ids:', gold_label_ids)
+
     question_size = gold_label_ids.shape[0]
     hit=0
     for i in range(question_size):
@@ -606,7 +606,7 @@ def evaluation(dev_dataloader, device, model):
         assert sum(gold_labellist) == 1
         if max(score_sublist) == score_sublist[gold_labellist.index(1)]:
             hit+=1
-        print(score_sublist, gold_labellist, hit)
+        # print(score_sublist, gold_labellist, hit)
     acc = hit/question_size
     '''NDCG4'''
     ndcg = ndcg_score(gold_label_ids, prob_of_entail)
