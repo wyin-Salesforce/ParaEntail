@@ -589,7 +589,7 @@ def evaluation(dev_dataloader, device, model):
     gold_label_ids = gold_label_ids
     assert len(pred_label_ids) == len(gold_label_ids)
     f1 = f1_score(gold_label_ids, pred_label_ids, pos_label= 1, average='binary')
-    return test_acc
+    return f1
 
 
 if __name__ == "__main__":
@@ -597,7 +597,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=0 python -u test_on_docNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 128 --learning_rate 1e-6 --max_seq_length 512 --seed 42
+CUDA_VISIBLE_DEVICES=3 python -u test_on_docNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 128 --learning_rate 1e-6 --max_seq_length 512 --seed 42
 
 
 '''
