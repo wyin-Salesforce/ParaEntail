@@ -558,8 +558,8 @@ def main():
     start evaluate on dev set after this epoch
     '''
     model.eval()
-    final_test_performance = evaluation(test_dataloader, device, model)
-    print('final_test_performance:', final_test_performance)
+    final_test_acc, final_test_ndcg = evaluation(test_dataloader, device, model)
+    print('final_test_acc:', final_test_acc, final_test_ndcg)
 
 def evaluation(dev_dataloader, device, model):
     eval_loss = 0
@@ -608,7 +608,7 @@ def evaluation(dev_dataloader, device, model):
     acc = hit/question_size
     '''NDCG4'''
     ndcg = ndcg_score(gold_label_ids, prob_of_entail)
-
+    return acc, ndcg
 
 
 
