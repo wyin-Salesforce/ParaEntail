@@ -604,7 +604,7 @@ def evaluation(dev_dataloader, device, model):
         score_sublist = list(prob_of_entail[i])
         gold_labellist = list(gold_label_ids[i])
         assert sum(gold_labellist) == 1
-        if sum(gold_labellist) == 3 and max(score_sublist) == score_sublist[gold_labellist.index(0)]:
+        if sum(gold_labellist) == 1 and max(score_sublist) == score_sublist[gold_labellist.index(1)]:
             hit+=1
     acc = hit/question_size
     '''NDCG4'''
