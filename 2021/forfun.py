@@ -8,7 +8,7 @@ def examples_2_dic(examples):
     return dic
 train_examples = load_DocNLI('train', hypo_only=False)
 train_set = examples_2_dic(train_examples)
-dev_examples = load_DocNLI('dev', hypo_only=False)
+dev_examples = load_DocNLI('test', hypo_only=False)
 dev_set = examples_2_dic(dev_examples)
 
 joint_set = train_set.intersection(dev_set)
