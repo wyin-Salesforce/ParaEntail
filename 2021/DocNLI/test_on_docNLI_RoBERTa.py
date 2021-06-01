@@ -491,7 +491,7 @@ def main():
     output_mode = output_modes[task_name]
 
     # train_examples = load_DocNLI('train', hypo_only=True)
-    test_examples = load_DocNLI('test', hypo_only=False)
+    test_examples = load_DocNLI('dev', hypo_only=False)
     # dev_examples = load_DocNLI('dev', hypo_only=True)
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
