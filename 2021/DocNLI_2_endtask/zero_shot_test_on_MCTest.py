@@ -498,7 +498,7 @@ def main():
     # print('args.data_label:', args.data_label)
     # train_examples = load_harsh_data('train', args.data_label.split(),  hypo_only=False)
 
-    label_list = ["not_entailment", "entailment"]#, "contradiction"]
+    label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
     print('num_labels:', num_labels,   ' test size:', len(test_examples))
 
@@ -588,10 +588,10 @@ def evaluation(dev_dataloader, device, model):
     preds = preds[0]
 
     pred_probs = softmax(preds,axis=1)
-    prob_of_entail = list(pred_probs[:,1]) # entail is the second label
+    prob_of_entail = list(pred_probs[:,0]) # entail is the first label
     # pred_label_ids = list(np.argmax(pred_probs, axis=1))
 
-    gold_label_ids = gold_label_ids
+    gold_label_ids = [1-x for x in gold_label_ids] # 1 means entail hereafter
     assert len(prob_of_entail) == len(gold_label_ids)
     assert  len(gold_label_ids) % 4 ==0
     '''accuracy for multi-choice QA'''
@@ -604,7 +604,7 @@ def evaluation(dev_dataloader, device, model):
         score_sublist = list(prob_of_entail[i])
         gold_labellist = list(gold_label_ids[i])
         assert sum(gold_labellist) == 1
-        if sum(gold_labellist) == 1 and max(score_sublist) == score_sublist[gold_labellist.index(1)]:
+        if max(score_sublist) == score_sublist[gold_labellist.index(1)]:
             hit+=1
         print(score_sublist, gold_labellist, hit)
     acc = hit/question_size
