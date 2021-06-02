@@ -5,6 +5,7 @@ import json
 data_label = 'ANLI CNNDailyMail DUC Curation SQUAD'
 # examples = load_harsh_data('train', data_label.split(),  hypo_only=False)
 examples = load_test_data()
+# examples = load_dev_data()
 writefile = codecs.open("/export/home/Dataset/para_entail_datasets/test.json", "w", 'utf-8')
 writefile.write('[')
 pos_size = 0

@@ -593,8 +593,8 @@ def load_dev_data(hypo_only=False):
     duc_examples, duc_pos_size = get_DUC_examples('dev', hypo_only=hypo_only)
     '''CNN'''
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('dev', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('dev', hypo_only=hypo_only)
+    '''SQUAD'''
+    squada_examples, squada_pos_size  = get_SQUAD_examples('dev', hypo_only=hypo_only)
     '''Curation'''
     curation_examples, curation_pos_size = get_Curation_examples('dev', hypo_only=hypo_only)
     '''ANLI'''
@@ -603,14 +603,14 @@ def load_dev_data(hypo_only=False):
     dev_examples = (
                         duc_examples+
                         cnn_examples+
-                        mctest_examples+
+                        squada_examples+
                         curation_examples+
                         anli_examples
                         )
     pos_size = (
                 duc_pos_size+
                 cnn_pos_size+
-                mctest_pos_size+
+                squada_pos_size+
                 curation_pos_size+
                 anli_pos_size
                 )
@@ -625,8 +625,8 @@ def load_test_data(hypo_only=False):
     duc_examples, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
+    '''SQUAD'''
+    squada_examples, squada_pos_size  = get_SQUAD_examples('test', hypo_only=hypo_only)
     '''Curation'''
     curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
     '''ANLI'''
@@ -635,14 +635,14 @@ def load_test_data(hypo_only=False):
     test_examples = (
                         duc_examples+
                         cnn_examples+
-                        mctest_examples+
+                        squada_examples+
                         curation_examples+
                         anli_examples
                         )
     pos_size = (
                 duc_pos_size+
                 cnn_pos_size+
-                mctest_pos_size+
+                squada_pos_size+
                 curation_pos_size+
                 anli_pos_size
                 )
