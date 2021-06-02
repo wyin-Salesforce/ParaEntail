@@ -490,7 +490,7 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    test_examples = load_DocNLI('test', hypo_only=False)
+    test_examples = load_DocNLI('dev', hypo_only=False)
     random.shuffle(test_examples)
     test_examples = test_examples[:10000]
 
