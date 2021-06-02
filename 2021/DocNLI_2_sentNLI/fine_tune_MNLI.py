@@ -651,7 +651,6 @@ def evaluation(dev_dataloader, device, model):
     nb_eval_steps = 0
     preds = []
     gold_label_ids = []
-    # print('Evaluating...')
     for input_ids, input_mask, segment_ids, label_ids in dev_dataloader:
         input_ids = input_ids.to(device)
         input_mask = input_mask.to(device)
