@@ -489,7 +489,7 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    train_examples = get_FEVER_examples('train', hypo_only=False)
+    train_examples, _ = get_FEVER_examples('train', hypo_only=False)
     dev_and_test_examples, _ = get_FEVER_examples('dev', hypo_only=False)
     random.shuffle(dev_and_test_examples)
     dev_examples = dev_and_test_examples[:-10000]
