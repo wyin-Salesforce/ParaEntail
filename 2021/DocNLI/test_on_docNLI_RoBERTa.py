@@ -492,6 +492,8 @@ def main():
 
     # train_examples = load_DocNLI('train', hypo_only=True)
     test_examples = load_test_data()
+    random.shuffle(test_examples)
+    test_examples = test_examples[:10000]
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
