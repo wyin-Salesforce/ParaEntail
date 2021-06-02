@@ -1,10 +1,11 @@
 import codecs
-from load_data import load_harsh_data
+from load_data import load_harsh_data, load_test_data, load_dev_data
 import json
 
 data_label = 'ANLI CNNDailyMail DUC Curation SQUAD'
-examples = load_harsh_data('train', data_label.split(),  hypo_only=False)
-writefile = codecs.open("/export/home/Dataset/para_entail_datasets/train.json", "w", 'utf-8')
+# examples = load_harsh_data('train', data_label.split(),  hypo_only=False)
+examples = load_test_data()
+writefile = codecs.open("/export/home/Dataset/para_entail_datasets/test.json", "w", 'utf-8')
 writefile.write('[')
 pos_size = 0
 neg_size = 0
