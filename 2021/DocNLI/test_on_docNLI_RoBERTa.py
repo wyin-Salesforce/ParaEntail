@@ -492,7 +492,6 @@ def main():
 
     # train_examples = load_DocNLI('train', hypo_only=True)
     test_examples = load_test_data()
-    test_examples = test_examples[:1000]
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
