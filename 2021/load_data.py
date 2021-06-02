@@ -54,7 +54,7 @@ def deal_with_block(block_line_list, filter_label_set, hypo_only=False):
 def get_summary_examples(path, prefix, hypo_only=False):
     #/export/home/Dataset/para_entail_datasets/DUC/train_in_entail.txt
     # path = '/export/home/Dataset/para_entail_datasets/DUC/'
-    filename = path+prefix+'_in_entail.harsh.txt'
+    filename = path+prefix+'_in_entail.harsh.v2.txt'
     print('loading ...', filename)
     readfile = codecs.open(filename, 'r', 'utf-8')
 

@@ -45,7 +45,7 @@ from transformers.models.roberta.modeling_roberta import RobertaModel#RobertaFor
 p = os.path.abspath('../')
 if p not in sys.path:
     sys.path.append(p)
-from load_data import load_DocNLI
+from load_data import load_DocNLI, load_test_data
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -491,7 +491,7 @@ def main():
     output_mode = output_modes[task_name]
 
     # train_examples = load_DocNLI('train', hypo_only=True)
-    test_examples = load_DocNLI('dev', hypo_only=False)
+    test_examples = load_test_data()
     test_examples = test_examples[:1000]
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
