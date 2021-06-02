@@ -490,9 +490,9 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    train_examples, _ = get_MCTest_examples('mc160.train', hypo_only=False)
-    dev_examples, _ = get_MCTest_examples('mc160.dev', hypo_only=False)
-    test_examples, _ = get_MCTest_examples('mc160.test', hypo_only=False)
+    train_examples, _ = get_MCTest_examples('mc500.train', hypo_only=False)
+    dev_examples, _ = get_MCTest_examples('mc500.dev', hypo_only=False)
+    test_examples, _ = get_MCTest_examples('mc500.test', hypo_only=False)
 
 
 
