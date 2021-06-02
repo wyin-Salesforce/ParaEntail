@@ -5,7 +5,7 @@ import random
 seeds = [42, 16, 32]
 for seed in seeds:
     random.seed(seed)
-    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/dev.json', 'r', 'utf-8')
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/test.json', 'r', 'utf-8')
 
     data = json.load(readfile)
     gold_labels = []
