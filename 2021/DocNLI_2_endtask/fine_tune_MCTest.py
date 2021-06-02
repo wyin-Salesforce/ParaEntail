@@ -40,6 +40,7 @@ from transformers.models.roberta.tokenization_roberta import RobertaTokenizer
 from transformers.optimization import AdamW
 from transformers.models.roberta.modeling_roberta import RobertaModel#RobertaForSequenceClassification
 
+from sklearn.metrics import ndcg_score
 
 p = os.path.abspath('../')
 if p not in sys.path:
