@@ -491,7 +491,7 @@ def main():
     output_mode = output_modes[task_name]
 
 
-    test_examples, _ = get_MCTest_examples('mc500.test', hypo_only=False)
+    test_examples, _ = get_MCTest_examples('mc160.test', hypo_only=False)
 
 
     #['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
@@ -623,7 +623,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=0 python -u zero_shot_test_on_FEVER.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 128 --learning_rate 1e-6 --max_seq_length 512 --seed 42
+CUDA_VISIBLE_DEVICES=0 python -u zero_shot_test_on_MCTest.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 128 --learning_rate 1e-6 --max_seq_length 512 --seed 42
 
 
 '''
