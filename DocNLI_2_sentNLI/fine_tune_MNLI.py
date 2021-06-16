@@ -500,7 +500,7 @@ def main():
 
     '''write into files'''
     def examples_2_file(exs, prefix):
-        writefile = codecs.open('/Users/wyin/workspace/DocNLI/Data/binary-MNLI/'+prefix+'.txt', 'w', 'utf-8')
+        writefile = codecs.open('/export/home/Dataset/glue_data/MNLI/binary-MNLI/'+prefix+'.txt', 'w', 'utf-8')
         for ex in exs:
             writefile.write(ex.label+'\t'+ex.text_a+'\t'+ex.text_b+'\n')
         print('print over')
