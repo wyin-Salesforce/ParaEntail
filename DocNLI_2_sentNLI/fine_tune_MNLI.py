@@ -497,6 +497,20 @@ def main():
     test_examples = dev_examples[:13000]
     dev_examples = dev_examples[13000:]
 
+
+    '''write into files'''
+    def examples_2_file(exs, prefix):
+        writefile = codecs.open('/Users/wyin/workspace/DocNLI/Data/binary-MNLI/'+prefix+'.txt', 'w', 'utf-8')
+        for ex in exs:
+            writefile.write(ex.label+'\t'+ex.text_a+'\t'+ex.text_b+'\n')
+        print('print over')
+        writefile.close()
+    examples_2_file(train_examples, 'train')
+    examples_2_file(dev_examples, 'dev')
+    examples_2_file(test_examples, 'test')
+    exit(0)
+
+
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
     print('num_labels:', num_labels, 'training size:', len(train_examples), 'dev size:', len(dev_examples), ' test size:', len(test_examples))
