@@ -494,8 +494,6 @@ def main():
     dev_examples, _ = get_MCTest_examples('mc500.dev', hypo_only=False)
     test_examples, _ = get_MCTest_examples('mc500.test', hypo_only=False)
 
-
-
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
     print('num_labels:', num_labels, 'training size:', len(train_examples), 'dev size:', len(dev_examples), ' test size:', len(test_examples))

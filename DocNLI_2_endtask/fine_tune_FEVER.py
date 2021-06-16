@@ -496,6 +496,18 @@ def main():
     test_examples = dev_and_test_examples[-10000:]
 
 
+    '''write into files'''
+    def examples_2_file(exs, prefix):
+        writefile = codecs.open('/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/my_split_binary/'+prefix+'.txt', 'w', 'utf-8')
+        for ex in exs:
+            writefile.write(ex.label+'\t'+ex.text_a+'\t'+ex.text_b+'\n')
+        print('print over')
+        writefile.close()
+    examples_2_file(train_examples, 'train')
+    examples_2_file(dev_examples, 'dev')
+    examples_2_file(test_examples, 'test')
+    exit(0)
+
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
