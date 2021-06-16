@@ -1,23 +1,15 @@
 
+from load_data import load_DocNLI
 
-from sklearn.metrics import f1_score
-import random
+def examples_2_dic(examples):
+    dic = set()
+    for ex in examples:
+        dic.add((ex.text_a, ex.text_b))
+    return dic
+train_examples = load_DocNLI('train', hypo_only=False)
+train_set = examples_2_dic(train_examples)
+dev_examples = load_DocNLI('test', hypo_only=False)
+dev_set = examples_2_dic(dev_examples)
 
-'''random baseline'''
-# out_label_ids = [1]*241910+[0]*25693
-# preds = []
-# for i in range(267603):
-
-out_label_ids = [1]*89748+[0]*33152
-preds = []
-for i in range(122900):
-    prob = random.uniform(0, 1)
-    if prob > 0.5:
-        preds.append(0)
-    else:
-        preds.append(1)
-
-
-
-f1 = f1_score(out_label_ids, preds, pos_label= 0, average='binary')
-print(f1)
+joint_set = train_set.intersection(dev_set)
+print(len(joint_set))

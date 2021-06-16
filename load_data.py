@@ -1,6 +1,7 @@
 import json_lines
 import codecs
 import random
+import json
 from transformers.data.processors.utils import InputExample
 
 
@@ -76,9 +77,8 @@ def get_summary_examples(path, prefix, hypo_only=False):
                 pos_size+=pos_size_block
                 neg_size+=neg_size_block
                 '''this is especially for CNN'''
-                if len(examples) >=160000:
-                # if len(examples) >=700000:
-                    break
+                # if len(examples) >=160000:
+                #     break
 
             '''start a new block'''
             block_line_list=[line.strip()]
@@ -87,7 +87,7 @@ def get_summary_examples(path, prefix, hypo_only=False):
                 block_line_list.append(line.strip())
 
     print('>>pos:neg: ', pos_size, neg_size)
-    print('DUC size:', len(examples))
+    print('size:', len(examples))
     return examples, pos_size
 
 # def get_DUC_examples(prefix, hypo_only=False):
@@ -457,7 +457,7 @@ def get_FEVER_examples(prefix, hypo_only=False):
     examples = []
     path = '/export/home/Dataset/para_entail_datasets/nli_FEVER/nli_fever/'
     filename = path+prefix+'_fitems.jsonl'
-    if prefix == 'test':
+    if prefix == 'test' or prefix == 'dev':
         filename = path+'dev_fitems.label.recovered.jsonl'
     print('loading FEVER...', filename)
     guid_id = 0
@@ -471,10 +471,6 @@ def get_FEVER_examples(prefix, hypo_only=False):
             if label == 'entailment':
                 pos_size+=1
             if len(premise) == 0 or len(hypothesis)==0:
-                # print('FEVER premise:', premise)
-                # print('hypothesis:', hypothesis)
-                # print(line)
-                # exit(0)
                 continue
 
             if hypo_only:
@@ -533,7 +529,7 @@ def get_ANLI_examples(prefix, hypo_only=False):
 
 
 
-def load_harsh_data(prefix, hypo_only=False):
+def load_harsh_data(prefix, need_data_list, hypo_only=False):
 
     # '''DUC'''
     # duc_examples, duc_pos_size = get_DUC_examples('train', hypo_only=hypo_only)
@@ -546,8 +542,9 @@ def load_harsh_data(prefix, hypo_only=False):
     # '''ANLI'''
     # anli_examples, anli_pos_size = get_ANLI_examples('train', hypo_only=hypo_only)
     # prefix = 'train'
-    train_examples = []
-    pos_size=0
+    train_examples_list = []
+    pos_size_list = []
+
 
     summary_path_list = [
                 '/export/home/Dataset/para_entail_datasets/DUC/',
@@ -556,8 +553,8 @@ def load_harsh_data(prefix, hypo_only=False):
                 ]
     for path in summary_path_list:
         summary_examples_i, summary_pos_size_i = get_summary_examples(path, prefix, hypo_only=hypo_only)
-        train_examples+=summary_examples_i
-        pos_size+=summary_pos_size_i
+        train_examples_list.append(summary_examples_i)
+        pos_size_list.append(summary_pos_size_i)
 
     # '''MCTest'''
     # mctest_examples, mctest_pos_size = get_MCTest_examples(prefix, hypo_only=hypo_only)
@@ -566,15 +563,22 @@ def load_harsh_data(prefix, hypo_only=False):
 
     '''SQUAD'''
     squada_examples, squada_pos_size = get_SQUAD_examples(prefix, hypo_only=hypo_only)
-    train_examples+=squada_examples
-    pos_size+=squada_pos_size
+    train_examples_list.append(squada_examples)
+    pos_size_list.append(squada_pos_size)
 
 
     '''ANLI'''
     anli_examples, anli_pos_size = get_ANLI_examples(prefix, hypo_only=hypo_only)
-    train_examples+=anli_examples
-    pos_size+=anli_pos_size
+    train_examples_list.append(anli_examples)
+    pos_size_list.append(anli_pos_size)
 
+    data_label_list = ['DUC', 'Curation', 'CNNDailyMail', 'SQUAD', 'ANLI']
+    assert len(data_label_list) == len(train_examples_list)
+    train_examples = []
+    pos_size = 0
+    for data_label in need_data_list:
+        train_examples+=train_examples_list[data_label_list.index(data_label)]
+        pos_size+=pos_size_list[data_label_list.index(data_label)]
 
     print('train size:', len(train_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(train_examples))
 
@@ -589,8 +593,8 @@ def load_dev_data(hypo_only=False):
     duc_examples, duc_pos_size = get_DUC_examples('dev', hypo_only=hypo_only)
     '''CNN'''
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('dev', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('dev', hypo_only=hypo_only)
+    '''SQUAD'''
+    squada_examples, squada_pos_size  = get_SQUAD_examples('dev', hypo_only=hypo_only)
     '''Curation'''
     curation_examples, curation_pos_size = get_Curation_examples('dev', hypo_only=hypo_only)
     '''ANLI'''
@@ -599,14 +603,14 @@ def load_dev_data(hypo_only=False):
     dev_examples = (
                         duc_examples+
                         cnn_examples+
-                        mctest_examples+
+                        squada_examples+
                         curation_examples+
                         anli_examples
                         )
     pos_size = (
                 duc_pos_size+
                 cnn_pos_size+
-                mctest_pos_size+
+                squada_pos_size+
                 curation_pos_size+
                 anli_pos_size
                 )
@@ -621,8 +625,8 @@ def load_test_data(hypo_only=False):
     duc_examples, duc_pos_size = get_DUC_examples('test', hypo_only=hypo_only)
     '''CNN'''
     cnn_examples, cnn_pos_size = get_CNN_DailyMail_examples('test', hypo_only=hypo_only)
-    '''MCTest'''
-    mctest_examples, mctest_pos_size = get_MCTest_examples('test', hypo_only=hypo_only)
+    '''SQUAD'''
+    squada_examples, squada_pos_size  = get_SQUAD_examples('test', hypo_only=hypo_only)
     '''Curation'''
     curation_examples, curation_pos_size = get_Curation_examples('test', hypo_only=hypo_only)
     '''ANLI'''
@@ -631,20 +635,36 @@ def load_test_data(hypo_only=False):
     test_examples = (
                         duc_examples+
                         cnn_examples+
-                        mctest_examples+
+                        squada_examples+
                         curation_examples+
                         anli_examples
                         )
     pos_size = (
                 duc_pos_size+
                 cnn_pos_size+
-                mctest_pos_size+
+                squada_pos_size+
                 curation_pos_size+
                 anli_pos_size
                 )
 
     print('test size:', len(test_examples), ' pos size:', pos_size, ' ratio:', pos_size/len(test_examples))
     return test_examples
+
+
+def load_DocNLI(prefix, hypo_only=False):
+    readfile = codecs.open('/export/home/Dataset/para_entail_datasets/'+prefix+'.json', 'r', 'utf-8')
+
+    data = json.load(readfile)
+    examples = []
+    for dic in data:
+        premise = dic.get('premise')
+        hypothesis = dic.get('hypothesis')
+        label  = dic.get('label')
+        if hypo_only:
+            examples.append(InputExample(guid='ex', text_a=hypothesis, text_b=None, label=label))
+        else:
+            examples.append(InputExample(guid='ex', text_a=premise, text_b=hypothesis, label=label))
+    return examples
 
 if __name__ == "__main__":
     # load_train_data()
