@@ -494,9 +494,7 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    test_examples = load_DocNLI('dev', hypo_only=False)
-    # random.shuffle(test_examples)
-    # test_examples = test_examples[:10000]
+    test_examples = load_DocNLI('test', hypo_only=False)
 
     label_list = ["entailment", "not_entailment"]#, "contradiction"]
     num_labels = len(label_list)
@@ -505,29 +503,7 @@ def main():
     # device = torch.device('cpu')
     model = RobertaForSequenceClassification(num_labels)
     tokenizer = RobertaTokenizer.from_pretrained(pretrain_model_dir, do_lower_case=args.do_lower_case)
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_2.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_epoch_3.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_2.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_epoch_3.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_epoch_2.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_1.pt', map_location=device))
-
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_epoch_0.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_epoch_1.pt', map_location=device))
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/ANLI_CNNDailyMail_DUC_Curation_SQUAD_epoch_0.pt', map_location=device))
-    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/docNLI_Longformer_epoch_4.pt', map_location=device))
-
-    # model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/160k_ANLI_epoch_4.pt', map_location=device))
+    model.load_state_dict(torch.load('/export/home/Dataset/BERT_pretrained_mine/paragraph_entail/2021/docNLI_Longformer_epoch_2.pt', map_location=device))
     model.to(device)
 
 
@@ -602,7 +578,7 @@ if __name__ == "__main__":
     main()
 
 '''
-CUDA_VISIBLE_DEVICES=7 python -u test_on_docNLI_Longformer.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 96 --learning_rate 1e-6 --max_seq_length 1024 --seed 42
+CUDA_VISIBLE_DEVICES=7 python -u test_on_docNLI_Longformer.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 4 --eval_batch_size 128 --learning_rate 1e-6 --max_seq_length 1024 --seed 42
 
 
 '''
