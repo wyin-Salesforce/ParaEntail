@@ -490,7 +490,7 @@ def main():
     processor = processors[task_name]()
     output_mode = output_modes[task_name]
 
-    test_examples = load_DocNLI('dev', hypo_only=False)
+    test_examples = load_DocNLI('test', hypo_only=False)
     # random.shuffle(test_examples)
     # test_examples = test_examples[:10000]
 
@@ -599,7 +599,7 @@ if __name__ == "__main__":
 
 '''
 
-CUDA_VISIBLE_DEVICES=4 python -u test_on_docNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 256 --learning_rate 1e-6 --max_seq_length 512 --seed 42
+CUDA_VISIBLE_DEVICES=5 python -u test_on_docNLI_RoBERTa.py --task_name rte --do_train --do_lower_case --data_label DUC --num_train_epochs 20 --train_batch_size 32 --eval_batch_size 256 --learning_rate 1e-6 --max_seq_length 512 --seed 42
 
 
 '''
